@@ -12,101 +12,93 @@ CM = choclo.constants.VACUUM_MAGNETIC_PERMEABILITY / (4 * np.pi)
 TESLA_TO_NANOTESLA = 1e9
 
 
-def unit_vector(inclination, declination):
+def angles_to_vector(inclination, declination, amplitude):
     """
-    Generate a 3-component unit vector from the direction angles.
-    
-    Inclination is positive downwards and declination is the angle with
-    the North component.
-    
-    The unit vector has easting, northing, and upward components.
+    Generate a 3-component vector from inclination, declination, and amplitude
+
+    Inclination is positive downwards and declination is the angle with the y
+    component. The vector has x, y, and z (upward) Cartesian components.
+
+    Parameters
+    ----------
+    inclination : float or array
+        The inclination values in degrees.
+    declination : float or array
+        The declination values in degrees.
+    amplitude : float or array
+        The vector amplitude values.
+
+    Returns
+    -------
+    vector : 1D or 2D array
+        The calculated x, y, z vector components. 1D if it's a single vector.
+        If N vectors are calculated, the "vector" will have shape (N, 3) with
+        each vector in a row of the array.
     """
-    easting = np.cos(np.radians(-inclination)) * np.sin(np.radians(declination))
-    northing = np.cos(np.radians(-inclination)) * np.cos(np.radians(declination))
-    upward = np.sin(np.radians(-inclination))
-    return np.array([easting, northing, upward])
+    inclination = np.radians(np.atleast_1d(inclination))
+    declination = np.radians(np.atleast_1d(declination))
+    amplitude = np.atleast_1d(amplitude)
+    sin_inc = np.sin(-inclination)
+    cos_inc = np.cos(-inclination)
+    sin_dec = np.sin(declination)
+    cos_dec = np.cos(declination)
+    x = cos_inc * sin_dec * amplitude
+    y = cos_inc * cos_dec * amplitude
+    z = sin_inc * amplitude
+    return np.array([x, y, z])
 
 
-def dipole_magnetic_field_fast(data_coordinates, dipole_coordinates, dipole_moment):
+def dipole_magnetic(coordinates, dipoles, magnetic_moments):
     """
     Magnetic field of a dipole (full 3-component vector).
     Output is in nanotesla.
     """
-    data_shape = data_coordinates[0].shape
-    data_coordinates = [np.asarray(c).ravel() for c in data_coordinates]
-    dipole_coordinates = [np.asarray(c).ravel() for c in dipole_coordinates]
-    dipole_moment = np.asarray(dipole_moment)
-    if dipole_moment.ndim == 1:
-        dipole_moment = np.array([dipole_moment])
-    magnetic_field = [np.zeros(data_coordinates[0].shape) for i in range(3)]
+    data_shape = coordinates[0].shape
+    coordinates = [np.asarray(c).ravel() for c in coordinates]
+    dipoles = [np.asarray(c).ravel() for c in dipoles]
+    magnetic_moments = [np.asarray(c).ravel() for c in magnetic_moments]
+    magnetic_field = [np.zeros(coordinates[0].shape) for i in range(3)]
     _dipole_magnetic_field_fast(
-        data_coordinates[0], 
-        data_coordinates[1], 
-        data_coordinates[2], 
-        dipole_coordinates[0],
-        dipole_coordinates[1],
-        dipole_coordinates[2], 
-        dipole_moment, 
+        coordinates[0],
+        coordinates[1],
+        coordinates[2],
+        dipoles[0],
+        dipoles[1],
+        dipoles[2],
+        magnetic_moments[0],
+        magnetic_moments[1],
+        magnetic_moments[2],
         magnetic_field[0],
         magnetic_field[1],
         magnetic_field[2],
-    )    
+    )
     return [TESLA_TO_NANOTESLA * m.reshape(data_shape) for m in magnetic_field]
 
 
 @numba.jit(nopython=True, parallel=True)
-def _dipole_magnetic_field_fast(easting, northing, upward, d_easting, d_northing, d_upward, dipole_moment, bx, by, bz):
+def _dipole_magnetic_field_fast(
+    easting, northing, upward, d_easting, d_northing, d_upward, m_easting,
+    m_northing, m_upward, b_easting, b_northing, b_upward,
+):
     """
     This is the bit that runs the fast for-loops
     """
     for i in numba.prange(easting.size):
         for j in range(d_easting.size):
             field = choclo.dipole.magnetic_field(
-                easting_p=easting[i], 
-                northing_p=northing[i], 
-                upward_p=upward[i], 
-                easting_q=d_easting[j], 
-                northing_q=d_northing[j], 
-                upward_q=d_upward[j], 
-                magnetic_moment=dipole_moment[j, :],
+                easting_p=easting[i],
+                northing_p=northing[i],
+                upward_p=upward[i],
+                easting_q=d_easting[j],
+                northing_q=d_northing[j],
+                upward_q=d_upward[j],
+                magnetic_moment_east=m_easting[j],
+                magnetic_moment_north=m_northing[j],
+                magnetic_moment_up=m_upward[j],
             )
-            bx[i] += field[0]
-            by[i] += field[1]
-            bz[i] += field[2]
-    
-
-def dipole_magnetic_field(data_coordinates, dipole_coordinates, dipole_moment):
-    """
-    Magnetic field of a dipole (full 3-component vector).
-    Output is in nanotesla.
-    """
-    dipole_coordinates = [np.atleast_1d(c).ravel() for c in dipole_coordinates]
-    number_of_dipoles = dipole_coordinates[0].size
-    magnetic_field = [np.zeros(data_coordinates[0].shape) for i in range(3)]
-    for j in range(number_of_dipoles):
-        distance = np.sqrt(
-            (dipole_coordinates[0][j] - data_coordinates[0])**2 
-            + (dipole_coordinates[1][j] - data_coordinates[1])**2 
-            + (dipole_coordinates[2][j] - data_coordinates[2])**2
-        )
-        # Calculate unit vector r between the source and the data
-        distance_unit_vector = [
-            (dipole[j] - data) / distance 
-            for dipole, data in zip(dipole_coordinates, data_coordinates)
-        ]
-        m_dot_r = sum(
-            m * r 
-            for m, r in zip(dipole_moment[j], distance_unit_vector)
-        )    
-        be, bn, bu = [
-            (TESLA_TO_NANOTESLA * CM / distance**3)
-            * (3 * m_dot_r * r  - m)
-            for m, r in zip(dipole_moment[j], distance_unit_vector)
-        ]
-        magnetic_field[0] += be
-        magnetic_field[1] += bn
-        magnetic_field[2] += bu
-    return magnetic_field
+            b_easting[i] += field[0]
+            b_northing[i] += field[1]
+            b_upward[i] += field[2]
 
 
 def total_field_anomaly(source_magnetic_field, main_field_direction):
@@ -139,7 +131,7 @@ def optimal_source_depth(data_coordinates):
     depth = (lowerbound + upperbound) / 2
     return depth
 
-        
+
 def sensitivity_matrix(
     data_coords, source_coords, unit_dipole_moment, main_field_direction,
 ):
@@ -171,8 +163,8 @@ def damped_least_squares(data, sensitivity, damping):
 
 def fit(coordinates, data, eqs_source_coords, damping, eqs_inc, eqs_dec, main_field_direction):
     A = sensitivity_matrix(
-        coordinates, 
-        eqs_source_coords, 
+        coordinates,
+        eqs_source_coords,
         unit_vector(eqs_inc, eqs_dec),
         main_field_direction,
     )
@@ -252,5 +244,5 @@ def shallow_dipole_moment_amp(data_coords, eqs_coords_shallow, window_size, damp
             main_field_direction,
         )
         residuals_shallow -= predicted_tfa_shallow
-        
+
     return dipole_moment_amp_shallow, residuals_shallow
