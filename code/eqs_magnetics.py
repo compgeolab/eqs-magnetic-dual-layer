@@ -2,7 +2,10 @@
 Module with custom functions for running magnetic equivalent sources.
 """
 import numpy as np
+from sklearn.utils.validation import check_is_fitted
 import verde as vd
+import verde.base as vdb
+import harmonica as hm
 import choclo
 import numba
 
@@ -121,15 +124,97 @@ def magnetic_field_norm(magnetic_field):
     return norm
 
 
-def optimal_source_depth(data_coordinates):
-    """
-    Estimates optimal depth of sources based on their horizontal spacing.
-    """
-    spacing = np.median(vd.median_distance(data_coordinates))
-    lowerbound = 2.5 * spacing
-    upperbound = 6 * spacing
-    depth = (lowerbound + upperbound) / 2
-    return depth
+# This was recommended by Vanderlei as a way to choose source depths.
+# Need to investigate further.
+# def optimal_source_depth(data_coordinates):
+    # """
+    # Estimates optimal depth of sources based on their horizontal spacing.
+    # """
+    # spacing = np.median(vd.median_distance(data_coordinates))
+    # lowerbound = 2.5 * spacing
+    # upperbound = 6 * spacing
+    # depth = (lowerbound + upperbound) / 2
+    # return depth
+
+
+class EquivalentSourcesMagnetic():
+
+    def __init__(
+        self, damping=None, depth=500, block_size=None,
+        dipole_inclination=90, dipole_declination=0, dipole_coordinates=None,
+    ):
+        self.damping = damping
+        self.depth = depth
+        self.block_size = block_size
+        self.dipole_coordinates = dipole_coordinates
+        self.dipole_inclination = dipole_inclination
+        self.dipole_declination = dipole_declination
+
+    def fit(self, coordinates, data, field_direction, weights=None):
+        """
+        """
+        coordinates, data, weights = vdb.check_fit_input(coordinates, data, weights)
+        # Capture the data region to use as a default when gridding.
+        self.region_ = vd.get_region(coordinates[:2])
+        coordinates = vdb.n_1d_arrays(coordinates, 3)
+        self.dipole_coordinates_ = self._build_points(coordinates)
+        dipole_moment_direction = angles_to_vector(
+            self.dipole_inclination, self.dipole_declination, 1,
+        )
+        jacobian = self.jacobian(
+            coordinates, self.dipole_coordinates_, dipole_moment_direction, field_direction,
+        )
+        moment_amplitude = vdb.least_squares(jacobian, data, weights, self.damping)
+        self.dipole_moments_ = angles_to_vector(
+            self.dipole_inclination, self.dipole_declination, moment_amplitude,
+        )
+        return self
+
+    def predict(self, coordinates):
+        """
+        """
+        # We know the gridder has been fitted if it has the estimated parameters
+        check_is_fitted(self, ["dipole_moments_"])
+        return dipole_magnetic(coordinates, self.dipole_coordinates_, self.dipole_moments_)
+
+    def _build_points(self, coordinates):
+        """
+        """
+        if self.block_size is not None:
+            reducer = vd.BlockReduce(
+                spacing=self.block_size, reduction=np.median, drop_coords=False
+            )
+            # Must pass a dummy data array to BlockReduce.filter(), we choose
+            # one of the coordinate arrays. We will ignore the returned reduced
+            # dummy array.
+            coordinates, _ = reducer.filter(coordinates, coordinates[0])
+        points = [
+            coordinates[0],
+            coordinates[1],
+            coordinates[2] - self.depth,
+        ]
+        return points
+
+    def jacobian(
+        self, coordinates, dipole_coordinates, dipole_moment_direction, field_direction,
+    ):
+        """
+        """
+        dipole_coordinates = [c.ravel() for c in dipole_coordinates]
+        n = len(coordinates[0])
+        m = len(dipole_coordinates[0])
+        A = np.empty((n, m))
+        for j in range(m):
+            east = dipole_coordinates[0][j]
+            north = dipole_coordinates[1][j]
+            up = dipole_coordinates[2][j]
+            magnetic_field = dipole_magnetic(
+                coordinates, ([east], [north], [up]), dipole_moment_direction,
+            )
+            A[:, j] = total_field_anomaly(magnetic_field, field_direction)
+        return A
+
+
 
 
 def sensitivity_matrix(
@@ -151,53 +236,6 @@ def sensitivity_matrix(
         )
         A[:, j] = total_field_anomaly(magnetic_field, main_field_direction)
     return A
-
-
-def damped_least_squares(data, sensitivity, damping):
-    I = np.identity(sensitivity.shape[1]) # needs to = m x m
-    system_matrix = sensitivity.T @ sensitivity + I * damping
-    system_rhs_vector = sensitivity.T @ data
-    coefficients = np.linalg.solve(system_matrix, system_rhs_vector)
-    return coefficients
-
-
-def fit(coordinates, data, eqs_source_coords, damping, eqs_inc, eqs_dec, main_field_direction):
-    A = sensitivity_matrix(
-        coordinates,
-        eqs_source_coords,
-        unit_vector(eqs_inc, eqs_dec),
-        main_field_direction,
-    )
-    eqs_dipole_moment_amplitude = damped_least_squares(
-        data, A, damping=damping,
-    )
-    return eqs_dipole_moment_amplitude
-
-
-def deep_eqs_coords(data_coords, eqs_spacing, eqs_depth):
-    reducer = vd.BlockReduce(reduction=np.median,
-                             spacing=eqs_spacing,
-                             center_coordinates=False)
-    points, _ = reducer.filter(data_coords, data_coords[0])
-    eqs_coords_deep = list(points)
-    eqs_coords_deep.append(np.full_like(points[0], eqs_depth))
-    return eqs_coords_deep
-
-def deep_dipole_moment(data_coords, data, eqs_inclination, eqs_declination, eqs_dipole_unit, damping, deep_eqs_coords, main_field_direction):
-    deep_dipole_moment_amp = fit(
-        coordinates=data_coords,
-        data=data,
-        eqs_source_coords=deep_eqs_coords,
-        damping=damping,
-        eqs_inc=eqs_inclination,
-        eqs_dec=eqs_declination,
-        main_field_direction=main_field_direction
-    )
-    dipole_moment_deep = [
-        deep_dipole_moment_amp[j] * eqs_dipole_unit
-        for j in range(deep_dipole_moment_amp.size)
-    ]
-    return dipole_moment_deep
 
 
 def shallow_dipole_moment_amp(data_coords, eqs_coords_shallow, window_size, damping, residuals, eqs_inclination, eqs_declination, eqs_dipole_unit, main_field_direction):
