@@ -1,4 +1,4 @@
-name: REPLACE_WITH_REPO_NAME
+name: eqs-gb-norm-of-b
 channels:
   - conda-forge
   - defaults
@@ -15,11 +15,10 @@ dependencies:
   - tectonic
   # Project specific dependencies
   - pandas
-  - scikit-image
   - xarray
   - netcdf4
-  # For stereonets
-  - mplstereonet
+  - pygmt
+  - pyproj
   # Fatiando
   - pooch
   - verde
