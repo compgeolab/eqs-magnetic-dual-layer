@@ -131,9 +131,8 @@ def recommended_source_depth(coordinates):
     From Dampney (1969).
     """
     spacing = np.mean(vd.median_distance(coordinates))
-    lowerbound = 2.5 * spacing
-    upperbound = 6 * spacing
-    depth = (lowerbound + upperbound) / 2
+    # Dampney recommends between 2.5 and 6 x spacing. Take the average.
+    depth = 4.25 * spacing
     return depth
 
 
@@ -175,7 +174,7 @@ class EquivalentSourcesMagnetic():
         """
         # We know the gridder has been fitted if it has the estimated parameters
         sklearn.utils.validation.check_is_fitted(self, ["dipole_moments_"])
-        return dipole_magnetic(coordinates, self.dipole_coordinates_, self.dipole_moments_)
+        return np.asarray(dipole_magnetic(coordinates, self.dipole_coordinates_, self.dipole_moments_))
 
     def _build_points(self, coordinates):
         """
