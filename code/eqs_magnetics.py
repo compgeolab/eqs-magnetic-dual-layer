@@ -2,7 +2,8 @@
 Module with custom functions for running magnetic equivalent sources.
 """
 import numpy as np
-from sklearn.utils.validation import check_is_fitted
+import sklearn.utils
+import sklearn.utils.validation
 import verde as vd
 import verde.base as vdb
 import harmonica as hm
@@ -173,7 +174,7 @@ class EquivalentSourcesMagnetic():
         """
         """
         # We know the gridder has been fitted if it has the estimated parameters
-        check_is_fitted(self, ["dipole_moments_"])
+        sklearn.utils.validation.check_is_fitted(self, ["dipole_moments_"])
         return dipole_magnetic(coordinates, self.dipole_coordinates_, self.dipole_moments_)
 
     def _build_points(self, coordinates):
@@ -218,72 +219,85 @@ class EquivalentSourcesMagnetic():
         return A
 
 
+class EquivalentSourcesMagneticGB(EquivalentSourcesMagnetic):
 
-
-def sensitivity_matrix(
-    data_coords, source_coords, unit_dipole_moment, main_field_direction,
-):
-    """
-    Calculate the A matrix using the total field anomaly.
-    """
-    source_coords = [c.ravel() for c in source_coords]
-    n = len(data_coords[0])
-    m = len(source_coords[0])
-    A = np.empty((n, m))
-    for j in range(m):
-        east = source_coords[0][j]
-        north = source_coords[1][j]
-        up = source_coords[2][j]
-        magnetic_field = dipole_magnetic_field_fast(
-            data_coords, ([east], [north], [up]), [unit_dipole_moment],
+    def __init__(
+        self, damping=None, depth=None, block_size=None,
+        dipole_inclination=90, dipole_declination=0, dipole_coordinates=None,
+        window_size=None, random_state=None,
+    ):
+        super().__init__(
+            damping, depth, block_size, dipole_inclination, dipole_declination,
+            dipole_coordinates,
         )
-        A[:, j] = total_field_anomaly(magnetic_field, main_field_direction)
-    return A
+        self.window_size = window_size
+        self.random_state = random_state
 
-
-def shallow_dipole_moment_amp(data_coords, eqs_coords_shallow, window_size, damping, residuals, eqs_inclination, eqs_declination, eqs_dipole_unit, main_field_direction):
-    _, source_indices = vd.rolling_window(
-        eqs_coords_shallow,
-        size=window_size,
-        spacing=window_size / 2,
-    )
-    _, data_indices = vd.rolling_window(
-        data_coords,
-        size=window_size,
-        spacing=window_size / 2
-    )
-    source_indices = [i[0] for i in source_indices.ravel()]
-    data_indices = [i[0] for i in data_indices.ravel()]
-    rmses = []
-    residuals_shallow = residuals.copy()
-    dipole_moment_amp_shallow = np.zeros_like(eqs_coords_shallow[0])
-    window_indices = list(range(len(data_indices)))
-    np.random.shuffle(window_indices)
-    for i in window_indices:
-        data_coord = tuple(c[data_indices[i]] for c in data_coords)
-        source_coord = tuple(c[source_indices[i]] for c in eqs_coords_shallow)
-        eqs_dipole_moment_amp_shallow = fit(
-            coordinates=data_coord,
-            data=residuals_shallow[data_indices[i]],
-            eqs_source_coords=source_coord,
-            damping=damping,
-            eqs_inc=eqs_inclination,
-            eqs_dec=eqs_declination,
-            main_field_direction=main_field_direction,
+    def fit(self, coordinates, data, field_direction, weights=None):
+        """
+        """
+        coordinates, data, weights = vdb.check_fit_input(coordinates, data, weights)
+        # Capture the data region to use as a default when gridding.
+        self.region_ = vd.get_region(coordinates[:2])
+        coordinates = vdb.n_1d_arrays(coordinates, 3)
+        self.dipole_coordinates_ = self._build_points(coordinates)
+        dipole_moment_direction = angles_to_vector(
+            self.dipole_inclination, self.dipole_declination, 1,
         )
-        dipole_moment_amp_shallow[source_indices[i]] += eqs_dipole_moment_amp_shallow
-        dipole_moment_shallow = [
-            eqs_dipole_moment_amp_shallow[j] * eqs_dipole_unit
-            for j in range(eqs_dipole_moment_amp_shallow.size)
-        ]
-        predicted_tfa_shallow = total_field_anomaly(
-            dipole_magnetic_field_fast(
-                data_coords,
-                source_coord,
-                dipole_moment_shallow,
-            ),
-            main_field_direction,
-        )
-        residuals_shallow -= predicted_tfa_shallow
+        if self.window_size is None:
+            # Keep the data per window around 10k.
+            # A better way would be to figure out the RAM available and choose
+            # based on that.
+            area = (self.region_[1] - self.region_[0]) * (self.region_[3] - self.region_[2])
+            ndata = data.size
+            points_per_m2 = ndata / area
+            window_area = 5e3 / points_per_m2
+            self.window_size_ = np.sqrt(window_area)
+        else:
+            self.window_size_ = self.window_size
 
-    return dipole_moment_amp_shallow, residuals_shallow
+        _, dipole_windows = vd.rolling_window(
+            self.dipole_coordinates_,
+            region=self.region_,
+            size=self.window_size_,
+            spacing=self.window_size_ / 2,
+        )
+        _, data_windows = vd.rolling_window(
+            coordinates,
+            region=self.region_,
+            size=self.window_size_,
+            spacing=self.window_size_ / 2
+        )
+        dipole_windows = [i[0] for i in dipole_windows.ravel()]
+        data_windows = [i[0] for i in data_windows.ravel()]
+        residuals = data.copy()
+        moment_amplitude = np.zeros_like(self.dipole_coordinates_[0])
+        window_indices = list(range(len(data_windows)))
+        sklearn.utils.check_random_state(self.random_state).shuffle(window_indices)
+        for window in window_indices:
+            dipole_window, data_window = dipole_windows[window], data_windows[window]
+            coords_chunk = tuple(c[data_window] for c in coordinates)
+            dipole_chunk = tuple(c[dipole_window] for c in self.dipole_coordinates_)
+            if weights is not None:
+                weights_chunk = weights[data_window]
+            else:
+                weights_chunk = None
+            jacobian = self.jacobian(
+                coords_chunk, dipole_chunk, dipole_moment_direction, field_direction,
+            )
+            moment_amplitude_chunk = vdb.least_squares(
+                jacobian, residuals[data_window], weights_chunk, self.damping,
+            )
+            dipole_moment_chunk = angles_to_vector(
+                self.dipole_inclination, self.dipole_declination, moment_amplitude_chunk,
+            )
+            predicted = total_field_anomaly(
+                dipole_magnetic(coordinates, dipole_chunk, dipole_moment_chunk),
+                field_direction,
+            )
+            moment_amplitude[dipole_window] += moment_amplitude_chunk
+            residuals -= predicted
+        self.dipole_moments_ = angles_to_vector(
+            self.dipole_inclination, self.dipole_declination, moment_amplitude,
+        )
+        return self
