@@ -124,23 +124,22 @@ def magnetic_field_norm(magnetic_field):
     return norm
 
 
-# This was recommended by Vanderlei as a way to choose source depths.
-# Need to investigate further.
-# def optimal_source_depth(data_coordinates):
-    # """
-    # Estimates optimal depth of sources based on their horizontal spacing.
-    # """
-    # spacing = np.median(vd.median_distance(data_coordinates))
-    # lowerbound = 2.5 * spacing
-    # upperbound = 6 * spacing
-    # depth = (lowerbound + upperbound) / 2
-    # return depth
+def recommended_source_depth(coordinates):
+    """
+    Estimates an approximate depth of sources based on their horizontal spacing
+    From Dampney (1969).
+    """
+    spacing = np.mean(vd.median_distance(coordinates))
+    lowerbound = 2.5 * spacing
+    upperbound = 6 * spacing
+    depth = (lowerbound + upperbound) / 2
+    return depth
 
 
 class EquivalentSourcesMagnetic():
 
     def __init__(
-        self, damping=None, depth=500, block_size=None,
+        self, damping=None, depth=None, block_size=None,
         dipole_inclination=90, dipole_declination=0, dipole_coordinates=None,
     ):
         self.damping = damping
@@ -180,6 +179,10 @@ class EquivalentSourcesMagnetic():
     def _build_points(self, coordinates):
         """
         """
+        if self.depth is None:
+            depth = recommended_source_depth(coordinates)
+        else:
+            depth = self.depth
         if self.block_size is not None:
             reducer = vd.BlockReduce(
                 spacing=self.block_size, reduction=np.median, drop_coords=False
@@ -191,7 +194,7 @@ class EquivalentSourcesMagnetic():
         points = [
             coordinates[0],
             coordinates[1],
-            coordinates[2] - self.depth,
+            coordinates[2] - depth,
         ]
         return points
 
