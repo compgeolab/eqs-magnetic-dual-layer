@@ -16,6 +16,17 @@ CM = choclo.constants.VACUUM_MAGNETIC_PERMEABILITY / (4 * np.pi)
 TESLA_TO_NANOTESLA = 1e9
 
 
+def contaminate(data, standard_deviation, random_state=None):
+    """
+    Add pseudo-random gaussian noise to the data array **in-place**.
+    """
+    noise = sklearn.utils.check_random_state(random_state).normal(
+        0, standard_deviation, size=data.shape,
+    )
+    data += noise
+    return data
+
+
 def angles_to_vector(inclination, declination, amplitude):
     """
     Generate a 3-component vector from inclination, declination, and amplitude
@@ -203,19 +214,51 @@ class EquivalentSourcesMagnetic():
     ):
         """
         """
-        dipole_coordinates = [c.ravel() for c in dipole_coordinates]
         n = len(coordinates[0])
         m = len(dipole_coordinates[0])
         A = np.empty((n, m))
-        for j in range(m):
-            east = dipole_coordinates[0][j]
-            north = dipole_coordinates[1][j]
-            up = dipole_coordinates[2][j]
-            magnetic_field = dipole_magnetic(
-                coordinates, ([east], [north], [up]), dipole_moment_direction,
-            )
-            A[:, j] = total_field_anomaly(magnetic_field, field_direction)
+        _jacobian_fast(
+            easting=coordinates[0],
+            northing=coordinates[1],
+            upward=coordinates[2],
+            d_easting=dipole_coordinates[0],
+            d_northing=dipole_coordinates[1],
+            d_upward=dipole_coordinates[2],
+            m_easting=dipole_moment_direction[0][0],
+            m_northing=dipole_moment_direction[1][0],
+            m_upward=dipole_moment_direction[2][0],
+            f_easting=field_direction[0][0],
+            f_northing=field_direction[1][0],
+            f_upward=field_direction[2][0],
+            jacobian=A,
+        )
         return A
+
+
+@numba.jit(nopython=True, parallel=True)
+def _jacobian_fast(
+    easting, northing, upward, d_easting, d_northing, d_upward, m_easting,
+    m_northing, m_upward, f_easting, f_northing, f_upward, jacobian,
+):
+        for i in numba.prange(easting.size):
+            for j in range(d_easting.size):
+                b_easting, b_northing, b_upward = choclo.dipole.magnetic_field(
+                    easting_p=easting[i],
+                    northing_p=northing[i],
+                    upward_p=upward[i],
+                    easting_q=d_easting[j],
+                    northing_q=d_northing[j],
+                    upward_q=d_upward[j],
+                    magnetic_moment_east=m_easting,
+                    magnetic_moment_north=m_northing,
+                    magnetic_moment_up=m_upward,
+                )
+                jacobian[i, j] = TESLA_TO_NANOTESLA * (
+                    b_easting * f_easting
+                    + b_northing * f_northing
+                    + b_upward * f_upward
+                )
+
 
 
 class EquivalentSourcesMagneticGB(EquivalentSourcesMagnetic):
