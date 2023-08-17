@@ -312,12 +312,20 @@ class EquivalentSourcesMagneticGB(EquivalentSourcesMagnetic):
         )
         dipole_windows = [i[0] for i in dipole_windows.ravel()]
         data_windows = [i[0] for i in data_windows.ravel()]
+        # remove empty windows
+        dipole_windows_nonempty = []
+        data_windows_nonempty = []
+        for dipole_window_, data_window_ in zip(dipole_windows, data_windows):
+            if dipole_window_.size > 0 and data_window_.size > 0:
+                dipole_windows_nonempty.append(dipole_window_)
+                data_windows_nonempty.append(data_window_)
+    
         residuals = data.copy()
         moment_amplitude = np.zeros_like(self.dipole_coordinates_[0])
-        window_indices = list(range(len(data_windows)))
+        window_indices = list(range(len(data_windows_nonempty)))
         sklearn.utils.check_random_state(self.random_state).shuffle(window_indices)
         for window in window_indices:
-            dipole_window, data_window = dipole_windows[window], data_windows[window]
+            dipole_window, data_window = dipole_windows_nonempty[window], data_windows_nonempty[window]
             coords_chunk = tuple(c[data_window] for c in coordinates)
             dipole_chunk = tuple(c[dipole_window] for c in self.dipole_coordinates_)
             if weights is not None:
