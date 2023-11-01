@@ -266,15 +266,16 @@ class EquivalentSourcesMagneticGB(EquivalentSourcesMagnetic):
     def __init__(
         self, damping=None, depth=None, block_size=None,
         dipole_inclination=90, dipole_declination=0, dipole_coordinates=None,
-        window_size=None, random_state=None,
+        window_size=None, repeat=1, random_state=None,
     ):
         super().__init__(
             damping, depth, block_size, dipole_inclination, dipole_declination,
             dipole_coordinates,
         )
         self.window_size = window_size
+        self.repeat = repeat
         self.random_state = random_state
-
+       
     def fit(self, coordinates, data, field_direction, weights=None):
         """
         """
@@ -323,30 +324,31 @@ class EquivalentSourcesMagneticGB(EquivalentSourcesMagnetic):
         residuals = data.copy()
         moment_amplitude = np.zeros_like(self.dipole_coordinates_[0])
         window_indices = list(range(len(data_windows_nonempty)))
-        sklearn.utils.check_random_state(self.random_state).shuffle(window_indices)
-        for window in window_indices:
-            dipole_window, data_window = dipole_windows_nonempty[window], data_windows_nonempty[window]
-            coords_chunk = tuple(c[data_window] for c in coordinates)
-            dipole_chunk = tuple(c[dipole_window] for c in self.dipole_coordinates_)
-            if weights is not None:
-                weights_chunk = weights[data_window]
-            else:
-                weights_chunk = None
-            jacobian = self.jacobian(
-                coords_chunk, dipole_chunk, dipole_moment_direction, field_direction,
-            )
-            moment_amplitude_chunk = vdb.least_squares(
-                jacobian, residuals[data_window], weights_chunk, self.damping,
-            )
-            dipole_moment_chunk = angles_to_vector(
-                self.dipole_inclination, self.dipole_declination, moment_amplitude_chunk,
-            )
-            predicted = total_field_anomaly(
-                dipole_magnetic(coordinates, dipole_chunk, dipole_moment_chunk),
-                field_direction,
-            )
-            moment_amplitude[dipole_window] += moment_amplitude_chunk
-            residuals -= predicted
+        for iteration in range(self.repeat):
+            sklearn.utils.check_random_state(self.random_state).shuffle(window_indices)
+            for window in window_indices:
+                dipole_window, data_window = dipole_windows_nonempty[window], data_windows_nonempty[window]
+                coords_chunk = tuple(c[data_window] for c in coordinates)
+                dipole_chunk = tuple(c[dipole_window] for c in self.dipole_coordinates_)
+                if weights is not None:
+                    weights_chunk = weights[data_window]
+                else:
+                    weights_chunk = None
+                jacobian = self.jacobian(
+                    coords_chunk, dipole_chunk, dipole_moment_direction, field_direction,
+                )
+                moment_amplitude_chunk = vdb.least_squares(
+                    jacobian, residuals[data_window], weights_chunk, self.damping,
+                )
+                dipole_moment_chunk = angles_to_vector(
+                    self.dipole_inclination, self.dipole_declination, moment_amplitude_chunk,
+                )
+                predicted = total_field_anomaly(
+                    dipole_magnetic(coordinates, dipole_chunk, dipole_moment_chunk),
+                    field_direction,
+                )
+                moment_amplitude[dipole_window] += moment_amplitude_chunk
+                residuals -= predicted
         self.dipole_moments_ = angles_to_vector(
             self.dipole_inclination, self.dipole_declination, moment_amplitude,
         )
