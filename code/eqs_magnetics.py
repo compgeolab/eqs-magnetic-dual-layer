@@ -280,6 +280,7 @@ class EquivalentSourcesMagneticGB(EquivalentSourcesMagnetic):
         """
         """
         coordinates, data, weights = vdb.check_fit_input(coordinates, data, weights)
+        data = np.atleast_1d(data)
         # Capture the data region to use as a default when gridding.
         self.region_ = vd.get_region(coordinates[:2])
         coordinates = vdb.n_1d_arrays(coordinates, 3)
