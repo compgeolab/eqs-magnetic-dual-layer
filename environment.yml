@@ -24,3 +24,6 @@ dependencies:
   - verde
   - harmonica
   - choclo
+  - pip
+  - pip:
+      - git+https://github.com/fatiando/harmonica
