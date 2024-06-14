@@ -194,6 +194,7 @@ class EquivalentSourcesMagnetic():
             depth = recommended_source_depth(coordinates)
         else:
             depth = self.depth
+        depth = np.ones_like(coordinates[0])*depth
         if self.block_size is not None:
             reducer = vd.BlockReduce(
                 spacing=self.block_size, reduction=np.median, drop_coords=False
@@ -201,7 +202,7 @@ class EquivalentSourcesMagnetic():
             # Must pass a dummy data array to BlockReduce.filter(), we choose
             # one of the coordinate arrays. We will ignore the returned reduced
             # dummy array.
-            coordinates, _ = reducer.filter(coordinates, coordinates[0])
+            coordinates, depth = reducer.filter(coordinates, depth)
         points = [
             coordinates[0],
             coordinates[1],
