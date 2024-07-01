@@ -1,38 +1,98 @@
+\section{India's notes}
+\textbf{This section is for India to get sentences written. It will to be sorted into the appropriate sections after.}
+
+Dampney (1969)
+- 2.5*grid spacing < (data height - source height) < 6*grid spacing
+    - this is for gravity data, would the limits be different for magnetics?
+    - Used this for deep sources
+    - Not used this for shallow sources - need to justify why?
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Introduction}
 
 This is the introduction. Here's a text citation of \citet{OliveiraJr2015}
 and a another version that is sometimes used \citep{OliveiraJr2015}.
 The rest is gibberish text.
 
-\lipsum[1-6]
-
+\lipsum[1]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Methodology}
 
-This is Euler's homogeneity equation
-
+\subsection{Equivalent Source Technique}
+\cite{Cordell1992}'s ‘generalized equivalent sources’ assumes any harmonic function $d_i$ can be approximated by the sum of $m$ discrete point source effects:
 \begin{equation}
-  \label{eq_euler_homogeneity}
-  (x - x_c)\partial_x f + (y - y_c)\partial_y f + (z - z_c)\partial_z f
-  = (b - f)\eta
-  \ ,
+d_i = \sum_{j=1}^{m} c_j f_{ij}(x,y,z)
 \end{equation}
 
-\noindent
-in which $(x_c, y_c, z_c)$ are the coordinates of the magnetic field source,
-$b$ is the base level representing a constant shift in the signal, and $\eta$
-is the structural index corresponding to the nature of the source. You can
-reference the equation in the text like this:
-Equation~\ref{eq_euler_homogeneity}.
+These equations can also be expressed in matrix form as:
+\begin{equation}
+    \mathbf{d} = \mathbf{Ac}
+\end{equation}
+where $\mathbf{d}$ is the column vector of $n$ predicted values at the observation points, $\mathbf{c}$ is the column vector of $m$ coefficients (moment magnitude) and $\mathbf{A}$ is the $n \times m$ sensitivity (Jacobian) matrix. By minimising the goal function,
+\begin{equation}
+    \phi(c) = [\mathbf{d}^0 - \mathbf{Ac}]^T W[\mathbf{d}^0 - \mathbf{Ac}] + \lambda_d \mathbf{c}^T\mathbf{c}
+\end{equation}
+the values of the source coefficients, $c$, that best fit the observed field values can be obtained using the difference between the observed and the predicted data. If the difference is as close as possible to zero, the observed and predicted data are very similar. Therefore, the smallest,
+\begin{equation}
+    \phi(c) = min
+\end{equation}
+gives the best fit. Therefore, the derivetive of $\phi$ is equal to zero.
+ADD MATHS!
 
-\lipsum[10-16]
+\subsection{Gradient Boosting}
+Estimating the source coefficients that best fit the observed data is computationally demanding. To overcome this problem, \cite{SolerUieda2021} used the gradient boosted method in which the source coefficients are estimated in overlapping windows and carried out iteratively. This gradient boosted method was applied to the shallow layer of equivalent sources.
+
+\subsection{Norm of B Predictions}
+The amplitude of the magnetic anomaly $B$ is weakly dependent on the direction of magnetisation compared the total field anomaly $F$ \cite{HidalgoGato2021}. By calculating the norm of the magnetic anomalous field, the data is less dependent on the direction of Earth’s main field and crustal magnetisation.
+
+\subsection{Dual Layer Concept}
+Two layers of equivalent sources was used to fit both, the regional magnetic field and the shallow magnetic anomalies. \cite{Li2019} found having an additional deeper layer of equivalent sources reduced the misfit, especially for the long‐wavelength fields. By using two layers, the deeper equivalent source layer can capture the regional, long-wavelength signals, whilst the shallower layer can capture the short-wavelength signals. For this dual layer process, firstly the deeper layer of equivalent sources is calculated to determine the regional field. To determine the depth of this layer, a lower and upper bound of 2.5 and 6 times the distance of the nearest neighbouring data point respectively was used \cite{Dampney1969}. The residual field between the deep equivalent source layer prediction and the data is then used to calculate the shallow equivalent source layer. Adding both the deep and shallow equivalent source layer predictions together creates the final prediction for the data.
+
+\subsection{Block Averaging}
+Block averaging the data reduces the computational load and the likelihood of overfitting the data. Due to the nature of aliasing flight line data, block averaging can balance the equivalent sources along and adjacent flight lines to reduce this effect \cite{SolerUieda2021}. Furthermore, by block averaging the data when calculating the deep equivalent sources, only the long-wavelength signals are captured, rather than both short and long wavelength signals. When the block average is too small, more short wavelength signals are captured and not all of the long wavelength signals from the regional field are captured. Too large block averaging, not all the regional signals are captured either. Therefore, different block averaging sizes were calculated to determine the optimum size for capturing only the long wavelength signals. To reduce the computational load when calculating the shallow equivalent sources, block averaging the same size as the grid spacing of the predicted data was applied.
+
+\subsection{K-Fold Cross-Validation}
+K-Fold Cross-Validation (K-CV) is a popular machine learning method for model selection. Data is divided into k number of folds, that are as equal as possible. One of the k folds is used to test the model and the remaining k-1 folds are used to train the model. This is repeated until all k folds have been used as both testing and training sets. The K-CV error estimation is the average of all the errors from each fold calculation.
+
+https://ieeexplore.ieee.org/abstract/document/5342427
+https://academic.oup.com/biomet/article-abstract/76/3/503/298209?redirectedFrom=fulltext&login=true
+https://www.tandfonline.com/doi/full/10.1080/10485252.2017.1404598
 
 
+There are many parameters that need to be chosen such as damping, depth of the sources, window size for the gradient boosting. To determine the optimum parameters, K-Fold cross validation was used and the values that had the smallest root mean square error (RMSE) were chosen.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Results}
+\section{Synthetic Data Application}
 
+\subsection{With and without dual layer}
+* w/o dual layer - doesn't capture all of the regional signal
+
+\subsection{Block average deep sources versus regular grids (for shallow we cite Santi):}
+Block average the data to make it smaller and smoother. Show that this works.
+Block average source positions instead of regular grid to avoid issues with no-data regions.
+
+\subsection{Single synthetic model}
+Use the coordinates from a survey (ICEGRAV) and make a dipole model that is relatively complex but doesn't have to be exactly like the data. Must have regional and shallow sources.
+
+
+\subsection{Part 1}
+Description of the model and data locations.
+
+\subsection{Part 2}
+Show the results for our method. Use the block averaging for deep sources + GB for shallow and predict a grid of TFA and |B|. Show maps of the block reduced sources and data, residuals after only deep sources, residuals of the TFA after gradient boosting, grid predictions (deep + shallow) of TFA and |B|.
+
+\subsection{Part 3}
+Difference between using the dual-layer or the single shallow layer. Maps showing the differences in TFA and |B|.
+
+\subsection{Part 4}
+Block averaging vs regular grid for deep sources. Effects on no-data zones when we use regular grid versus block averaged sources (maps showing the error). Difference in computation time between (1) Block averaged data and sources (2) Blocked averaged sources but original data (3) grid sources and original data (bar plot showing the difference in computation time).
+
+\subsection{Brief discussion (or in a separate section)}
 
 %\begin{figure}[tb]
 %\centering
@@ -43,13 +103,32 @@ Equation~\ref{eq_euler_homogeneity}.
 %\label{fig_synthetic_simple_data}
 %\end{figure}
 
-\lipsum[5-10]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Real Data Application}
+
+\subsection{Apply the standard method to ICEGRAV}
+
+\subsection{Describe ICEGRAV}
+
+\subsection{Show the original data (TFA points)}
+
+\subsection{Show the location of the deep sources and the block averaged data}
+
+\subsection{Show residuals from deep sources}
+
+\subsection{Show residuals from GB}
+
+\subsection{Grid predictions of TFA and |B|}
+
+\subsection{Brief discussion (or in a separate section)}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 
-\lipsum[1-5]
+\lipsum[1]
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,8 +142,6 @@ Here we should cite all of the main software used, like Jupyter, numpy, scipy,
 matplotlib, Fatiando, etc.
 
 Cite any data sources as well.
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Acknowledgements}
