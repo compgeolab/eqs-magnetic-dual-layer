@@ -46,14 +46,13 @@ Two layers of equivalent sources was used to fit both, the regional magnetic fie
 Block averaging the data reduces the computational load and the likelihood of overfitting the data. Due to the nature of aliasing flight line data, block averaging can balance the equivalent sources along and adjacent flight lines to reduce this effect \cite{SolerUieda2021}. Furthermore, by block averaging the data when calculating the deep equivalent sources, only the long-wavelength signals are captured, rather than both short and long wavelength signals. When the block average is too small, more short wavelength signals are captured and not all of the long wavelength signals from the regional field are captured. Too large block averaging, not all the regional signals are captured either. Therefore, different block averaging sizes were calculated to determine the optimum size for capturing only the long wavelength signals. To reduce the computational load when calculating the shallow equivalent sources, block averaging the same size as the grid spacing of the predicted data was applied.
 
 \subsection{K-Fold Cross-Validation}
-K-Fold Cross-Validation (K-CV) is a popular machine learning method for model selection. Data is divided into k number of folds, that are as equal as possible. One of the k folds is used to test the model and the remaining k-1 folds are used to train the model. This is repeated until all k folds have been used as both testing and training sets. The K-CV error estimation is the average of all the errors from each fold calculation.
+The model requires manual parameter selection for the damping, depth of equivalent sources and window size for the gradient boosting. In order to select the optimal parameter combination, K-Fold Crosss Validation (K-CV) was used. K-CV is a popular machine learning method often used for model selection. Data is divided into k number of folds, that are as equal as possible in size. One of the k folds is used as testing set and the remaining (k-1) folds are used as training sets. This is repeated iteratively until all k folds have been used as both testing and training sets. The K-CV error estimation is the root mean square error (RMSE) of all the errors from each fold calculation. The parameter combination with the smallest RMSE is selected for the model.
+
+% KCV on slice data, plot pic of training and testing fold 
 
 % https://ieeexplore.ieee.org/abstract/document/5342427
 % https://academic.oup.com/biomet/article-abstract/76/3/503/298209?redirectedFrom=fulltext&login=true
-% https://www.tandfonline.com/doi/full/10.1080/10485252.2017.1404598
 
-
-There are many parameters that need to be chosen such as damping, depth of the sources, window size for the gradient boosting. To determine the optimum parameters, K-Fold cross validation was used and the values that had the smallest root mean square error (RMSE) were chosen.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Synthetic Data Application}
