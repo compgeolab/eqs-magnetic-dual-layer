@@ -13,15 +13,33 @@ Dampney (1969)
 
 \section{Introduction}
 
-This is the introduction. Here's a text citation of \citet{OliveiraJr2015}
+Here's a text citation of \citet{OliveiraJr2015}
 and a another version that is sometimes used \citep{OliveiraJr2015}.
-The rest is gibberish text.
 
-\lipsum[1]
+The different gridding methods, such as inverse-distance weights, polynomical fitting, spline functions (Briggs, 1974), often assume potential data are not harmonic functions. However, the total field anomaly is harmonic when the magnitude is much smaller than the magnitude of the geomagnetic field; this is true for most instances in which the total field anomaly is observed. 
+
+Airborne data often have more data points along flight lines and much larger gaps between flight lines. The equivalent source (EQS) technique takes into account the irregularly spaced grids and the variable heights of the observed data. The EQS technique can be used for reduction to the pole, upwards continuation, modelling the lithospheric magnetic field, etc.
+
+The norm of the magnetic field is less dependent on the direction of magnetisation. This is particularly useful for areas with remanent magnetisation, low magnetic latitudes, sources with shallow inclination directions and sources with an unknown magnetised directions (Hidalgo-Gato, et al., 2021; Melo, et al., 2021).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Methodology}
+The observed total field anomaly, \textcolor{orange}{$\Delta T$}, has N numbrt of data points with positions $(x_i, y_i, z_i)$, where $x_i$ points in the geographic north direction, $y_i$ points in the east direction and $z_i$ points upwards (see orange diamonds in figure XX).
+
+
+is the difference between the observed magnetic total field intensity vector, $\vec{T}$, and the regional reference field vector, $\vec{F}$:
+\begin{equation}
+    \textcolor{orange}{\Delta T} = \left\lVert \vec{T} \right\rVert - \left\lVert \vec{F} \right\rVert,
+\end{equation}
+where the observed $\vec{T}$, is the sum of the anomalous magnetic field vector, $\vec{B}$, and $\vec{F}$:
+\begin{equation}
+    \textcolor{orange}{\Delta T} = \left\lVert \vec{F} + \vec{B} \right\rVert - \left\lVert \vec{F} \right\rVert.
+\end{equation}
+Since the $\vec{B}$ is much smaller in comparison to the $\vec{F}$, \deltaT can be approximated as the dot product of the \vec{B} and the regional field direction, \hat{F}:
+\begin{equation}
+    \textcolor{orange}{\Delta T} \approx  \vec{B} \cdot \hat{F}.
+\end{equation}
 
 \subsection{Equivalent Source Technique}
 \cite{Cordell1992}'s ‘generalized equivalent sources’ assumes any harmonic function $d_i$ can be approximated by the sum of $m$ discrete point source effects:
@@ -63,6 +81,83 @@ The model requires manual parameter selection for the damping, depth of equivale
 
 % https://ieeexplore.ieee.org/abstract/document/5342427
 % https://academic.oup.com/biomet/article-abstract/76/3/503/298209?redirectedFrom=fulltext&login=true
+
+\begin{equation}
+    \textcolor{orange}{\Delta T} = \left\lVert \vec{T} \right\rVert - \left\lVert \vec{F} \right\rVert
+\end{equation}
+
+\begin{equation}
+    \textcolor{orange}{\Delta T} = \left\lVert \vec{F} + \vec{B} \right\rVert - \left\lVert \vec{F} \right\rVert \approx  \vec{B} \cdot \hat{F}
+\end{equation}
+
+\begin{equation}
+\textcolor{orange}{d_i} = \sum_{j=1}^{M}  f_{ij} \textcolor{teal}{c_j}
+\end{equation}
+
+\begin{equation}
+\textcolor{orange}{\Delta T (x, y, z)} = \sum_{j=1}^{M}  \vec{B_j}(x, y, z) \cdot \hat{F_i} \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}
+\end{equation}
+
+\begin{equation}
+\textcolor{orange}{\begin{bmatrix}
+    \Delta T_1 \\ \Delta T_2 \\ \vdots \\ \Delta T_N
+\end{bmatrix}_{Nx1}} = \begin{bmatrix}
+    B_{11} \cdot F_{1} & B_{12} \cdot F_{1} & \hdots & B_{1M} \cdot F_{1} \\
+    B_{21} \cdot F_{2} & B_{22} \cdot F_{2} & \hdots & B_{2M} \cdot F_{2} \\
+    \vdots & \vdots & \vdots & \vdots \\
+    B_{N1} \cdot F_{N} & B_{N2} \cdot F_{N} & \hdots & B_{NM} \cdot F_{N} \\
+\end{bmatrix}_{NxM} \textcolor{teal}{\begin{bmatrix}
+    \left\lVert \vec{m_1} \right\rVert \\ \left\lVert \vec{m_2} \right\rVert \\ \vdots \\ \left\lVert \vec{m_M} \right\rVert
+\end{bmatrix}_{Mx1}}
+\end{equation}
+
+\begin{equation}
+    \textcolor{orange}{\Delta T (x, y, z)}
+\end{equation}
+
+\begin{equation}
+  \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}  
+\end{equation}
+
+\begin{equation}
+    \vec{B_j}(x, y, z) \cdot \hat{F_i}
+\end{equation}
+
+\begin{equation}
+    \vec{B} = \frac{C_m}{r^3} [3 ( \hat{m} \cdot \hat{r}) \hat{r} - \hat{m}]
+\end{equation}
+
+\begin{equation}
+    \textcolor{orange}{\Bar{d}} = \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}}
+\end{equation}
+\begin{equation}
+    \bar{r} = \bar{d^0} - \textcolor{orange}{\bar{d}}
+\end{equation}
+
+\begin{equation}
+    \phi = \bar{r}^T\bar{r} + \mu \textcolor{teal}{\bar{c}^T\bar{c}}
+\end{equation}
+
+\begin{equation}
+    \phi (\textcolor{teal}{\bar{c}}) = (\bar{d^0} - \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}})^T (\bar{d^0} - \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}}) + \mu \textcolor{teal}{\bar{c}^T\bar{c}}
+\end{equation}
+
+\begin{equation}
+    \phi (\textcolor{teal}{\bar{c}}) = \bar{d^0}^T\bar{d^0} - 2 \bar{d^0}^T \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}} + \textcolor{teal}{\Bar{c}}^T \Bar{\Bar{A}}^T \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}} + \mu \textcolor{teal}{\bar{c}^T\bar{c}}
+\end{equation}
+
+\begin{equation}
+    \nabla_{\textcolor{teal}{\bar{c}}} \phi = 2 \Bar{\Bar{A}}^T \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}} - 2\Bar{\Bar{A}}^T\bar{d^0} + 2\mu \textcolor{teal}{\bar{c}} = \bar{0}
+\end{equation}
+    
+\begin{equation}
+    (\Bar{\Bar{A}}^T \Bar{\Bar{A}} + \Bar{\Bar{I}} \mu ) \textcolor{teal}{\bar{c}} = 
+    \Bar{\Bar{A}}^T\bar{d^0}
+\end{equation}
+
+\begin{equation}
+  \textcolor{orange}{\left\lVert \vec{B_i}(x,y,z) \right\rVert} = \sum_{j=1}^{M} \left\lVert \vec{B_j}(x,y,z) \right\rVert \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}
+\end{equation}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
