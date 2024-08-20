@@ -14,18 +14,19 @@ The norm of the magnetic field is less dependent on the direction of magnetisati
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Methodology}
-The observed total field anomaly vector, $\Delta T$, has N number of data points with positions $(x_i, y_i, z_i)$, where $x_i$ points in the geographic north direction, $y_i$ points in the east direction and $z_i$ points upwards (see black inverted triangles in figure XX). $\Delta T$ is the difference between the measured magnetic total field intensity vector, $\vec{T}$, and the regional reference field vector, $\vec{F}$,
+The observed total field anomaly vector, $\Delta T$, has N number of data points with positions $(x_i, y_i, z_i)$, where $x_i$ points in the geographic north direction, $y_i$ points in the east direction and $z_i$ points upwards (see black inverted triangles in figure XX). $\Delta T$ is the difference between the measured magnetic total field intensity vector, $\vec{T}$, and the regional reference field vector, $\vec{F}$, at the time of measurement:
 \begin{equation}
-    \Delta T = \left\lVert \vec{T} \right\rVert - \left\lVert \vec{F} \right\rVert,
+    \Delta T = \left\lVert \vec{T} \right\rVert - \left\lVert \vec{F} \right\rVert.
 \end{equation}
-where the measured $\vec{T}$, is the sum of the anomalous magnetic field vector, $\vec{B}$, and $\vec{F}$ (cite Blakley, 1996, Langel and Hinze, 1998, Oliveira Jr, et al, 2015):
+The measured $\vec{T}$, is the sum of the anomalous magnetic field vector, $\vec{B}$, and $\vec{F}$ (cite Blakley, 1996, Langel and Hinze, 1998, Oliveira Jr, et al, 2015). The $\Delta T$ can therefore be given by:
 \begin{equation}
     \Delta T = \left\lVert \vec{F} + \vec{B} \right\rVert - \left\lVert \vec{F} \right\rVert.
 \end{equation}
-Up to a regional-scale, $\hat{F}$ is considered to be constant and the $\vec{B}$ is much smaller in magnitude in comparison to the $\vec{F}$. Subsequently, $\Delta T$ can be approximated as the dot product of the $\vec{B}$ and the regional field direction, $\hat{F}$ (cite Telford, et al, 1990; Blakley, 1996, Oliveira Jr, et al, 2015):
+For most crustal anomalies measured by airborne and shipborne surveys, the measured $\vec{B}$ is much smaller in magnitude in comparison to the $\vec{F}$. Subsequently, $\Delta T$ can be approximated as the dot product of the $\vec{B}$ and the regional field direction, $\hat{F}$:
 \begin{equation}
-    \Delta T \approx  \vec{B} \cdot \hat{F}.
+    \Delta T\approx  \vec{B} \cdot \hat{F}.
 \end{equation}
+For these local to regional scale surveys, the $\vec{F}$ can be considered constant, enabling the $\Delta T$ to be harmonic (cite Blakely, 1996; Oliveira Jr, et al, 2015).
 
 \subsection{Equivalent Source Technique}
 \cite{Cordell1992}'s ‘generalized equivalent sources’ assumes any harmonic function \textcolor{orange}{$d_i$} can be approximated by the sum of $m$ discrete point source effects:
@@ -34,7 +35,6 @@ Up to a regional-scale, $\hat{F}$ is considered to be constant and the $\vec{B}$
 \end{equation}
 The $\vec{B}$ is a harmonic function, whilst the $\Delta T$ can be treated as harmonic when the magnitude is much smaller than the regional geomagnetic field. This is the case in majority of survey.
 
-:
 \begin{equation}
     \mathbf{d} = \mathbf{Ac}
 \end{equation}
