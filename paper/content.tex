@@ -14,26 +14,28 @@ The norm of the magnetic field is less dependent on the direction of magnetisati
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Methodology}
-The observed total field anomaly vector, $\Delta T$, has N number of data points with positions $(x_i, y_i, z_i)$, where $x_i$ points in the geographic north direction, $y_i$ points in the east direction and $z_i$ points upwards (see black inverted triangles in figure XX). $\Delta T$ is the difference between the measured magnetic total field intensity vector, $\vec{T}$, and the regional reference field vector, $\vec{F}$, at the time of measurement:
+The observed total field anomaly vector, $\Delta T$, is the difference between the magnetic total field intensity vector, $\vec{T}$, measured and the regional reference field vector, $\vec{F}$, at the time of measurement:
 \begin{equation}
     \Delta T = \left\lVert \vec{T} \right\rVert - \left\lVert \vec{F} \right\rVert.
 \end{equation}
-The measured $\vec{T}$, is the sum of the anomalous magnetic field vector, $\vec{B}$, and $\vec{F}$ (cite Blakley, 1996, Langel and Hinze, 1998, Oliveira Jr, et al, 2015). The $\Delta T$ can therefore be given by:
+The measured $\vec{T}$, is the sum of the anomalous magnetic field vector, $\vec{B}$, and $\vec{F}$ (cite Blakley, 1996, Langel and Hinze, 1998, \citet{OliveiraJr2015}). The $\Delta T$ can therefore be given by:
 \begin{equation}
     \Delta T = \left\lVert \vec{F} + \vec{B} \right\rVert - \left\lVert \vec{F} \right\rVert.
 \end{equation}
-For most crustal anomalies measured by airborne and shipborne surveys, the measured $\vec{B}$ is much smaller in magnitude in comparison to the $\vec{F}$. Subsequently, $\Delta T$ can be approximated as the dot product of the $\vec{B}$ and the regional field direction, $\hat{F}$:
+For the majority of crustal anomalies measured by airborne and shipborne surveys, the measured $\vec{B}$ is much smaller in magnitude compared to the $\vec{F}$. Subsequently, $\Delta T$ can be approximated as the dot product of the $\vec{B}$ and the regional field direction, $\hat{F}$:
 \begin{equation}
     \Delta T\approx  \vec{B} \cdot \hat{F}.
 \end{equation}
-For these local to regional scale surveys, the $\vec{F}$ can be considered constant, enabling the $\Delta T$ to be harmonic (cite Blakely, 1996; Oliveira Jr, et al, 2015).
+For these local to regional scale surveys, the $\vec{F}$ can be considered constant, thus enabling the $\Delta T$ to be harmonic (cite Blakely, 1996; \citet{OliveiraJr2015}).
 
 \subsection{Equivalent Source Technique}
-\cite{Cordell1992}'s ‘generalized equivalent sources’ assumes any harmonic function \textcolor{orange}{$d_i$} can be approximated by the sum of $m$ discrete point source effects:
+\cite{Cordell1992}'s ‘generalized equivalent sources’ assumes any harmonic function \textcolor{orange}{$d_i$} can be approximated by the sum of $M$ discrete point source effects:
 \begin{equation}
-	\textcolor{orange}{d_i} = \sum_{j=1}^{m} \textcolor{teal}{c_j} f_{ij}(x,y,z).
+\textcolor{orange}{d_i} = \sum_{j=1}^{M}  f_{ij} \textcolor{teal}{c_j}
 \end{equation}
-The $\vec{B}$ is a harmonic function, whilst the $\Delta T$ can be treated as harmonic when the magnitude is much smaller than the regional geomagnetic field. This is the case in majority of survey.
+
+
+where $\Delta T$ has N number of data points with positions $(x_i, y_i, z_i)$, where $x_i$ and $y_i$ point in the geographic north and east directions, respectively, and $z_i$ points upwards.
 
 \begin{equation}
     \mathbf{d} = \mathbf{Ac}
@@ -47,39 +49,7 @@ the values of the source coefficients, $c$, that best fit the observed field val
     \phi(c) = min
 \end{equation}
 gives the best fit. Therefore, the derivetive of $\phi$ is equal to zero.
-ADD MATHS!
 
-\subsection{Gradient Boosting}
-Estimating the source coefficients that best fit the observed data is computationally demanding. To overcome this problem, \cite{SolerUieda2021} used the gradient boosted method in which the source coefficients are estimated in overlapping windows and carried out iteratively. This gradient boosted method was applied to the shallow layer of equivalent sources.
-
-\subsection{Norm of B Predictions}
-The amplitude of the magnetic anomaly $B$ is weakly dependent on the direction of magnetisation compared the total field anomaly $F$ \cite{HidalgoGato2021}. By calculating the norm of the magnetic anomalous field, the data is less dependent on the direction of Earth’s main field and crustal magnetisation.
-
-\subsection{Dual Layer Concept}
-Two layers of equivalent sources was used to fit both, the regional magnetic field and the shallow magnetic anomalies. \cite{Li2019} found having an additional deeper layer of equivalent sources reduced the misfit, especially for the long‐wavelength fields. By using two layers, the deeper equivalent source layer can capture the regional, long-wavelength signals, whilst the shallower layer can capture the short-wavelength signals. For this dual layer process, firstly the deeper layer of equivalent sources is calculated to determine the regional field. To determine the depth of this layer, a lower and upper bound of 2.5 and 6 times the distance of the nearest neighbouring data point respectively was used \cite{Dampney1969}. The residual field between the deep equivalent source layer prediction and the data is then used to calculate the shallow equivalent source layer. Adding both the deep and shallow equivalent source layer predictions together creates the final prediction for the data.
-
-\subsection{Block Averaging}
-Block averaging the data reduces the computational load and the likelihood of overfitting the data. Due to the nature of aliasing flight line data, block averaging can balance the equivalent sources along and adjacent flight lines to reduce this effect \cite{SolerUieda2021}. Furthermore, by block averaging the data when calculating the deep equivalent sources, only the long-wavelength signals are captured, rather than both short and long wavelength signals. When the block average is too small, more short wavelength signals are captured and not all of the long wavelength signals from the regional field are captured. Too large block averaging, not all the regional signals are captured either. Therefore, different block averaging sizes were calculated to determine the optimum size for capturing only the long wavelength signals. To reduce the computational load when calculating the shallow equivalent sources, block averaging the same size as the grid spacing of the predicted data was applied.
-
-\subsection{K-Fold Cross-Validation}
-The model requires manual parameter selection for the damping, depth of equivalent sources and window size for the gradient boosting. In order to select the optimal parameter combination, K-Fold Crosss Validation (K-CV) was used. K-CV is a popular machine learning method often used for model selection. Data is divided into k number of folds, that are as equal as possible in size. One of the k folds is used as testing set and the remaining (k-1) folds are used as training sets. This is repeated iteratively until all k folds have been used as both testing and training sets. The K-CV error estimation is the root mean square error (RMSE) of all the errors from each fold calculation. The parameter combination with the smallest RMSE is selected for the model.
-
-% KCV on slice data, plot pic of training and testing fold 
-
-% https://ieeexplore.ieee.org/abstract/document/5342427
-% https://academic.oup.com/biomet/article-abstract/76/3/503/298209?redirectedFrom=fulltext&login=true
-
-\begin{equation}
-    \textcolor{orange}{\Delta T} = \left\lVert \vec{T} \right\rVert - \left\lVert \vec{F} \right\rVert
-\end{equation}
-
-\begin{equation}
-    \textcolor{orange}{\Delta T} = \left\lVert \vec{F} + \vec{B} \right\rVert - \left\lVert \vec{F} \right\rVert \approx  \vec{B} \cdot \hat{F}
-\end{equation}
-
-\begin{equation}
-\textcolor{orange}{d_i} = \sum_{j=1}^{M}  f_{ij} \textcolor{teal}{c_j}
-\end{equation}
 
 \begin{equation}
 \textcolor{orange}{\Delta T (x, y, z)} = \sum_{j=1}^{M}  \vec{B_j}(x, y, z) \cdot \hat{F_i} \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}
@@ -145,6 +115,28 @@ The model requires manual parameter selection for the damping, depth of equivale
 \begin{equation}
   \textcolor{orange}{\left\lVert \vec{B_i}(x,y,z) \right\rVert} = \sum_{j=1}^{M} \left\lVert \vec{B_j}(x,y,z) \right\rVert \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}
 \end{equation}
+
+
+
+\subsection{Gradient Boosting}
+Estimating the source coefficients that best fit the observed data is computationally demanding. To overcome this problem, \cite{SolerUieda2021} used the gradient boosted method in which the source coefficients are estimated in overlapping windows and carried out iteratively. This gradient boosted method was applied to the shallow layer of equivalent sources.
+
+\subsection{Norm of B Predictions}
+The amplitude of the magnetic anomaly $B$ is weakly dependent on the direction of magnetisation compared the total field anomaly $F$ \cite{HidalgoGato2021}. By calculating the norm of the magnetic anomalous field, the data is less dependent on the direction of Earth’s main field and crustal magnetisation.
+
+\subsection{Dual Layer Concept}
+Two layers of equivalent sources was used to fit both, the regional magnetic field and the shallow magnetic anomalies. \cite{Li2019} found having an additional deeper layer of equivalent sources reduced the misfit, especially for the long‐wavelength fields. By using two layers, the deeper equivalent source layer can capture the regional, long-wavelength signals, whilst the shallower layer can capture the short-wavelength signals. For this dual layer process, firstly the deeper layer of equivalent sources is calculated to determine the regional field. To determine the depth of this layer, a lower and upper bound of 2.5 and 6 times the distance of the nearest neighbouring data point respectively was used \cite{Dampney1969}. The residual field between the deep equivalent source layer prediction and the data is then used to calculate the shallow equivalent source layer. Adding both the deep and shallow equivalent source layer predictions together creates the final prediction for the data.
+
+\subsection{Block Averaging}
+Block averaging the data reduces the computational load and the likelihood of overfitting the data. Due to the nature of aliasing flight line data, block averaging can balance the equivalent sources along and adjacent flight lines to reduce this effect \cite{SolerUieda2021}. Furthermore, by block averaging the data when calculating the deep equivalent sources, only the long-wavelength signals are captured, rather than both short and long wavelength signals. When the block average is too small, more short wavelength signals are captured and not all of the long wavelength signals from the regional field are captured. Too large block averaging, not all the regional signals are captured either. Therefore, different block averaging sizes were calculated to determine the optimum size for capturing only the long wavelength signals. To reduce the computational load when calculating the shallow equivalent sources, block averaging the same size as the grid spacing of the predicted data was applied.
+
+\subsection{K-Fold Cross-Validation}
+The model requires manual parameter selection for the damping, depth of equivalent sources and window size for the gradient boosting. In order to select the optimal parameter combination, K-Fold Crosss Validation (K-CV) was used. K-CV is a popular machine learning method often used for model selection. Data is divided into k number of folds, that are as equal as possible in size. One of the k folds is used as testing set and the remaining (k-1) folds are used as training sets. This is repeated iteratively until all k folds have been used as both testing and training sets. The K-CV error estimation is the root mean square error (RMSE) of all the errors from each fold calculation. The parameter combination with the smallest RMSE is selected for the model.
+
+% KCV on slice data, plot pic of training and testing fold 
+
+% https://ieeexplore.ieee.org/abstract/document/5342427
+% https://academic.oup.com/biomet/article-abstract/76/3/503/298209?redirectedFrom=fulltext&login=true
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
