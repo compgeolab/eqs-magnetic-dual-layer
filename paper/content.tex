@@ -11,50 +11,43 @@ Airborne data often have more data points along flight lines and much larger gap
 
 The norm of the magnetic field is less dependent on the direction of magnetisation. This is particularly useful for areas with remanent magnetisation, low magnetic latitudes, sources with shallow inclination directions and sources with an unknown magnetised directions (Hidalgo-Gato, et al., 2021; Melo, et al., 2021).
 
+\lipsum[1-3]
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Methodology}
-The observed total field anomaly vector, $\Delta T$, is the difference between the magnetic total field intensity vector, $\vec{T}$, measured and the regional reference field vector, $\vec{F}$, at the time of measurement:
+The observed total field anomaly vector ($\Delta T$) is the difference between the magnetic total field intensity vector ($\vec{T}$) measured and the regional reference field vector ($\vec{F}$) at the time of measurement:
 \begin{equation}
-    \Delta T = \left\lVert \vec{T} \right\rVert - \left\lVert \vec{F} \right\rVert.
+    \Delta T = \left\lVert \vec{T} \right\rVert - \left\lVert \vec{F} \right\rVert
 \end{equation}
-The measured $\vec{T}$, is the sum of the anomalous magnetic field vector, $\vec{B}$, and $\vec{F}$ (cite Blakley, 1996, Langel and Hinze, 1998, \citet{OliveiraJr2015}). The $\Delta T$ can therefore be given by:
+$\vec{T}$ is the sum of the anomalous magnetic field vector ($\vec{B}$) and $\vec{F}$ (cite Blakley, 1996, Langel and Hinze, 1998, \citep{OliveiraJr2015}). $\Delta T$ can therefore be given by:
 \begin{equation}
-    \Delta T = \left\lVert \vec{F} + \vec{B} \right\rVert - \left\lVert \vec{F} \right\rVert.
+    \Delta T = \left\lVert \vec{F} + \vec{B} \right\rVert - \left\lVert \vec{F} \right\rVert
 \end{equation}
-For the majority of crustal anomalies measured by airborne and shipborne surveys, the measured $\vec{B}$ is much smaller in magnitude compared to the $\vec{F}$. Subsequently, $\Delta T$ can be approximated as the dot product of the $\vec{B}$ and the regional field direction, $\hat{F}$:
+For the majority of crustal anomalies measured by airborne and shipborne surveys, $\vec{B}$ is much smaller in magnitude compared to $\vec{F}$. Additionally, $\vec{F}$ can be considered constant on these local to regional scales. Subsequently, $\Delta T$ can be approximated as the dot product of $\vec{B}$ and the regional field direction ($\hat{F}$),
 \begin{equation}
-    \Delta T\approx  \vec{B} \cdot \hat{F}.
+\label{'eq:tfa dot product'}
+    \Delta T\approx  \vec{B} \cdot \hat{F},
 \end{equation}
-For these local to regional scale surveys, the $\vec{F}$ can be considered constant, thus enabling the $\Delta T$ to be harmonic (cite Blakely, 1996; \citet{OliveiraJr2015}).
+thus enabling $\Delta T$ to be harmonic (cite Blakely, 1996; \citep{OliveiraJr2015}).
 
 \subsection{Equivalent Source Technique}
-\cite{Cordell1992}'s ‘generalized equivalent sources’ assumes any harmonic function \textcolor{orange}{$d_i$} can be approximated by the sum of $M$ discrete point source effects:
+The equivalent source technique assumes any harmonic function \textcolor{orange}{$d_i$} can be approximated by the sum of $M$ discrete point source effects,
 \begin{equation}
-\textcolor{orange}{d_i} = \sum_{j=1}^{M}  f_{ij} \textcolor{teal}{c_j}
+\label{'eq:eqs technique'}
+\textcolor{orange}{d_i} = \sum_{j=1}^{M}  f_{ij} \textcolor{teal}{c_j},
 \end{equation}
+where \textcolor{orange}{$d_i$} is the predicted data at $N$ observation points with $i = 1, ... , N$, $f_{ij}$ is the $M$ point source effects with $j = 1, ..., M$ and \textcolor{teal}{$c_j$} is the associated coefficients for the $M$ point source effects (cite dampney 1969, \cite{Cordell1992}).
 
-
-where $\Delta T$ has N number of data points with positions $(x_i, y_i, z_i)$, where $x_i$ and $y_i$ point in the geographic north and east directions, respectively, and $z_i$ points upwards.
-
+For magnetic surveys, {$d_i$} from Equation~\ref{'eqs technique'} becomes \textcolor{orange}{$\Delta T(x, y, z)$} for N number of data points with Cartesian positions $(x_i, y_i, z_i)$, where $x_i$ and $y_i$ point in the geographic north and east directions, respectively, and $z_i$ points upwards. $f_{ij}$ is therefore $\vec{B} \cdot \hat{F}$ from Equation~\ref{'eq:tfa dot product'}, where $\vec{B}$ is the magnetic field of dipole given by:
 \begin{equation}
-    \mathbf{d} = \mathbf{Ac}
+    \vec{B} = \frac{C_m}{r^3} [3 ( \hat{m} \cdot \hat{r}) \hat{r} - \hat{m}],
 \end{equation}
-where $\mathbf{d}$ is the column vector of $n$ predicted values at the observation points, $\mathbf{c}$ is the column vector of $m$ coefficients (moment magnitude) and $\mathbf{A}$ is the $n \times m$ sensitivity (Jacobian) matrix. By minimising the goal function,
-\begin{equation}
-    \phi(c) = [\mathbf{d}^0 - \mathbf{Ac}]^T W[\mathbf{d}^0 - \mathbf{Ac}] + \lambda_d \mathbf{c}^T\mathbf{c}
-\end{equation}
-the values of the source coefficients, $c$, that best fit the observed field values can be obtained using the difference between the observed and the predicted data. If the difference is as close as possible to zero, the observed and predicted data are very similar. Therefore, the smallest,
-\begin{equation}
-    \phi(c) = min
-\end{equation}
-gives the best fit. Therefore, the derivetive of $\phi$ is equal to zero.
-
-
+in which $C_m = \frac{\mu_0}{4 \pi} = 10^{-7} Henry \cdot meter^{-1}$ is the proportionality constant where $\mu_0$ is the magnetic permeability of free space, $ \vec{m} = m \hat{m}$ is the dipole moment, and $\vec{r} = r \hat{r} $ is the vector from the dipole source to the observation point (cite Blakely 1996). If the moment magnitude, $m$, is equal to 1, the coefficients, \textcolor{teal}{$c_j$}, from Equation~\ref{'eq:eqs technique'} becomes the norm of the moment magnitude:
 \begin{equation}
 \textcolor{orange}{\Delta T (x, y, z)} = \sum_{j=1}^{M}  \vec{B_j}(x, y, z) \cdot \hat{F_i} \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}
 \end{equation}
-
+This can also be expressed in matrix form:
 \begin{equation}
 \textcolor{orange}{\begin{bmatrix}
     \Delta T_1 \\ \Delta T_2 \\ \vdots \\ \Delta T_N
@@ -67,57 +60,39 @@ gives the best fit. Therefore, the derivetive of $\phi$ is equal to zero.
     \left\lVert \vec{m_1} \right\rVert \\ \left\lVert \vec{m_2} \right\rVert \\ \vdots \\ \left\lVert \vec{m_M} \right\rVert
 \end{bmatrix}_{Mx1}}
 \end{equation}
-
+which is also in the linear system,
 \begin{equation}
-    \textcolor{orange}{\Delta T (x, y, z)}
+    \textcolor{orange}{\bar{d}} = \bar{\bar{A}} \textcolor{teal}{\bar{c}},
 \end{equation}
-
+where $\mathbf{d}$ is the column vector of $N$ predicted values at the observation points, $\mathbf{c}$ is the column vector of $M$ coefficients (norm of the moment magnitudes) and $\mathbf{A}$ is the $N \times M$ sensitivity (Jacobian) matrix. Using the damp least squares solution, the goal function, $\phi$, is:
 \begin{equation}
-  \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}  
+\label{'eq:goal function'}
+    \phi = \bar{r}^T\bar{r} + \mu \textcolor{teal}{\bar{c}^T\bar{c}},
 \end{equation}
-
-\begin{equation}
-    \vec{B_j}(x, y, z) \cdot \hat{F_i}
-\end{equation}
-
-\begin{equation}
-    \vec{B} = \frac{C_m}{r^3} [3 ( \hat{m} \cdot \hat{r}) \hat{r} - \hat{m}]
-\end{equation}
-
-\begin{equation}
-    \textcolor{orange}{\Bar{d}} = \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}}
-\end{equation}
+where $\mu \textcolor{teal}{\bar{c}^T\bar{c}}$ is the regularisation function and  $\bar{r}^T\bar{r}$ is the data misfit function where $\bar{r}$ is the residual between the observed and predicted data:
 \begin{equation}
     \bar{r} = \bar{d^0} - \textcolor{orange}{\bar{d}}
 \end{equation}
-
-\begin{equation}
-    \phi = \bar{r}^T\bar{r} + \mu \textcolor{teal}{\bar{c}^T\bar{c}}
-\end{equation}
-
+Consequently, the goal function from Equation~\ref{'eq:goal function'} can  be expanded to give:
 \begin{equation}
     \phi (\textcolor{teal}{\bar{c}}) = (\bar{d^0} - \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}})^T (\bar{d^0} - \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}}) + \mu \textcolor{teal}{\bar{c}^T\bar{c}}
 \end{equation}
-
+By minimising the goal function, the values of the source coefficients, $c$, that best fit the observed field values can be obtained using the residual. If the residual is as close as possible to zero, the observed and predicted data are very similar. Therefore, the smallest,
 \begin{equation}
-    \phi (\textcolor{teal}{\bar{c}}) = \bar{d^0}^T\bar{d^0} - 2 \bar{d^0}^T \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}} + \textcolor{teal}{\Bar{c}}^T \Bar{\Bar{A}}^T \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}} + \mu \textcolor{teal}{\bar{c}^T\bar{c}}
+    \phi(\textcolor{teal}{\bar{c}}) = min
 \end{equation}
-
+gives the best fit which can be calculated by taking the derivative of $\phi(\textcolor{teal}{\bar{c}})$ and equalling to zero:
 \begin{equation}
     \nabla_{\textcolor{teal}{\bar{c}}} \phi = 2 \Bar{\Bar{A}}^T \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}} - 2\Bar{\Bar{A}}^T\bar{d^0} + 2\mu \textcolor{teal}{\bar{c}} = \bar{0}
 \end{equation}
-    
+This can be rearranged to express the normal equation system:
 \begin{equation}
     (\Bar{\Bar{A}}^T \Bar{\Bar{A}} + \Bar{\Bar{I}} \mu ) \textcolor{teal}{\bar{c}} = 
     \Bar{\Bar{A}}^T\bar{d^0}
 \end{equation}
+which can be solved for \textcolor{teal}{$\bar{c}$}, and then forward modelled for any field in any $x, y, z$ location.
 
-\begin{equation}
-  \textcolor{orange}{\left\lVert \vec{B_i}(x,y,z) \right\rVert} = \sum_{j=1}^{M} \left\lVert \vec{B_j}(x,y,z) \right\rVert \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}
-\end{equation}
-
-
-
+    
 \subsection{Gradient Boosting}
 Estimating the source coefficients that best fit the observed data is computationally demanding. To overcome this problem, \cite{SolerUieda2021} used the gradient boosted method in which the source coefficients are estimated in overlapping windows and carried out iteratively. This gradient boosted method was applied to the shallow layer of equivalent sources.
 
