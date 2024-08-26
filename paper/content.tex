@@ -120,6 +120,21 @@ Block averaging the data reduces the computational load and the likelihood of ov
 \subsection{Block K-Fold Cross-Validation}
 The model requires manual parameter selection for the damping, depth of equivalent sources and window size for the gradient boosting. In order to select the optimal parameter combination, K-Fold Crosss Validation (K-CV) was used. K-CV is a popular machine learning method often used for model selection. Data is divided into k number of folds, that are as equal as possible in size. One of the k folds is used as testing set and the remaining (k-1) folds are used as training sets. This is repeated iteratively until all k folds have been used as both testing and training sets. The K-CV error estimation is the root mean square error (RMSE) of all the errors from each fold calculation. The parameter combination with the smallest RMSE is selected for the model.
 
+\begin{enumerate}
+    \item Split the data into blocks that are equal as possible in size.
+    \item Split the blocks into K number of folds.
+    \item Assign the first fold, $Fold_i$ (for $i= 1,..., K$), to the testing set and the remaining folds to the training set.
+    \item Fit the equivalent sources using the training dataset and the first parameter set.
+    \item Predict on the testing dataset and calculate the RMSE.
+    \item Then assign the next fold ($Fold_{i+1}$) to the testing dataset and the remaining folds to the training dataset.
+    \item Repeat steps 4 and 5.
+    \item Continue repeating steps 4 and 5 until all folds have been used as both testing and training datasets.
+    \item Calculate the CV-RMSE for the parameter set by taking the average of all the RMSEs from each fold.
+    \item Repeat all steps for each parameter set.
+\end{enumerate}
+ 
+
+
 % KCV on slice data, plot pic of training and testing fold 
 
 % https://ieeexplore.ieee.org/abstract/document/5342427
