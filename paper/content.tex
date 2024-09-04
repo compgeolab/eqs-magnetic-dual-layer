@@ -9,7 +9,7 @@ The different gridding methods, such as inverse-distance weights, polynomical fi
 
 Airborne data often have more data points along flight lines and much larger gaps between flight lines. The equivalent source (EQS) technique takes into account the irregularly spaced grids and the variable heights of the observed data. The EQS technique can be used for reduction to the pole, upwards continuation, modelling the lithospheric magnetic field, etc.
 
-The norm of the magnetic field is less dependent on the direction of magnetisation. This is particularly useful for areas with remanent magnetisation, low magnetic latitudes, sources with shallow inclination directions and sources with an unknown magnetised directions (Hidalgo-Gato, et al., 2021; Melo, et al., 2021).
+The norm of the magnetic field is less dependent on the direction of magnetisation. This is particularly useful for areas with remanent magnetisation, low magnetic latitudes, sources with shallow inclination directions and sources with an unknown magnetised directions (Hidalgo-Gato, et al., 2021; Melo, et al., 2021). By calculating the norm of the magnetic anomalous field, the data is less dependent on the direction of Earth’s main field and crustal magnetisation.
 
 \lipsum[1-3]
 
@@ -50,6 +50,7 @@ For magnetic surveys, {$d_i$} from Equation~\ref{'eqs technique'} becomes \textc
 \end{equation}
 in which $C_m = \frac{\mu_0}{4 \pi} = 10^{-7} Henry \cdot meter^{-1}$ is the proportionality constant where $\mu_0$ is the magnetic permeability of free space, $ \vec{m} = m \hat{m}$ is the dipole moment, and $\vec{r} = r \hat{r} $ is the vector from the dipole source to the observation point (cite Blakely 1996). If the moment magnitude, $m$, is equal to 1, the coefficients, \textcolor{teal}{$c_j$}, from Equation~\ref{'eq:eqs technique'} becomes the norm of the moment magnitude:
 \begin{equation}
+\label{'eq:tfa_eqs'}
 \textcolor{orange}{\Delta T (x, y, z)} = \sum_{j=1}^{M}  \vec{B_j}(x, y, z) \cdot \hat{F_i} \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}
 \ .
 \end{equation}
@@ -104,18 +105,42 @@ This can be rearranged to express the normal equation system:
 \end{equation}
 which can be solved for \textcolor{teal}{$\bar{c}$}, and then forward modelled for any field in any $x, y, z$ location.
 
-    
-\subsection{Gradient Boosting}
-Estimating the source coefficients (\textcolor{teal}{$\bar{c}$}) that best fit the observed data is computationally demanding. To overcome this problem, \cite{SolerUieda2021} used the gradient boosted method in which (\textcolor{teal}{$\bar{c}$}) is estimated in overlapping windows and carried out iteratively. This gradient boosted method was applied to the shallow layer of equivalent sources (later discussed in the Dual Layer Concept chapter).
 
 \subsection{Norm of B Predictions}
-The amplitude of $B$ is weakly dependent on the direction of magnetisation compared the total field anomaly $F$ \citep{HidalgoGato2021}. By calculating the norm of the magnetic anomalous field, the data is less dependent on the direction of Earth’s main field and crustal magnetisation.
+The norm of the anomalous magnetic field vector ($\vec{B}$) at the $ith$ data point for $i = 1,...,N$ is given by:
+\begin{equation}
+    B_i(x,y,z) = \sqrt{B^2_{x_i} + B^2_{y_i} +B^2_{z_i}}
+\end{equation}
+where where $B_{x_i}$, $B_{y_i}$ and $B_{z_i}$ are the three components of the anomalous magnetic field vector in the geographic easting, geographic northing and upwards direction, respectively. We can therefore adapt Equation~\ref{'eq:tfa_eqs'} to give:
+\begin{equation}
+\textcolor{orange}{\left\lVert \vec{B}_{i}(x,y,z) \right\rVert} = \sum_{j=1}^{M}  \left\lVert \vec{B}_{j}(x,y,z) \right\rVert \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}
+\ .
+\end{equation}
+
 
 \subsection{Dual Layer Concept}
-Two layers of equivalent sources was used to fit both, the regional magnetic field and the shallow magnetic anomalies. \citep{Li2019} found having an additional deeper layer of equivalent sources reduced the misfit, especially for the long‐wavelength fields. By using two layers, the deeper equivalent source layer can capture the regional, long-wavelength signals, whilst the shallower layer can capture the short-wavelength signals. For this dual layer process, firstly the deeper layer of equivalent sources is calculated to determine the regional field. To determine the depth of this layer, a lower and upper bound of 2.5 and 6 times the distance of the nearest neighbouring data point respectively was used \citep{Dampney1969}. The residual field between the deep equivalent source layer prediction and the data is then used to calculate the shallow equivalent source layer. Adding both the deep and shallow equivalent source layer predictions together creates the final prediction for the data.
+Two layers of equivalent sources was used to fit both, the regional magnetic field and the shallow magnetic anomalies. \citep{Li2019} found having an additional deeper layer of equivalent sources reduced the misfit, especially for the long‐wavelength fields. By using two layers, the deeper equivalent source layer can capture the regional, long-wavelength signals, whilst the shallower layer can capture the short-wavelength signals.
+
+For this dual layer process, firstly the deep layer of equivalent sources is calculated to determine the regional magnetic field. To determine the depth of this layer, a lower and upper bound of 2.5 and 6 times the average 0distance of the nearest neighbouring data point was used \citep{Dampney1969}. The residual field between the observed data and the deep equivalent source layer prediction is calculated. This residual field is then fitted by the shallow layer of equivalent sources. Adding both the deep and shallow equivalent source layer predictions together creates the final prediction for the predicted data.
+
+\subsection{Gradient Boosting}
+Estimating the source coefficients (\textcolor{teal}{$\bar{c}$}) using the damp least-squares solution is very computationally demanding, especially on a regional scale due to the large number of data points. To overcome this problem, \citet{SolerUieda2021} adapted the gradient boosting method from \citet{Friedman2001} in which the least-squares solution can be determined by fitting additive models to the pseudo-residuals which are updated at each step. Using this method, (\textcolor{teal}{$\bar{c}$}) is estimated in overlapping windows and carried out iteratively. To improve the accuracy of the prediction, \citet{SolerUieda2021} also selected the windows randomly following \citet{Friedman2002}. This gradient boosting method reduces the computational load by solving for numerous smaller damp least-squares solutions rather than one large solution:
+\begin{enumerate}
+    \item Define $M$ number of equivalent sources with the same easting and northing coordinates as the data.
+    \item Determine a set of overlapping windows that are equal in size and cover the whole survey area.
+    \item Randomly select a window.
+    \item Fit the data in the selected window using the equivalent sources.
+    \item Using the equivalent sources, predict on all of the data.
+    \item Calculate the (pseudo-)residual.
+    \item Randomly select another window.
+    \item Fit the residuals in the newly selected window using the equivalent sources in that window.
+    \item Predict on all of the data and update the (pseudo-)residual.
+    \item Repeat steps 7 to 9 until all the windows have been used.
+\end{enumerate}
+This method was applied to the shallow layer of equivalent sources (see the Dual Layer Concept chapter).
 
 \subsection{Block Averaging}
-Block averaging the data reduces the computational load and the likelihood of overfitting the data. Due to the nature of aliasing flight line data, block averaging can balance the equivalent sources along and adjacent flight lines to reduce this effect \citep{SolerUieda2021}. Furthermore, by block averaging the data when calculating the deep equivalent sources, only the long-wavelength signals are captured, rather than both short and long wavelength signals. When the block average is too small, more short wavelength signals are captured and not all of the long wavelength signals from the regional field are captured. Too large block averaging, not all the regional signals are captured either. Therefore, different block averaging sizes were calculated to determine the optimum size for capturing only the long wavelength signals. To reduce the computational load when calculating the shallow equivalent sources, block averaging the same size as the grid spacing of the predicted data was applied.
+Block averaging the data reduces the computational load and the likelihood of over-fitting the data. Due to the nature of aliasing flight line data, block averaging can balance the equivalent sources along and on adjacent flight lines to reduce this effect \citep{SolerUieda2021}. Furthermore, by block averaging the data when calculating the deep equivalent sources, only the long-wavelength signals are captured, rather than both short and long wavelength signals. When the block average is too small, more short wavelength signals are captured and not all of the long wavelength signals from the regional field are captured. Too large block averaging, not all the regional signals are captured either. Therefore, different block averaging sizes were calculated to determine the optimum size for capturing only the long wavelength signals. To further reduce the computational load when calculating the shallow equivalent sources, block averaging the same size as the grid spacing of the predicted data was applied.
 
 \subsection{Block K-Fold Cross-Validation}
 The model requires manual parameter selection for the damping, depth of equivalent sources and window size for the gradient boosting. In order to select the optimal parameter combination, K-Fold Crosss Validation (K-CV) was used. K-CV is a popular machine learning method often used for model selection. Data is divided into k number of folds, that are as equal as possible in size. One of the k folds is used as testing set and the remaining (k-1) folds are used as training sets. This is repeated iteratively until all k folds have been used as both testing and training sets. The K-CV error estimation is the root mean square error (RMSE) of all the errors from each fold calculation. The parameter combination with the smallest RMSE is selected for the model.
@@ -132,13 +157,8 @@ The model requires manual parameter selection for the damping, depth of equivale
     \item Calculate the CV-RMSE for the parameter set by taking the average of all the RMSEs from each fold.
     \item Repeat all steps for each parameter set.
 \end{enumerate}
+
  
-
-
-% KCV on slice data, plot pic of training and testing fold 
-
-% https://ieeexplore.ieee.org/abstract/document/5342427
-% https://academic.oup.com/biomet/article-abstract/76/3/503/298209?redirectedFrom=fulltext&login=true
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
