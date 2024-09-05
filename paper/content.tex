@@ -15,105 +15,123 @@ The norm of the magnetic field is less dependent on the direction of magnetisati
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 \section{Methodology}
-The observed total field anomaly vector ($\Delta T$) is the difference between the magnetic total field intensity vector ($\vec{T}$) measured and the regional reference field vector ($\vec{F}$) at the time of measurement:
+
+The observed total field anomaly ($\Delta T$) is the difference between the measured norm of the total magnetic field ($\vec{\mathbf{T}}$) and the norm of the regional reference field ($\vec{\mathbf{F}}$, usually represented by the IGRF) at the time of measurement:
+
 \begin{equation}
-    \Delta T = \left\lVert \vec{T} \right\rVert - \left\lVert \vec{F} \right\rVert
+    \Delta T = \left\lVert \vec{\mathbf{T}} \right\rVert - \left\lVert \vec{\mathbf{F}} \right\rVert
     \ .
 \end{equation}
-$\vec{T}$ is the sum of the anomalous magnetic field vector ($\vec{B}$) and $\vec{F}$ (cite Blakley, 1996, Langel and Hinze, 1998, \citep{OliveiraJr2015}). $\Delta T$ can therefore be given by:
+
+\noindent
+The total magnetic field ($\vec{T}$) is the sum of the anomalous magnetic field vector ($\vec{\mathbf{B}}$) and the regional field vector ($\vec{\mathbf{F}}$) (cite Blakley, 1996, Langel and Hinze, 1998, \citep{OliveiraJr2015}). The total field anomaly ($\Delta T$) can therefore be given by
+
 \begin{equation}
-    \Delta T = \left\lVert \vec{F} + \vec{B} \right\rVert - \left\lVert \vec{F} \right\rVert
+    \Delta T = \left\lVert \vec{\mathbf{F}} + \vec{\mathbf{B}} \right\rVert - \left\lVert \vec{\mathbf{F}} \right\rVert
     \ .
 \end{equation}
-For the majority of crustal anomalies measured by airborne and shipborne surveys, $\vec{B}$ is much smaller in magnitude compared to $\vec{F}$. Additionally, $\vec{F}$ can be considered constant on these local to regional scales. Subsequently, $\Delta T$ can be approximated as the dot product of $\vec{B}$ and the regional field direction ($\hat{F}$),
+
+For the majority of crustal anomalies measured by airborne and shipborne surveys, $\vec{\mathbf{B}}$ is much smaller in magnitude compared to $\vec{\mathbf{F}}$. Additionally, $\vec{\mathbf{F}}$ can be considered constant on these local to regional scales. Subsequently, $\Delta T$ can be approximated as
+
 \begin{equation}
 \label{'eq:tfa dot product'}
-    \Delta T\approx  \vec{B} \cdot \hat{F}
+    \Delta T\approx  \vec{\mathbf{B}} \cdot \hat{\mathbf{F}}
     \ ,
 \end{equation}
-thus enabling $\Delta T$ to be harmonic (cite Blakely, 1996; \citep{OliveiraJr2015}).
+
+\noindent
+in which $\hat{\mathbf{F}}$ is a unit vector in the same direction as the regional field. Thus, $\Delta T$ is approximately a harmonic function (cite Blakely, 1996; \citep{OliveiraJr2015}).
 
 \subsection{Equivalent Source Technique}
-The equivalent source technique assumes any harmonic function \textcolor{orange}{$d_i$} can be approximated by the sum of $M$ discrete point source effects,
+
+The equivalent source technique assumes any harmonic function \textcolor{orange}{$d(x, y, z)$} can be approximated by the sum of $M$ discrete point source effects,
+
 \begin{equation}
 \label{'eq:eqs technique'}
-\textcolor{orange}{d_i} = \sum_{j=1}^{M}  f_{ij} \textcolor{teal}{c_j}
+\textcolor{orange}{d (x, y, z)} = \sum_{j=1}^{M} a(x, y, z, x'_j, y'_j , z'_j) \textcolor{teal}{c_j}
 \ ,
 \end{equation}
-where \textcolor{orange}{$d_i$} is the predicted data at $N$ observation points with $i = 1, ... , N$, $f_{ij}$ is the $M$ point source effects with $j = 1, ..., M$ and \textcolor{teal}{$c_j$} is the associated coefficients for the $M$ point source effects (cite dampney 1969, \cite{Cordell1992}).
 
-For magnetic surveys, {$d_i$} from Equation~\ref{'eqs technique'} becomes \textcolor{orange}{$\Delta T(x, y, z)$} for N number of data points with Cartesian positions $(x_i, y_i, z_i)$, where $x_i$ and $y_i$ point in the geographic north and east directions, respectively, and $z_i$ points upwards. $f_{ij}$ is therefore $\vec{B} \cdot \hat{F}$ from Equation~\ref{'eq:tfa dot product'}, where $\vec{B}$ is the magnetic field of dipole given by:
+\noindent
+where \textcolor{orange}{$d (x, y, z)$} is the predicted data with Cartesian positions $x$ and $y$ pointing in the geographic north and east directions, respectively, and $z$ pointing upwards. For $M$ point sources, $a(x, y, z, x'_j, y'_j , z'_j)$ are the source effects (for $j = 1, ..., M$), where $(x', y', z')$ are the Cartesian positions of the sources to the observation points in the same coordinate system as the data, \textcolor{teal}{$c_j$} are the associated source coefficients (cite dampney 1969, \cite{Cordell1992}).
+
+For magnetic surveys, \textcolor{orange}{$d (x, y, z)$} from Equation~\ref{'eq:eqs technique'} becomes \textcolor{orange}{$\Delta T(x, y, z)$} for N number of data points with Cartesian positions $(x, y, z)$ where $x$ and $y$ point in the geographic north and east directions, respectively, and $z$ points upwards. The point source effects, $a(x, y, z, x'_j, y'_j , z'_j)$, are therefore $\vec{\mathbf{B}} \cdot \hat{\mathbf{F}}$ from Equation~\ref{'eq:tfa dot product'}, where $\vec{\mathbf{B}}$ is the magnetic field of dipole given by:
 \begin{equation}
-    \vec{B} = \frac{C_m}{r^3} [3 ( \hat{m} \cdot \hat{r}) \hat{r} - \hat{m}]
+    \vec{\mathbf{B}} = C_m \frac{m}{r^3} [3 ( \hat{\mathbf{m}} \cdot \hat{\mathbf{r}}) \hat{\mathbf{r}} - \hat{\mathbf{m}}]
+    \ .
+\end{equation}
+\noindent
+Here $C_m = \frac{\mu_0}{4 \pi} = 10^{-7} \ \text{Hm}^{-1}$ is the proportionality constant where $\mu_0$ is the magnetic permeability of free space, $\hat{\mathbf{m}}$ is the dipole moment unit vector and
+\begin{equation}
+    r = \sqrt{(x - x')^2 + (y - y')^2 + (z - z')^2}
     \ ,
 \end{equation}
-in which $C_m = \frac{\mu_0}{4 \pi} = 10^{-7} Henry \cdot meter^{-1}$ is the proportionality constant where $\mu_0$ is the magnetic permeability of free space, $ \vec{m} = m \hat{m}$ is the dipole moment, and $\vec{r} = r \hat{r} $ is the vector from the dipole source to the observation point (cite Blakely 1996). If the moment magnitude, $m$, is equal to 1, the coefficients, \textcolor{teal}{$c_j$}, from Equation~\ref{'eq:eqs technique'} becomes the norm of the moment magnitude:
+the vector from the dipole source to the observation point (cite Blakely 1996). If the moment magnitude, $m$, is equal to 1, the coefficients, \textcolor{teal}{$c_j$}, from Equation~\ref{'eq:eqs technique'} becomes the norm of the moment magnitude:
 \begin{equation}
 \label{'eq:tfa_eqs'}
-\textcolor{orange}{\Delta T (x, y, z)} = \sum_{j=1}^{M}  \vec{B_j}(x, y, z) \cdot \hat{F_i} \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}
+\textcolor{orange}{\Delta T (x, y, z)} = \sum_{j=1}^{M}  \vec{\mathbf{B}}(x, y, z, x'_j, y'_j, z'_j) \cdot \hat{\mathbf{F}} \textcolor{teal}{\left\lVert \vec{\mathbf{m}_j} \right\rVert}
 \ .
 \end{equation}
+
 This can also be expressed in matrix form:
 \begin{equation}
 \textcolor{orange}{\begin{bmatrix}
     \Delta T_1 \\ \Delta T_2 \\ \vdots \\ \Delta T_N
 \end{bmatrix}_{Nx1}} = \begin{bmatrix}
-    B_{11} \cdot F_{1} & B_{12} \cdot F_{1} & \hdots & B_{1M} \cdot F_{1} \\
-    B_{21} \cdot F_{2} & B_{22} \cdot F_{2} & \hdots & B_{2M} \cdot F_{2} \\
+    \mathbf{B}_{11} \cdot \hat{\mathbf{F}} & \mathbf{B}_{12} \cdot \hat{\mathbf{F}} & \hdots & \mathbf{B}_{1M} \cdot \hat{\mathbf{F}} \\
+    \mathbf{B}_{21} \cdot \hat{\mathbf{F}} & \mathbf{B}_{22} \cdot \hat{\mathbf{F}} & \hdots & \mathbf{B}_{2M} \cdot \hat{\mathbf{F}} \\
     \vdots & \vdots & \vdots & \vdots \\
-    B_{N1} \cdot F_{N} & B_{N2} \cdot F_{N} & \hdots & B_{NM} \cdot F_{N} \\
+    \mathbf{B}_{N1} \cdot \hat{\mathbf{F}} & \mathbf{B}_{N2} \cdot \hat{\mathbf{F}} & \hdots & \mathbf{B}_{NM} \cdot \hat{\mathbf{F}} \\
 \end{bmatrix}_{NxM} \textcolor{teal}{\begin{bmatrix}
-    \left\lVert \vec{m_1} \right\rVert \\ \left\lVert \vec{m_2} \right\rVert \\ \vdots \\ \left\lVert \vec{m_M} \right\rVert
+    \left\lVert \vec{\mathbf{m}_1} \right\rVert \\ \left\lVert \vec{\mathbf{m}_2} \right\rVert \\ \vdots \\ \left\lVert \vec{\mathbf{m}_M} \right\rVert
 \end{bmatrix}_{Mx1}}
 \end{equation}
 which is also in the linear system,
 \begin{equation}
-    \textcolor{orange}{\bar{d}} = \bar{\bar{A}} \textcolor{teal}{\bar{c}}
+    \textcolor{orange}{\bar{\mathbf{d}}} = \bar{\bar{A}} \textcolor{teal}{\bar{\mathbf{c}}}
     \ ,
 \end{equation}
-where $\mathbf{d}$ is the column vector of $N$ predicted values at the observation points, $\mathbf{c}$ is the column vector of $M$ coefficients (norm of the moment magnitudes) and $\mathbf{A}$ is the $N \times M$ sensitivity (Jacobian) matrix. Using the damp least squares solution, the goal function, $\phi$, is:
+where $\mathbf{d}$ is the column vector of $N$ predicted values at the observation points, $\mathbf{c}$ is the column vector of $M$ coefficients (norm of the moment magnitudes) and $A$ is the $N \times M$ sensitivity (Jacobian) matrix. Using the damp least squares solution, the goal function, $\phi$, is:
 \begin{equation}
 \label{'eq:goal function'}
-    \phi = \bar{r}^T\bar{r} + \mu \textcolor{teal}{\bar{c}^T\bar{c}}
+    \phi = \bar{\mathbf{r}}^T\bar{\mathbf{r}} + \mu \textcolor{teal}{\bar{\mathbf{c}}^T\bar{\mathbf{c}}}
     \ ,
 \end{equation}
-where $\mu \textcolor{teal}{\bar{c}^T\bar{c}}$ is the regularisation function and  $\bar{r}^T\bar{r}$ is the data misfit function where $\bar{r}$ is the residual between the observed and predicted data:
+where $\mu \textcolor{teal}{\bar{\mathbf{c}}^T\bar{\mathbf{c}}}$ is the regularisation function and  $\bar{\mathbf{r}}^T\bar{\mathbf{r}}$ is the data misfit function where $\bar{r}$ is the residual between the observed and predicted data:
 \begin{equation}
-    \bar{r} = \bar{d^0} - \textcolor{orange}{\bar{d}}
+    \bar{\mathbf{r}} = \bar{\mathbf{d^0}} - \textcolor{orange}{\bar{\mathbf{d}}}
     \ .
 \end{equation}
 Consequently, the goal function from Equation~\ref{'eq:goal function'} can  be expanded to give:
 \begin{equation}
-    \phi (\textcolor{teal}{\bar{c}}) = (\bar{d^0} - \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}})^T (\bar{d^0} - \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}}) + \mu \textcolor{teal}{\bar{c}^T\bar{c}}
+    \phi (\textcolor{teal}{\bar{\mathbf{c}}}) = (\bar{\mathbf{d}^0} - \Bar{\Bar{A}} \textcolor{teal}{\bar{\mathbf{c}}})^T (\bar{\mathbf{d}^0} - \Bar{\Bar{A}} \textcolor{teal}{\bar{\mathbf{c}}}) + \mu \textcolor{teal}{\bar{\mathbf{c}}^T\bar{\mathbf{c}}}
     \ .
 \end{equation}
-By minimising the goal function, the values of the source coefficients, $c$, that best fit the observed field values can be obtained using the residual. If the residual is as close as possible to zero, the observed and predicted data are very similar. Therefore, the smallest
+By minimising the goal function, the values of the source coefficients $\textcolor{teal}{\bar{\mathbf{c}}}$ that best fit the observed field values can be obtained. If the residual is as close as possible to zero, the observed and predicted data are very similar. Therefore, the smallest $\phi(\textcolor{teal}{\bar{c}})$
+gives the best fit, which can be calculated by taking the gradient of $\phi(\textcolor{teal}{\bar{c}})$ and equating it to the null vector
 \begin{equation}
-    \phi(\textcolor{teal}{\bar{c}}) = min
-\end{equation}
-gives the best fit which can be calculated by taking the derivative of $\phi(\textcolor{teal}{\bar{c}})$ and equalling to zero:
-\begin{equation}
-    \nabla_{\textcolor{teal}{\bar{c}}} \phi = 2 \Bar{\Bar{A}}^T \Bar{\Bar{A}} \textcolor{teal}{\Bar{c}} - 2\Bar{\Bar{A}}^T\bar{d^0} + 2\mu \textcolor{teal}{\bar{c}} = \bar{0}
+    \nabla_{\textcolor{teal}{\bar{c}}} \phi = 2 \Bar{\Bar{A}}^T \Bar{\Bar{A}} \textcolor{teal}{\Bar{\mathbf{c}}} - 2\Bar{\Bar{A}}^T\bar{\mathbf{d}^0} + 2\mu \textcolor{teal}{\bar{\mathbf{c}}} = \bar{\mathbf{0}}
     \ .
 \end{equation}
 This can be rearranged to express the normal equation system:
 \begin{equation}
-    (\Bar{\Bar{A}}^T \Bar{\Bar{A}} + \Bar{\Bar{I}} \mu ) \textcolor{teal}{\bar{c}} = 
-    \Bar{\Bar{A}}^T\bar{d^0}
+    (\Bar{\Bar{A}}^T \Bar{\Bar{A}} + \Bar{\Bar{I}} \mu ) \textcolor{teal}{\bar{\mathbf{c}}} = 
+    \Bar{\Bar{A}}^T\bar{\mathbf{d}^0}
     \ ,
 \end{equation}
-which can be solved for \textcolor{teal}{$\bar{c}$}, and then forward modelled for any field in any $x, y, z$ location.
+which can be solved for \textcolor{teal}{$\bar{c}$}. Once \textcolor{teal}{$\bar{c}$} has been fitted to the data, Equation~\ref{'eq:eqs technique'} can be used to forward model for any field in any ($x, y, z$) location.
 
 
 \subsection{Norm of B Predictions}
-The norm of the anomalous magnetic field vector ($\vec{B}$) at the $ith$ data point for $i = 1,...,N$ is given by:
+The anomalous magnetic field vector ($\vec{\mathbf{B}}$) at the $ith$ data point for $i = 1,...,N$ is given by:
 \begin{equation}
-    B_i(x,y,z) = \sqrt{B^2_{x_i} + B^2_{y_i} +B^2_{z_i}}
+    \mathbf{B}_i(x,y,z) = \sqrt{B^2_{x_i} + B^2_{y_i} +B^2_{z_i}}
 \end{equation}
-where where $B_{x_i}$, $B_{y_i}$ and $B_{z_i}$ are the three components of the anomalous magnetic field vector in the geographic easting, geographic northing and upwards direction, respectively. We can therefore adapt Equation~\ref{'eq:tfa_eqs'} to give:
+where where $B_{x_i}$, $B_{y_i}$ and $B_{z_i}$ are the three components of the anomalous magnetic field vector in the geographic easting, geographic northing and upwards direction, respectively. We can therefore adapt Equation~\ref{'eq:tfa_eqs'} to predict the norm of the anomalous magnetic field:
 \begin{equation}
-\textcolor{orange}{\left\lVert \vec{B}_{i}(x,y,z) \right\rVert} = \sum_{j=1}^{M}  \left\lVert \vec{B}_{j}(x,y,z) \right\rVert \textcolor{teal}{\left\lVert \vec{m_j} \right\rVert}
+\textcolor{orange}{\left\lVert \vec{\mathbf{B}}_{i}(x,y,z) \right\rVert} = \sum_{j=1}^{M}  \left\lVert \vec{\mathbf{B}}_{j}(x,y,z) \right\rVert \textcolor{teal}{\left\lVert \vec{\mathbf{m}_j} \right\rVert}
 \ .
 \end{equation}
 
@@ -122,6 +140,8 @@ where where $B_{x_i}$, $B_{y_i}$ and $B_{z_i}$ are the three components of the a
 Two layers of equivalent sources was used to fit both, the regional magnetic field and the shallow magnetic anomalies. \citep{Li2019} found having an additional deeper layer of equivalent sources reduced the misfit, especially for the long‐wavelength fields. By using two layers, the deeper equivalent source layer can capture the regional, long-wavelength signals, whilst the shallower layer can capture the short-wavelength signals.
 
 For this dual layer process, firstly the deep layer of equivalent sources is calculated to determine the regional magnetic field. The deep layer has much fewer equivalent soruces compared to the number of data points in order to only capture the longer-wavelength signals. To determine the depth of this layer, a lower and upper bound of 2.5 and 6 times the average 0distance of the nearest neighbouring data point was used \citep{Dampney1969}. The residual field between the observed data and the deep equivalent source layer prediction is calculated. This residual field is then fitted by the shallow layer of equivalent sources. The shallow layer has the same amount of equivalent sources as the number of data points. After fitting the shallow equivalent layer, the final prediction can be determined by adding both, the deep and shallow, equivalent source layer predictions.
+
+Block averaging the data reduces the computational load and the likelihood of over-fitting the data. Due to the nature of aliasing flight line data, block averaging can balance the equivalent sources along and on adjacent flight lines to reduce this effect \citep{SolerUieda2021}. Furthermore, by block averaging the data when calculating the deep equivalent sources, only the long-wavelength signals are captured, rather than both short and long wavelength signals. When the block average is too small, more short wavelength signals are captured and not all of the long wavelength signals from the regional field are captured. Too large block averaging, not all the regional signals are captured either. Therefore, different block averaging sizes were calculated to determine the optimum size for capturing only the long wavelength signals. To further reduce the computational load when calculating the shallow equivalent sources, block averaging the same size as the grid spacing of the predicted data was applied.
 
 \subsection{Gradient Boosting}
 Estimating the source coefficients (\textcolor{teal}{$\bar{c}$}) using the damp least-squares solution is very computationally demanding, especially on a regional scale due to the large number of data points. To overcome this problem, \citet{SolerUieda2021} adapted the gradient boosting method from \citet{Friedman2001} in which the least-squares solution can be determined by fitting additive models to the pseudo-residuals which are updated at each step. Using this method, (\textcolor{teal}{$\bar{c}$}) is estimated in overlapping windows and carried out iteratively. To improve the accuracy of the prediction, \citet{SolerUieda2021} also selected the windows randomly following \citet{Friedman2002}. This gradient boosting method reduces the computational load by solving for numerous smaller damp least-squares solutions rather than one large solution:
@@ -139,12 +159,8 @@ Estimating the source coefficients (\textcolor{teal}{$\bar{c}$}) using the damp 
 \end{enumerate}
 This method was applied to the shallow layer of equivalent sources (see the Dual Layer Concept chapter).
 
-\subsection{Block Averaging}
-Block averaging the data reduces the computational load and the likelihood of over-fitting the data. Due to the nature of aliasing flight line data, block averaging can balance the equivalent sources along and on adjacent flight lines to reduce this effect \citep{SolerUieda2021}. Furthermore, by block averaging the data when calculating the deep equivalent sources, only the long-wavelength signals are captured, rather than both short and long wavelength signals. When the block average is too small, more short wavelength signals are captured and not all of the long wavelength signals from the regional field are captured. Too large block averaging, not all the regional signals are captured either. Therefore, different block averaging sizes were calculated to determine the optimum size for capturing only the long wavelength signals. To further reduce the computational load when calculating the shallow equivalent sources, block averaging the same size as the grid spacing of the predicted data was applied.
-
 \subsection{Block K-Fold Cross-Validation}
-The model requires manual parameter selection for the damping, depth of equivalent sources and window size for the gradient boosting. In order to select the optimal parameter combination, K-Fold Crosss Validation (K-CV) was used. K-CV is a popular machine learning method often used for model selection. Data is divided into k number of folds, that are as equal as possible in size. One of the k folds is used as testing set and the remaining (k-1) folds are used as training sets. This is repeated iteratively until all k folds have been used as both testing and training sets. The K-CV error estimation is the root mean square error (RMSE) of all the errors from each fold calculation. The parameter combination with the smallest RMSE is selected for the model.
-
+The model requires manual parameter selection for the damping, depth of equivalent sources and window size for the gradient boosting. In order to select the optimal parameter combination, K-Fold Crosss Validation (K-CV) was used. K-CV is a popular machine learning method often used for model selection. Data is divided into k number of folds, that are as equal as possible in size. One of the k folds is used as testing set and the remaining (k-1) folds are used as training sets. This is repeated iteratively until all k folds have been used as both testing and training sets:
 \begin{enumerate}
     \item Split the data into blocks that are equal as possible in size.
     \item Split the blocks into K number of folds.
@@ -157,7 +173,7 @@ The model requires manual parameter selection for the damping, depth of equivale
     \item Calculate the CV-RMSE for the parameter set by taking the average of all the RMSEs from each fold.
     \item Repeat all steps for each parameter set.
 \end{enumerate}
-
+The K-CV error estimation is the root mean square error (RMSE) of all the errors from each fold calculation. The parameter combination with the smallest RMSE is selected for the model.
  
 
 
