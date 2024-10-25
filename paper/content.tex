@@ -261,25 +261,25 @@ This method was applied to the shallow layer of equivalent sources because it is
 
 \subsection{Cross-Validation and Model Selection}
 
-The equivalent sources model requires the selection of appropriate values for the damping parameter $\mu$ (Equation~\ref{eq:goal_function}) and the depth of the equivalent sources. 
-These two quantities are known as the hyper-parameters of the inversion; both of which have an effect of smoothing the model predictions. It is therefore crucial to select values for these hyper-parameters that yield good predictions in the unobserved locations when using the equivalent sources for interpolation. Selecting the optimal values of damping and depth requires the establishment of a metric of how well a model with a given combination of these hyperparameters is able to interpolate.
+The equivalent sources model requires careful selection of appropriate values for the damping parameter $\mu$ (see Equation~\ref{eq:goal_function}) and the depth of the equivalent sources. 
+These two parameters, referred to as hyper-parameters of the inversion, significantly influence the smoothing of the model predictions. It is therefore crucial to select values for these hyper-parameters that yield accurate predictions in the unobserved locations when using the equivalent sources for interpolation. Selecting the optimal values of damping and depth requires the establishment of a metric of how well a model with a given combination of these hyperparameters is able to interpolate.
 
-Cross-validation (CV) is a machine learning technique used commonly in statistics to obtain a metric of how successful a model is at making predictions. Data are split into two subsets: one for model training and one for model testing. This prevents overfitting because the training set is independent to the testing set. \citet{Geisser1975} proposed K-Fold CV to reduce the computational load compared to other commonly used CV methods. With K-Fold CV, data are split evenly into K number of folds, where $Fold_1 to Fold_{K-1}$ are used as the training set to construct the model and the remaining fold ($Fold_K$) is used as the testing set to validate the model \citep{Jung2017}. This is then repeated until each fold has been used for both testing and training.
+Cross-validation (CV) is a machine learning technique commonly used in statistics to obtain a metric of how successful a model is at making predictions. Data are split into two subsets: one for model training and one for model testing. This prevents overfitting by ensuring the training set is independent to the testing set. \citet{Geisser1975} introduced K-Fold CV to reduce the computational load compared to other CV methods. In K-Fold CV, data are split into K equally-sized folds. The folds $Fold_1 \text{to } Fold_{K-1}$ are used as the training set to construct the model and the remaining fold ($Fold_K$) is used as the testing set to validate the model \citep{Jung2017}. This is then repeated until each fold has been used as both a testing and a training set.
 
-\citet{Roberts2017} introduced the blocked versions of cross-validation methods for when data are spatially auto-correlated. This is necessary for when observations taken at close points tend to have similar values, which is often the case for potential-field data due to their smooth nature. In the Block K-Fold Cross-Validation (BK-CV) method, data are first divided into non-overlapping spatial blocks of a given size. Next, the blocks are randomly divided into $K$ folds with approximately the same number of data points in each fold. Data from folds $Fold_i to Fold_{K-1}$ are fitted with the equivalent source model in order to estimate the source coefficients \textcolor{teal}{$\bar{\mathbf{c}}$} using Equation 14 or the gradient-boosted equivalent sources method. The model then predicts \textcolor{orange}{$\mathbf{d_{test}}$}, the total field anomaly (\textcolor{orange}{$\Delta T (x, y, z)$}) on the coordinates from the remaining fold ($Fold_K$) using Equation~\ref{eq:tfa_eqs}. To determine the accuracy of the model, the Root Mean Square Error (RMSE) can be calculated between the the observed data from the testing set (\textcolor{orange}{$\mathbf{d^o_{test}}$}) and the predicted total-field anomaly (\textcolor{orange}{$\mathbf{d_{test}}$}):
+\citet{Roberts2017} introduced the blocked versions of cross-validation methods for when data are spatially auto-correlated. This is necessary for when observations taken at close points tend to have similar values, which is often the case for potential-field data due to their smooth nature. In the Block K-Fold Cross-Validation (BK-CV) method, data are first divided into non-overlapping spatial blocks of a specified size. These blocks are then randomly assigned to $K$ folds, ensuring each fold contains approximately the same number of data points. Data from folds $Fold_i to Fold_{K-1}$ are assigned to the training set, whilst the remaining fold, $Fold_K$, is assigned to the testing set. The training set is fitted with the equivalent source model using Equation 14 or the gradient-boosted equivalent sources method in order to estimate the source coefficients \textcolor{teal}{$\bar{\mathbf{c}}$}. The model is then used to predict \textcolor{orange}{$\mathbf{d_{test}}$}, the total field anomaly (\textcolor{orange}{$\Delta T (x, y, z)$}), on the coordinates from the remaining fold, $Fold_K$, using Equation~\ref{eq:tfa_eqs}. The model accuracy can be assessed though the Root Mean Square Error (RMSE) calculated between the observed data from the testing set (\textcolor{orange}{$\mathbf{d^o_{test}}$}) and the predicted total-field anomaly (\textcolor{orange}{$\mathbf{d_{test}}$}):
 \begin{equation}
     \label{eq:rmse}
     RMSE_K = \sqrt{\frac{\sum_{i=1}^L (\textcolor{orange}{\mathbf{d^o_{test_i}}} - \textcolor{orange}{\mathbf{d_{test_i}}})^2}{L}}
     \ ,
 \end{equation}
- for $L$ number of testing points. The BK-CV is then repeated for the next iteration until all the folds have been used for both testing and training sets. Once all of the $RMSE_K$ have been calculated for each fold, the BK-CV RMSE can be determined by by taking the average of all the $RMSE_K$. A summary of this method is shown in Algorithm~\ref{alg:BK-CV}.
+ for $L$ number of testing points. This BK-CV process is iterated until all the folds have been used for both testing and training. The overall BK-CV RMSE is determined by taking the average of all the $RMSE_K$ values across the folds. This is summarised in Algorithm~\ref{alg:BK-CV}.
 
 
 \begin{algorithm}[!h]
     \setstretch{1.5}
     Split the data into blocks of a given size
     \;
-    Split the blocks randomly into K number of folds, trying to assign approximately the same number of data points to each fold
+    Split the blocks randomly into K folds, ensuring approximately the same number of data points per each fold
     \;
     \For{each fold $k$}{
         Assign the fold to the testing set and the remaining folds to the training set
@@ -288,7 +288,7 @@ Cross-validation (CV) is a machine learning technique used commonly in statistic
         \;
         Predict the total field anomaly (\textcolor{orange}{$\Delta T (x, y, z)$}) on the coordinates of the testing set using Equation~\ref{eq:tfa_eqs}
         \;
-        Calculate the Root Mean Square Error (RMSE) between the observed data of the testing set (\textcolor{orange}{$\mathbf{d^{o_t}}$}) and the predicted total-field anomaly (\textcolor{orange}{$\mathbf{d^{t}}$}) using Equation~\ref{eq:rmse}
+        Calculate the Root Mean Square Error (RMSE) between the observed data from the testing set (\textcolor{orange}{$\mathbf{d^{o_t}}$}) and the predicted total-field anomaly (\textcolor{orange}{$\mathbf{d^{t}}$}) using Equation~\ref{eq:rmse}
         \;
     }
     Calculate the BK-CV RMSE by taking the average of all the $RMSE_k$ calculated for each fold.
@@ -298,12 +298,7 @@ Cross-validation (CV) is a machine learning technique used commonly in statistic
     \label{alg:BK-CV}
 \end{algorithm}
 
-PART ABOUT MODEL SELECTION. MISSING THE FULL DESCRIPTION FO THE MODEL SELECTION PROCESS. DEFINING RANGES, LOOPING OVER COMBINATIONS OF PARAMS, RUNNING THE BK-CV, CHOOSING PARAMETER SETS WITH SMALLEST CV SCORE.
-The parameter combination with the smallest K-CV RMSE is used for the EQS model predictions.
-
-To select the optimal parameters for each layer, a range of values were used for each parameter to generate combination sets for all possible combinations of damping and depth within the specified ranges. 
-For the depth range of the deep layer, \citet{Dampney1969} suggests a lower and upper bound of 2.5 and 6 times the average distance of the nearest neighbouring data point.
-The shallow layer also required choosing the gradient boosting window size. Therefore, a range of window sizes were also used in the parameter combinations. The optimal combination set was then determined using block K-Fold Cross Validation (K-CV). 
+To determine the optimal hyper-parameters for each layer, a range of values for damping and depth is systematically generated. \citet{Dampney1969} suggests bounds of 2.5 to 6 times the average distance to the nearest neighboring data point should for the depth of equivalent source layers. This range is utilised for the deep equivalent sources to ensure the regional long-wavelength signals are captured. For the shallow layer, a range of depths closer to the Earth's surface are employed. Additionally, a range of $1x10^-10 \text{to } 1x10^10$ is used for the damping parameter $\mu$ (see Equation~\ref{eq:goal_function}). Once these ranges are defined, a comprehensive set of all the possible combinations of these hyper-parameters is created. For each combination, the BK-CV method (Algorithm~\ref{alg:BK-CV}) is employed to determine the corresponding BK-CV RMSE, which serves as the performance metric. The combination that yields the smallest BK-CV RMSE is then selected as the optimal set of parameters for the final equivalent source model.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Synthetic Data Application}
