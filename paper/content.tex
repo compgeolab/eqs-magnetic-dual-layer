@@ -49,15 +49,15 @@ The equivalent source technique assumes any harmonic function \textcolor{orange}
 
 \begin{equation}
 \label{eq:eqs_technique}
-\textcolor{orange}{d (x, y, z)} = \sum_{j=1}^{M} a_j(x, y, z, x'_j, y'_j , z'_j) \textcolor{teal}{\mathbf{c_j}}
+\textcolor{orange}{d (x, y, z)} = \sum_{j=1}^{M} a_j(x, y, z, x'_j, y'_j , z'_j) \textcolor{teal}{c_j}
 \ ,
 \end{equation}
 
 \noindent
-where \textcolor{orange}{$d$} is calculated at the Cartesian coordinates $x$, $y$ and $z$ pointing in the geographic east, geographic north and upwards direction, respectively. The function $a_j(x, y, z, x'_j, y'_j , z'_j)$ is the effect of the $j$-th source with unitary physical property, located at the Cartesian coordinates $(x', y', z')$, calculated at the observation point $(x, y, z)$. The coefficients (\textcolor{teal}{$\mathbf{c_j}$}) represent the physical property of the $j$-th source 
+where \textcolor{orange}{$d$} is calculated at the Cartesian coordinates $x$, $y$ and $z$ pointing in the geographic east, geographic north and upwards direction, respectively. The function $a_j(x, y, z, x'_j, y'_j , z'_j)$ is the effect of the $j$-th source with unitary physical property, located at the Cartesian coordinates $(x'_j, y'_j, z'_j)$, calculated at the observation point $(x, y, z)$. The coefficients (\textcolor{teal}{$c_j$}) represent the physical property of the $j$-th source 
 (e.g. density for gravity data, magnetic moment amplitude for magnetic data).
 
-For magnetic surveys, \textcolor{orange}{$d (x, y, z)$} from Equation~\ref{eq:eqs_technique} becomes \textcolor{orange}{$\Delta T(x, y, z)$}. The point source effects, $a_j(x, y, z, x'_j, y'_j , z'_j)$, are therefore $\vec{\mathbf{B}}_j \cdot \hat{\mathbf{F}}$ from Equation~\ref{eq:tfa_dot_product}, where $\vec{\mathbf{B}}_j$ is the magnetic field of the $j$-th dipole with unit magnetic moment ($\vec{\mathbf{m}}_j$) and is given by \citep{Blakley1995}:
+For magnetic surveys, \textcolor{orange}{$d (x, y, z)$} from Equation~\ref{eq:eqs_technique} becomes \textcolor{orange}{$\Delta T(x, y, z)$}. The point source effects, $a_j(x, y, z, x'_j, y'_j , z'_j)$, are therefore $\vec{\mathbf{B}}_j \cdot \hat{\mathbf{F}}$ from Equation~\ref{eq:tfa_dot_product}, where $\vec{\mathbf{B}}_j$ is the magnetic field of the $j$-th dipole with unit magnetic moment ($\hat{\mathbf{m}}_j$) and is given by \citep{Blakley1995}:
 
 \begin{equation}
     \vec{\mathbf{B}}_j (x, y, z) = C_m \dfrac{3 \left( \hat{\mathbf{m_j}} \cdot \hat{\mathbf{r_j}} \right) \hat{\mathbf{r_j}} - \hat{\mathbf{m_j}}}{{r_j}^3}
@@ -165,9 +165,9 @@ where $B_{x_j}$, $B_{y_j}$ and $B_{z_j}$ are the three components of the anomalo
 
 \subsection{Dual Layer Concept}
 
-Using two layers, a shallow one and a deep one, was first introduced by \citep{Li2020} to predict the three components of the anomalous field ($\vec{\mathbf{B}}$) from total-field anomaly observations. The deep layer was used to fit the regional magnetic field and the shallow layer was used to fit the shallow magnetic anomalies. \citep{Li2020} found that having an additional deeper layer of equivalent sources improved the accuracy of the predictions, particularly for the long‐wavelength fields. \citep{Li2020} fitted both layers to the observed data simultaneously. Due to the sensitivity matrix elements associated with the shallow layer being much larger than the elements associated with the deep layer, their method required the use of a depth-weighing factor to keep the shallow layer coefficients from dominating.
+Using two layers, a shallow one and a deep one, was first introduced by \citet{Li2020} to predict the three components of the anomalous field ($\vec{\mathbf{B}}$) from total-field anomaly observations. The deep layer was used to fit the regional magnetic field and the shallow layer was used to fit the shallow magnetic anomalies. \citet{Li2020} found that having an additional deeper layer of equivalent sources improved the accuracy of the predictions, particularly for the long‐wavelength fields. \citet{Li2020} fitted both layers to the observed data simultaneously. Due to the sensitivity matrix elements associated with the shallow layer being much larger than the elements associated with the deep layer, their method required the use of a depth-weighing factor to keep the shallow layer coefficients from dominating.
 
-Instead, here the dual layer method is modified to separate the deep and shallow sources into two different sets of parameters, \textcolor{teal}{$\bar{\mathbf{c}}^d$} and \textcolor{teal}{$\bar{\mathbf{c}}^s$}, respectively, and estimated separately. To estimate the deep layer coefficients first, the short-wavelength information has to be removed from the observed data to allow the deep layer to only capture the long-wavelength components, rather than both short- and long-wavelength components. This is achieved by block-averaging the observed line data shown by Algorithm~\ref{alg:block_averaging}:
+Instead, here the dual layer method is modified to separate the deep and shallow sources into two different sets of parameters, \textcolor{teal}{$\bar{\mathbf{c}}^d$} and \textcolor{teal}{$\bar{\mathbf{c}}^s$}, respectively, and estimated separately. To estimate the deep layer coefficients first, the short-wavelength information has to be removed from the observed data to allow the deep layer to only capture the long-wavelength components, rather than both short- and long-wavelength components. This is achieved by block-averaging the observed line data, as described in Algorithm~\ref{alg:block_averaging}.
 
 \begin{algorithm}[!h]
   \setstretch{1.5}
@@ -206,15 +206,17 @@ Once both the coefficients for both the deep and shallow layers are estimated, t
 
 \noindent
 Likewise, the norm of the anomalous field can also be predicted by combing the predictions of both layers:
+
 \begin{equation}
   \textcolor{orange}{\left\lVert \vec{\mathbf{B}}(x,y,z) \right\rVert} = 
-  \sum_{j=1}^{M^d}  \left\lVert \vec{\mathbf{B}}^d_{j}(x,y,z) \right\rVert \textcolor{teal}{m^d_j}
+  \left\lVert \sum_{j=1}^{M^d} \vec{\mathbf{B}}^d_{j}(x,y,z)\ \textcolor{teal}{m^d_j}
   +
-  \sum_{j=1}^{M^s}  \left\lVert \vec{\mathbf{B}}^s_{j}(x,y,z) \right\rVert \textcolor{teal}{m^s_j}
+  \sum_{j=1}^{M^s}  \vec{\mathbf{B}}^s_{j}(x,y,z)\ \textcolor{teal}{m^s_j}
+  \right\rVert
   \ .
 \end{equation}
 
-A summary of this dual layer method proposed can be found in Algorithm~\ref{alg:dual_layer}.
+A summary of this dual layer method proposed here can be found in Algorithm~\ref{alg:dual_layer}.
 
 \begin{algorithm}[!h]
   \setstretch{1.5}
@@ -246,26 +248,26 @@ A summary of this dual layer method proposed can be found in Algorithm~\ref{alg:
 
 Estimating \textcolor{teal}{$\bar{\mathbf{c}}$} using the damped least-squares solution (Equation~\ref{eq:normal_equations}) is computationally demanding, especially on a regional scale, due to the large number of data points. 
 To overcome this problem, \citet{Soler2021} adapted the gradient-boosting method from \citet{Friedman2001}, which provides a way to fit additive models iteratively. Using this method, the shallow source coefficients (\textcolor{teal}{$\bar{\mathbf{c}}^s$}) are estimated in overlapping windows and carried out iteratively. Following \citet{Friedman2002}, \citet{Soler2021} also iterated through the windows randomly to improve the accuracy of the prediction. 
-The gradient-boosted equivalent sources method reduces the computational load by solving numerous smaller damped least-squares problems rather than one large problem.This method is applied to the shallow layer of equivalent sources because it is fitted to the entire dataset, which can contain millions of observations in real airborne surveys. An outline of the method is presented in Algorithm~\ref{alg:gradient_boosting}.
+The gradient-boosted equivalent sources method reduces the computational load by solving numerous smaller damped least-squares problems rather than one large problem. This method is applied to the shallow layer of equivalent sources because it is fitted to the entire dataset, which can contain millions of observations in real airborne surveys. An outline of the method is presented in Algorithm~\ref{alg:gradient_boosting}.
 
 \clearpage
 \begin{algorithm}[!h]
     \setstretch{1.5}
-    Determine a set of $L$ windows overlapping by 50\% that are equal in size and cover the whole survey area
+    Determine a set of $Q$ windows overlapping by 50\% that are equal in size and cover the whole survey area
     \;
     Shuffle the order of the windows in the set of windows
     \;
     Initialise the residuals vector with the observed data \textcolor{orange}{$\mathbf{r^1}$} = \textcolor{orange}{$\mathbf{d^o}$}
     \;
-    \For{ $l = 1$ \KwTo $L$}{
-        Fit the sources inside window $l$ to the subset of residuals \textcolor{orange}{$\mathbf{r^l}$} that fall within the window to obtain the coefficient vector \textcolor{teal}{$\mathbf{c^l}$}
+    \For{ $q = 1$ \KwTo $Q$}{
+        Fit the sources inside window $q$ to the subset of residuals \textcolor{orange}{$\mathbf{r^q}$} that fall within the window to obtain the coefficient vector \textcolor{teal}{$\mathbf{c^q}$}
         \;
-        Use Equation~\ref{eq:tfa_eqs} calculate a vector of predicted data \textcolor{orange}{$\mathbf{d^l}$} on all of the $N$ observation points
+        Use Equation~\ref{eq:tfa_eqs} calculate a vector of predicted data \textcolor{orange}{$\mathbf{d^q}$} on all of the $N$ observation points
         \;
-        Update the residuals to \textcolor{orange}{$\mathbf{r^{l+1}}$} = \textcolor{orange}{$\mathbf{r^l}$} - \textcolor{orange}{$\mathbf{d^l}$}
+        Update the residuals to \textcolor{orange}{$\mathbf{r^{q+1}}$} = \textcolor{orange}{$\mathbf{r^q}$} - \textcolor{orange}{$\mathbf{d^q}$}
         \;
     }
-    Predict new data values using \textcolor{orange}{$\mathbf{d}$} = $\sum\limits_{l=1}^{L} A^l$ \textcolor{teal}{$\mathbf{c^l}$}
+    Predict new data values using \textcolor{orange}{$\mathbf{d}$} = $\sum\limits_{q=1}^{Q} A^q$ \textcolor{teal}{$\mathbf{c^q}$}
     \;
     \BlankLine
     \setstretch{1}
@@ -278,26 +280,29 @@ The gradient-boosted equivalent sources method reduces the computational load by
 The equivalent sources model requires careful selection of appropriate values for the damping parameter, $\mu$ (see Equation~\ref{eq:goal_function}), and the depth of the equivalent sources. 
 These two parameters, referred to as hyper-parameters of the inversion, significantly influence the smoothing of the model predictions. It is therefore crucial to select values for these hyper-parameters that yield accurate predictions in the unobserved locations when using the equivalent sources for interpolation. Selecting the optimal values of damping and depth requires the establishment of a metric of how well a model with a given combination of these hyperparameters is able to interpolate.
 
-Cross-validation (CV) is a machine learning technique commonly used in statistics to obtain a metric of how successful a model is at making predictions. Data are split into two subsets: one for model training and one for model testing. This prevents overfitting by ensuring the training set is independent to the testing set. \citet{Geisser1975} introduced K-Fold CV to reduce the computational load compared to other CV methods. In K-Fold CV, data are split into K equally-sized folds. The folds $Fold_1 \text{to } Fold_{K-1}$ are used as the training set to construct the model and the remaining fold ($Fold_K$) is used as the testing set to validate the model \citep{Jung2017}. This is then repeated until each fold has been used as both a testing and a training set.
+Cross-validation (CV) is a machine learning technique commonly used in statistics to obtain a metric of how successful a model is at making predictions. Data are split into two subsets: one for model training and one for model testing. This prevents overfitting by ensuring the training set is independent to the testing set. \citet{Geisser1975} introduced K-Fold CV to reduce the computational load compared to other CV methods. In K-Fold CV, data are split into K equally-sized folds. The folds 2 to $K$ are used as the training set to construct the model and the remaining fold (fold 1) is used as the testing set to validate the model \citep{Jung2017}. This is then repeated by using a subsequent fold for testing and the remaining folds for training until each fold has been used as a testing set.
 
-\citet{Roberts2017} introduced the blocked versions of cross-validation methods for when data are spatially auto-correlated. This is necessary for when observations taken at close points tend to have similar values, which is often the case for potential-field data due to their smooth nature. In the Block K-Fold Cross-Validation (BK-CV) method, data (black dots in Figure~\ref{fig:BK-CV}) are first divided into non-overlapping spatial blocks of a specified size (orange blocks in Figure~\ref{fig:BK-CV}). These blocks are then randomly assigned to $K$ folds, ensuring each fold contains approximately the same number of data points. Data from folds $Fold_{2} to Fold_{K}$ are assigned to the training set ($Fold_1$ blue dots in Figure~\ref{fig:BK-CV}), whilst the remaining fold, $Fold_1$, ($fold_1$ red dots in Figure~\ref{fig:BK-CV}) is assigned to the testing set. The training set is fitted with the equivalent source model using Equation\ref{eq:normal_equations} or the gradient-boosted equivalent sources method in order to estimate the \textcolor{teal}{$\bar{\mathbf{c}}$}. The model is then used to predict \textcolor{orange}{$\mathbf{d_{test}}$}, the total field anomaly (\textcolor{orange}{$\Delta T (x, y, z)$}), on the coordinates from the remaining fold, $Fold_K$, using Equation~\ref{eq:tfa_eqs}.
-\clearpage
-\begin{figure}[!h]
+\citet{Roberts2017} introduced the blocked versions of cross-validation methods for when data are spatially auto-correlated. This is necessary for when observations taken at close points tend to have similar values, which is often the case for potential-field data due to their smooth nature. In the Block K-Fold Cross-Validation (BK-CV) method, data (black dots in Figure~\ref{fig:BK-CV}) are first divided into non-overlapping spatial blocks of a specified size (orange blocks in Figure~\ref{fig:BK-CV}). These blocks are then randomly assigned to $K$ folds, ensuring each fold contains approximately the same number of data points. Data from folds 2 to $K$ are assigned to the training set (blue dots in step 1 of Figure~\ref{fig:BK-CV}), whilst the remaining fold is assigned to the testing set (red dots in step 1 of Figure~\ref{fig:BK-CV}). The training set is fitted with the equivalent source model using Equation\ref{eq:normal_equations} or the gradient-boosted equivalent sources method in order to estimate the parameters \textcolor{teal}{$\bar{\mathbf{c}}$}. The model is then used to predict \textcolor{orange}{$\mathbf{d_{test}}$}, the total field anomaly (\textcolor{orange}{$\Delta T (x, y, z)$}), on the coordinates from the testing set using Equation~\ref{eq:tfa_eqs} or the equivalent for the gradient-boosted equivalent sources.
+
+\begin{figure}[!tb]
   \centering
   \includegraphics[width=1\linewidth]{paper/figures/bk_cv.png}
   \caption{
-    The Block K-Fold Cross Validation method. The black dots are the data, the orange blocks are the non-overlapping spatial blocks of a specified size, the blue dots are the training sets for each fold and the red dots are the testing sets for each fold.
+    The Block K-Fold Cross Validation method. The black dots are the data, the orange blocks are the non-overlapping spatial blocks of a specified size, the blue dots are the training sets for each iteration and the red dots are the testing sets for each fold.
     }
   \label{fig:BK-CV}
 \end{figure}
-\noindent
-The model accuracy can be assessed though the Root Mean Square Error (RMSE) calculated between the observed data from the testing set (\textcolor{orange}{$\mathbf{d^o_{test}}$}) and the predicted total-field anomaly (\textcolor{orange}{$\mathbf{d_{test}}$}):
+
+The model accuracy can be assessed though the Root Mean Square Error (RMSE) calculated between the observed data from the testing set (\textcolor{orange}{$\mathbf{d^o_{test}}$}) and the predicted total-field anomaly also on the testing set coordinates (\textcolor{orange}{$\mathbf{d_{test}}$}):
+
 \begin{equation}
     \label{eq:rmse}
-    RMSE_K = \sqrt{\frac{\sum_{i=1}^L (\textcolor{orange}{\mathbf{d^o_{test_i}}} - \textcolor{orange}{\mathbf{d_{test_i}}})^2}{L}}
+    \text{RMSE}_k = \sqrt{\dfrac{\sum\limits_{i=1}^L \left(\textcolor{orange}{{d^o_{test_i}}} - \textcolor{orange}{{d_{test_i}}}\right)^2}{L}}
     \ ,
 \end{equation}
- for $L$ number of testing points. This BK-CV process is iterated until all the folds have been used for both testing and training (see Figure\ref{fig:BK-CV}). The overall BK-CV RMSE is determined by taking the average of all the $RMSE_K$ values across the folds. This BK-CV is summarised in Algorithm~\ref{alg:BK-CV}.
+
+\noindent
+for $L$ number of testing points. This BK-CV process is iterated until all the folds have been used for both testing and training (see Figure~\ref{fig:BK-CV}). The overall BK-CV RMSE is determined by taking the average of all the $\text{RMSE}_k$ values across the folds. This BK-CV is summarised in Algorithm~\ref{alg:BK-CV}.
 
 \begin{algorithm}[!h]
     \setstretch{1.5}
@@ -306,81 +311,48 @@ The model accuracy can be assessed though the Root Mean Square Error (RMSE) calc
     Split the blocks randomly into K folds, with roughly the same number of data points per fold
     \;
     \For{each fold $k$}{
-        Assign the fold to the testing set and the remaining folds to the training set
+        Assign fold $k$ to the testing set and the remaining folds to the training set
         \;
-        Estimate the \textcolor{teal}{$\bar{\mathbf{c}}$} using the data from the training set and Equation~\ref{eq:normal_equations} or the gradient-boosted equivalent sources method
+        Estimate the parameters \textcolor{teal}{$\bar{\mathbf{c}}_k$} using the data from the training set and Equation~\ref{eq:normal_equations} or the gradient-boosted equivalent sources method
         \;
-        Predict the \textcolor{orange}{$\Delta T (x, y, z)$} on the coordinates of the testing set using Equation~\ref{eq:tfa_eqs}
+        Predict the total-field anomaly \textcolor{orange}{$\Delta T (x, y, z)$} on the coordinates of the testing set using Equation~\ref{eq:tfa_eqs}
         \;
-        Calculate the RMSE between the observed data from the testing set (\textcolor{orange}{$\mathbf{d^{o_t}}$}) and the predicted total-field anomaly (\textcolor{orange}{$\mathbf{d^{t}}$}) using Equation~\ref{eq:rmse}
+        Calculate the $\text{RMSE}_k$ between the observed data from the testing set (\textcolor{orange}{$\mathbf{d^{o}_{test}}$}) and the predicted total-field anomaly (\textcolor{orange}{$\mathbf{d_{test}}$}) using Equation~\ref{eq:rmse}
         \;
     }
-    Calculate the BK-CV RMSE by taking the average of all the $RMSE_k$ calculated for each fold.
+    Calculate the BK-CV RMSE by taking the average of all the $\text{RMSE}_k$ calculated for each fold.
     \BlankLine
     \setstretch{1}
     \caption{The Block K-fold Cross-Validation method.}
     \label{alg:BK-CV}
 \end{algorithm}
 
-To determine the optimal hyper-parameters for each layer, a range of values for damping and depth is systematically generated. \citet{Dampney1969} suggests bounds of 2.5 to 6 times the average distance to the nearest neighboring data point should for the depth of equivalent source layers. This range is utilised for the deep equivalent sources to ensure the regional long-wavelength signals are captured. For the shallow layer, a range of depths between the Earth's surface and the deep layer are employed. Additionally, a range of $1x10^{-10} \text{ to } 1x10^{10}$ is used for the damping parameter $\mu$ (see Equation~\ref{eq:goal_function}). Once these ranges are defined, a comprehensive set of all the possible combinations of these hyper-parameters is created. For each combination, the BK-CV method (Algorithm~\ref{alg:BK-CV}) is employed to determine the corresponding BK-CV RMSE, which serves as the performance metric. The combination that yields the smallest BK-CV RMSE is then selected as the optimal set of parameters for the final equivalent source model.
+To determine the optimal hyper-parameters for each layer, a range of values for damping and depth is systematically generated. \citet{Dampney1969} suggests bounds of 2.5 to 6 times the average distance to the nearest neighboring data points for the depth of equivalent sources. This range is utilised for the deep equivalent sources to ensure the regional long-wavelength signals are captured. For the shallow layer, a range of depths between the data heights and the deep layer are employed. Additionally, a range of $1 \times 10^{-10} \text{ to } 1 \times 10^{10}$ is used for the damping parameter $\mu$ (see Equation~\ref{eq:goal_function}). Once these ranges are defined, a comprehensive set of all the possible combinations of these hyper-parameters is created. For each combination, the BK-CV method (Algorithm~\ref{alg:BK-CV}) is employed to determine the corresponding BK-CV RMSE, which serves as the performance metric. The combination that yields the smallest BK-CV RMSE is then selected as the optimal set of parameters for the final equivalent source model.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Synthetic Data Application}
 
+Description of the model and data locations.
+
 \subsection{With and without dual layer}
 * w/o dual layer - doesn't capture all of the regional signal
 
-\subsection{Block average deep sources versus regular grids (for shallow we cite Santi):}
-Block average the data to make it smaller and smoother. Show that this works.
-Block average source positions instead of regular grid to avoid issues with no-data regions.
-
-\subsection{Single synthetic model}
-Use the coordinates from a survey (ICEGRAV) and make a dipole model that is relatively complex but doesn't have to be exactly like the data. Must have regional and shallow sources.
-
-
-\subsection{Part 1}
-Description of the model and data locations.
-
-\subsection{Part 2}
-Show the results for our method. Use the block averaging for deep sources + GB for shallow and predict a grid of TFA and |B|. Show maps of the block reduced sources and data, residuals after only deep sources, residuals of the TFA after gradient boosting, grid predictions (deep + shallow) of TFA and |B|.
-
-\subsection{Part 3}
-Difference between using the dual-layer or the single shallow layer. Maps showing the differences in TFA and |B|.
-
-\subsection{Part 4}
-Block averaging vs regular grid for deep sources. Effects on no-data zones when we use regular grid versus block averaged sources (maps showing the error). Difference in computation time between (1) Block averaged data and sources (2) Blocked averaged sources but original data (3) grid sources and original data (bar plot showing the difference in computation time).
-
-\subsection{Brief discussion (or in a separate section)}
-
-%\begin{figure}[tb]
-%\centering
-%\includegraphics[width=1\linewidth]{figures/simple-synthetic-data.png}
-%\caption{
-  %\lipsum[1]
-%}
-%\label{fig_synthetic_simple_data}
-%\end{figure}
+\subsection{Truncated Regional}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Real Data Application}
 
-\subsection{Apply the standard method to ICEGRAV}
+Describe ICEGRAV and show the original data (TFA points)
 
-\subsection{Describe ICEGRAV}
+Show the location of the deep sources and the block averaged data
 
-\subsection{Show the original data (TFA points)}
+Show residuals from deep sources
 
-\subsection{Show the location of the deep sources and the block averaged data}
+Show residuals from GB
 
-\subsection{Show residuals from deep sources}
-
-\subsection{Show residuals from GB}
-
-\subsection{Grid predictions of TFA and |B|}
-
-\subsection{Brief discussion (or in a separate section)}
+Grid predictions of TFA and |B|
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
