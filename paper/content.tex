@@ -30,7 +30,7 @@ The total magnetic field ($\vec{T}$) is the sum of the anomalous magnetic field 
     \Delta T = \left\lVert \vec{\mathbf{F}} + \vec{\mathbf{B}} \right\rVert - \left\lVert \vec{\mathbf{F}} \right\rVert
     \ .
 \end{equation}
-
+\noindent
 For the majority of crustal anomalies measured by airborne and shipborne surveys, $\vec{\mathbf{B}}$ is much smaller in magnitude compared to $\vec{\mathbf{F}}$. Additionally, $\vec{\mathbf{F}}$ can be considered constant on these local to regional scales. Subsequently, $\Delta T$ can be approximated as
 
 \begin{equation}
@@ -54,7 +54,7 @@ The equivalent source technique assumes any harmonic function \textcolor{orange}
 \end{equation}
 
 \noindent
-where \textcolor{orange}{$d$} is calculated at the Cartesian coordinates $x$, $y$ and $z$ pointing in the geographic east, geographic north and upwards direction, respectively. The function $a_j(x, y, z, x'_j, y'_j , z'_j)$ is the effect of the $j$-th source with unitary physical property, located at the Cartesian coordinates $(x'_j, y'_j, z'_j)$, calculated at the observation point $(x, y, z)$. The coefficients (\textcolor{teal}{$c_j$}) represent the physical property of the $j$-th source 
+where \textcolor{orange}{$d$} is calculated at the Cartesian coordinates ($x$, $y$, $z$) pointing in the geographic east, geographic north and upwards direction, respectively. The function $a_j(x, y, z, x'_j, y'_j , z'_j)$ is the effect of the $j$-th source with unitary physical property, located at the Cartesian coordinates $(x'_j, y'_j, z'_j)$, calculated at the observation point $(x, y, z)$. The coefficients (\textcolor{teal}{$c_j$}) represent the physical property of the $j$-th source 
 (e.g. density for gravity data, magnetic moment amplitude for magnetic data).
 
 For magnetic surveys, \textcolor{orange}{$d (x, y, z)$} from Equation~\ref{eq:eqs_technique} becomes \textcolor{orange}{$\Delta T(x, y, z)$}. The point source effects, $a_j(x, y, z, x'_j, y'_j , z'_j)$, are therefore $\vec{\mathbf{B}}_j \cdot \hat{\mathbf{F}}$ from Equation~\ref{eq:tfa_dot_product}, where $\vec{\mathbf{B}}_j$ is the magnetic field of the $j$-th dipole with unit magnetic moment ($\hat{\mathbf{m}}_j$) and is given by \citep{Blakley1995}:
@@ -130,7 +130,7 @@ Consequently, the goal function from Equation~\ref{eq:goal_function} can  be exp
 \end{equation}
 
 \noindent
-By minimising the goal function, the values of the source coefficients \textcolor{teal}{$\bar{\mathbf{c}}$} that best fit the observed field values can be obtained. If the residual is as close as possible to zero, the observed and predicted data are very similar. Therefore, the smallest $\phi(\textcolor{teal}{\bar{\mathbf{c}}})$ gives the best fit, which can be calculated by taking the gradient of $\phi(\textcolor{teal}{\bar{\mathbf{c}}})$ and equating it to the null vector:
+By minimising the goal function, the values of the source coefficients \textcolor{teal}{$\bar{\mathbf{c}}$} that best fit the observed field values can be obtained subject to the constraint. If the residual is as close as possible to zero, the observed and predicted data are very similar. Therefore, the smallest $\phi(\textcolor{teal}{\bar{\mathbf{c}}})$ gives the best fit, which can be calculated by taking the gradient of $\phi(\textcolor{teal}{\bar{\mathbf{c}}})$ and equating it to the null vector:
 \begin{equation}
     \nabla_{\textcolor{teal}{\bar{c}}} \phi = 2 \Bar{\Bar{\mathbf{A}}}^T \Bar{\Bar{\mathbf{A}}} \textcolor{teal}{\Bar{\mathbf{c}}} - 2\Bar{\Bar{\mathbf{A}}}^T\textcolor{orange}{\bar{\mathbf{d}}^o} + 2\mu \textcolor{teal}{\bar{\mathbf{c}}} = \bar{\mathbf{0}}
     \ .
@@ -165,7 +165,7 @@ where $B_{x_j}$, $B_{y_j}$ and $B_{z_j}$ are the three components of the anomalo
 
 \subsection{Dual Layer Concept}
 
-Using two layers, a shallow one and a deep one, was first introduced by \citet{Li2020} to predict the three components of the anomalous field ($\vec{\mathbf{B}}$) from total-field anomaly observations. The deep layer was used to fit the regional magnetic field and the shallow layer was used to fit the shallow magnetic anomalies. \citet{Li2020} found that having an additional deeper layer of equivalent sources improved the accuracy of the predictions, particularly for the long‐wavelength fields. \citet{Li2020} fitted both layers to the observed data simultaneously. Due to the sensitivity matrix elements associated with the shallow layer being much larger than the elements associated with the deep layer, their method required the use of a depth-weighing factor to keep the shallow layer coefficients from dominating.
+The use of two layers, a shallow one and a deep one, was first introduced by \citet{Li2020} to predict the three components of the anomalous field ($\vec{\mathbf{B}}$) from total-field anomaly observations. The deep layer was used to fit the regional magnetic field and the shallow layer was used to fit the shallow magnetic anomalies. \citet{Li2020} found that having an additional deeper layer of equivalent sources improved the accuracy of the predictions, particularly for the long‐wavelength fields. \citet{Li2020} fit both layers to the observed data simultaneously. Due to the sensitivity matrix elements associated with the shallow layer being much larger than the elements associated with the deep layer, their method required the use of a depth-weighing factor to keep the shallow layer coefficients from dominating.
 
 Instead, here the dual layer method is modified to separate the deep and shallow sources into two different sets of parameters, \textcolor{teal}{$\bar{\mathbf{c}}^d$} and \textcolor{teal}{$\bar{\mathbf{c}}^s$}, respectively, and estimated separately. To estimate the deep layer coefficients first, the short-wavelength information has to be removed from the observed data to allow the deep layer to only capture the long-wavelength components, rather than both short- and long-wavelength components. This is achieved by block-averaging the observed line data, as described in Algorithm~\ref{alg:block_averaging}.
 
@@ -216,7 +216,7 @@ Likewise, the norm of the anomalous field can also be predicted by combing the p
   \ .
 \end{equation}
 
-A summary of this dual layer method proposed here can be found in Algorithm~\ref{alg:dual_layer}.
+A summary of this dual layer method proposed here is given in Algorithm~\ref{alg:dual_layer}.
 
 \begin{algorithm}[!h]
   \setstretch{1.5}
@@ -278,7 +278,7 @@ The gradient-boosted equivalent sources method reduces the computational load by
 \subsection{Cross-Validation and Model Selection}
 
 The equivalent sources model requires careful selection of appropriate values for the damping parameter, $\mu$ (see Equation~\ref{eq:goal_function}), and the depth of the equivalent sources. 
-These two parameters, referred to as hyper-parameters of the inversion, significantly influence the smoothing of the model predictions. It is therefore crucial to select values for these hyper-parameters that yield accurate predictions in the unobserved locations when using the equivalent sources for interpolation. Selecting the optimal values of damping and depth requires the establishment of a metric of how well a model with a given combination of these hyperparameters is able to interpolate.
+These two parameters, referred to as hyper-parameters of the inversion, significantly influence the smoothing of the model predictions. It is therefore crucial to select values for these hyper-parameters that yield accurate predictions in the unobserved locations when using the equivalent sources for interpolation. Selecting the optimal values of damping and depth requires the establishment of a metric of how well a model with a given combination of these hyper-parameters can be interpolated.
 
 Cross-validation (CV) is a machine learning technique commonly used in statistics to obtain a metric of how successful a model is at making predictions. Data are split into two subsets: one for model training and one for model testing. This prevents overfitting by ensuring the training set is independent to the testing set. \citet{Geisser1975} introduced K-Fold CV to reduce the computational load compared to other CV methods. In K-Fold CV, data are split into K equally-sized folds. The folds 2 to $K$ are used as the training set to construct the model and the remaining fold (fold 1) is used as the testing set to validate the model \citep{Jung2017}. This is then repeated by using a subsequent fold for testing and the remaining folds for training until each fold has been used as a testing set.
 
