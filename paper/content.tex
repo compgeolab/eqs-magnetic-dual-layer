@@ -20,14 +20,14 @@ The norm of the magnetic field is less dependent on the direction of magnetisati
 
 The observed total field anomaly ($\Delta T$) is the difference between the measured norm of the total magnetic field ($\vec{\mathbf{T}}$) and the norm of the regional reference field ($\vec{\mathbf{F}}$, usually represented by the IGRF) at the time of measurement:
 \begin{equation}
-    \Delta T = \left\lVert \vec{\mathbf{T}} \right\rVert - \left\lVert \vec{\mathbf{F}} \right\rVert
+    \Delta T = \vert \vec{\mathbf{T}} \vert - \vert \vec{\mathbf{F}} \vert
     \ .
 \end{equation}
 
 \noindent
 The total magnetic field ($\vec{T}$) is the sum of the anomalous magnetic field vector ($\vec{\mathbf{B}}$) and the regional field vector ($\vec{\mathbf{F}}$) \citep{Blakley1995, Langel1998, OliveiraJr2015}. The total field anomaly ($\Delta T$) can therefore be given by
 \begin{equation}
-    \Delta T = \left\lVert \vec{\mathbf{F}} + \vec{\mathbf{B}} \right\rVert - \left\lVert \vec{\mathbf{F}} \right\rVert
+    \Delta T = \vert \vec{\mathbf{F}} + \vec{\mathbf{B}} \vert - \vert \vec{\mathbf{F}} \vert
     \ .
 \end{equation}
 \noindent
@@ -73,7 +73,7 @@ Here $C_m = \frac{\mu_0}{4 \pi} = 10^{-7} \ \text{Hm}^{-1}$ is the proportionali
 \end{equation}
  
 
-The coefficients (\textcolor{teal}{$\mathbf{c_j}$}) from Equation~\ref{eq:eqs_technique} are the norm of the magnetic moment \textcolor{teal}{$\lVert \vec{\mathbf{m}}_j \rVert = m_j$}. As a result, Equation~\ref{eq:eqs_technique} becomes
+The coefficients (\textcolor{teal}{$\mathbf{c_j}$}) from Equation~\ref{eq:eqs_technique} are the norm of the magnetic moment \textcolor{teal}{$\vert \vec{\mathbf{m}}_j \vert = m_j$}. As a result, Equation~\ref{eq:eqs_technique} becomes
 \begin{equation}
 \label{eq:tfa_eqs}
 \textcolor{orange}{\Delta T (x, y, z)} = \sum_{j=1}^{M} \left(\vec{\mathbf{B}}_j(x, y, z) \cdot \hat{\mathbf{F}}\right) \textcolor{teal}{m_j}
@@ -151,14 +151,14 @@ which can be solved for \textcolor{teal}{$\bar{\mathbf{c}}$}. Once \textcolor{te
 
 The norm of the anomalous magnetic field vector ($\vec{\mathbf{B}}$) caused by the $j$-th source with unit magnetic moment is given by
 \begin{equation}
-    \left\lVert \vec{\mathbf{B}_j}(x,y,z) \right \rVert = \sqrt{B^2_{x_j} + B^2_{y_j} +B^2_{z_j}}
+    \left\lvert \vec{\mathbf{B}_j}(x,y,z) \right\rvert = \sqrt{B^2_{x_j} + B^2_{y_j} +B^2_{z_j}}
     \ ,
 \end{equation}
 
 \noindent
 where $B_{x_j}$, $B_{y_j}$ and $B_{z_j}$ are the three components of the anomalous magnetic field vector (Equation~\ref{eq:magnetic_field}) in the geographic easting, geographic northing and upwards direction, respectively. We can therefore adapt Equation~\ref{eq:tfa_eqs} to predict the norm of the anomalous magnetic field using the estimated dipole moment intensities (\textcolor{teal}{$\bar{\mathbf{c}}$}):
 \begin{equation}
-\textcolor{orange}{\left\lVert \vec{\mathbf{B}}(x,y,z) \right\rVert} = \sum_{j=1}^{M}  \left\lVert \vec{\mathbf{B}}_{j}(x,y,z) \right\rVert \textcolor{teal}{m_j}
+\textcolor{orange}{\left\lvert \vec{\mathbf{B}}(x,y,z) \right\rvert} = \sum_{j=1}^{M}  \left\lvert \vec{\mathbf{B}}_{j}(x,y,z) \right\rvert \textcolor{teal}{m_j}
 \ .
 \end{equation}
 
@@ -208,11 +208,11 @@ Once both the coefficients for both the deep and shallow layers are estimated, t
 Likewise, the norm of the anomalous field can also be predicted by combing the predictions of both layers:
 
 \begin{equation}
-  \textcolor{orange}{\left\lVert \vec{\mathbf{B}}(x,y,z) \right\rVert} = 
-  \left\lVert \sum_{j=1}^{M^d} \vec{\mathbf{B}}^d_{j}(x,y,z)\ \textcolor{teal}{m^d_j}
+  \textcolor{orange}{\left\lvert \vec{\mathbf{B}}(x,y,z) \right\rvert} = 
+  \left\lvert \sum_{j=1}^{M^d} \vec{\mathbf{B}}^d_{j}(x,y,z)\ \textcolor{teal}{m^d_j}
   +
   \sum_{j=1}^{M^s}  \vec{\mathbf{B}}^s_{j}(x,y,z)\ \textcolor{teal}{m^s_j}
-  \right\rVert
+  \right\rvert
   \ .
 \end{equation}
 
