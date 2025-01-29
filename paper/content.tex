@@ -333,7 +333,21 @@ To determine the optimal hyper-parameters for each layer, a range of values for 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Synthetic Data Application}
 
-Description of the model and data locations.
+To assess the accuracy of the interpolations, the method was applied to synthetic datasets containing magnetic sources with varying shapes, depths and induced magnetisations. These datasets were generated using the coordinates from the real data application dataset (see section XX), along with the same Earth’s main field direction (-65° inclination, 35° declination). The regional field was modelled on a regular grid covering the survey area, located at a depth of 60km with an oscillating height of 15km amplitude. Pseudo-random Gaussian noise, with a standard deviation of 5nT, was applied to the regional field. The magnetisation for the regional field was set at -50° inclination, 40° declination and 5e12nT magnitude. A regional dipole was also added to the synthetic to study the effects of a truncating regional signal (see section XX). This dipole is located at [2250km, 2730km, -70km], with a magnetisation of 55° inclination, 45° declination and 2e13nT magnitude. The shallower sources are described below:
+•	Source 1: Oval shaped, located at [1930km, 3030km, -6km], with a magnetisation of 75° inclination, 60° declination and 2e10nT magnitude
+•	Source 2: Irregular-shaped, located at [1960km, 2980km, -0.8km], with a magnetisation of -60° inclination, 45° declination and 3e9nT magnitude
+•	Source 3: Dipole point source, located at [1950km, 2785km, -0.5km], with a magnetisation of 45° inclination, -65° declination and 5e10nT magnitude
+•	Source 4: Dipole point source, located at [2100km, 3011km, -0.5km], with a magnetisation of 45° inclination, -65° declination and 5e10nT magnitude
+•	Source 5: Dipole point source, located at [2110km, 2955km, -0.5km], with a magnetisation of 45° inclination, -65° declination and 5e10nT magnitude
+•	Source 6: Dipole point source, located at [2150km, 2750km, -0.5km], with a magnetisation of 45° inclination, -65° declination and 5e10nT magnitude.
+•	Source 7: Linear dyke-like source, centre at roughly [2200km, 2950km, -1km], with a magnetisation of -70° inclination, 80° declination and 1e9nT magnitude
+•	Source 8: Linear dyke-like source, centre at roughly [2220km, 2870km, -5km], with a magnetisation of -70° inclination, 80° declination and 2e9nT magnitude
+•	Source 9: Irregular-shaped, located at [2230km, 2820km, -0.9km], with a magnetisation of 50° inclination, 70° declination and 5e9nT magnitude
+•	Source 10: Large dipole, located at [2260km, 2830km, -8km], with a magnetisation of -70° inclination, 40° declination and 1e10nT magnitude
+
+!!!!!!!!!!! I THINK THESE BULLET POINTS WOULD BE BETTER IN A TABLE !!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!! 5 minutes to test 9 combinations for 1 layer, 40 combinations for the deep layer and 9 combinations for the shallow layer !!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 \subsection{With and without dual layer}
 * w/o dual layer - doesn't capture all of the regional signal
