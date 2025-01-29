@@ -6,7 +6,7 @@ import verde as vd
 import eqs_magnetics as eqs
 import harmonica as hm
 
-def icegrav_synthetic(source1, source2, source3, source4, dike1, dike2, dipole, regional_dipole, regional):
+def icegrav_synthetic(source1, source2, source3, source4, dyke1, dyke2, dipole, regional_dipole, regional):
     """
     Synthetic dataset associated with the ICEGRAV coordinates.
     Provide source directions specifed as [inclination, declination]. E.g. source1=[-60,60], where inclination=-60 and declination=60.
@@ -119,25 +119,25 @@ def icegrav_synthetic(source1, source2, source3, source4, dike1, dike2, dipole, 
     coordinates.append(vd.profile_coordinates((2.246e6,2.715e6),(2.264e6,2.715e6), size=5, extra_coords=-8e3)[0])
     dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(5,1e10), source4[0], source4[1])))
 
-    # DIKE 1
+    # dyke 1
     coordinates.append(vd.profile_coordinates((2.18e6,2.9e6),(2.205e6,3.0e6), size=500, extra_coords=-1e3)[0])
-    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(500,1e9), dike1[0], dike1[1])))
+    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(500,1e9), dyke1[0], dyke1[1])))
     coordinates.append(vd.profile_coordinates((2.185e6,2.9e6),(2.21e6,3.0e6), size=500, extra_coords=-1e3)[0])
-    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(500,1e9), dike1[0], dike1[1])))
+    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(500,1e9), dyke1[0], dyke1[1])))
     
-    # DIKE 2
+    # dyke 2
     coordinates.append(vd.profile_coordinates((2.16e6,2.76e6),(2.26e6,2.98e6), size=1000, extra_coords=-5e3)[0])
-    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(1000,2e9), dike2[0], dike2[1])))
+    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(1000,2e9), dyke2[0], dyke2[1])))
     coordinates.append(vd.profile_coordinates((2.165e6,2.76e6),(2.261e6,2.98e6), size=1000, extra_coords=-5e3)[0])
-    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(1000,2e9), dike2[0], dike2[1])))
+    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(1000,2e9), dyke2[0], dyke2[1])))
     coordinates.append(vd.profile_coordinates((2.17e6,2.76e6),(2.262e6,2.98e6), size=1000, extra_coords=-5e3)[0])
-    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(1000,2e9), dike2[0], dike2[1])))
+    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(1000,2e9), dyke2[0], dyke2[1])))
     coordinates.append(vd.profile_coordinates((2.185e6,2.78e6),(2.263e6,2.98e6), size=900, extra_coords=-5e3)[0])
-    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(900,2e9), dike2[0], dike2[1])))
+    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(900,2e9), dyke2[0], dyke2[1])))
     coordinates.append(vd.profile_coordinates((2.19e6,2.78e6),(2.264e6,2.98e6), size=800, extra_coords=-5e3)[0])
-    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(800,2e9), dike2[0], dike2[1])))
+    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(800,2e9), dyke2[0], dyke2[1])))
     coordinates.append(vd.profile_coordinates((2.195e6,2.78e6),(2.265e6,2.98e6), size=900, extra_coords=-5e3)[0])
-    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(900,2e9), dike2[0], dike2[1])))
+    dipole_moments.append(np.array(hm.magnetic_angles_to_vec(np.full(900,2e9), dyke2[0], dyke2[1])))
     
     # Small dipoles
     coordinates.append([[1.95e6], [2.785e6], [-500]])
@@ -274,26 +274,26 @@ def icegrav_synthetic(source1, source2, source3, source4, dike1, dike2, dipole, 
 
 
 
-def simple_synthetic(dike1, dike2, point1, point2, point3, point4, regional ):
+def simple_synthetic(dyke1, dyke2, point1, point2, point3, point4, regional ):
     """
     Simple synthetic dataset associated with the Victoria Land coordinates.
-    Provide source directions specifed as [inclination, declination]. E.g. dike1=[70,60], where inclination=70 and declination=60.
+    Provide source directions specifed as [inclination, declination]. E.g. dyke1=[70,60], where inclination=70 and declination=60.
     """
     dipole_moments = []
     coordinates = []
-    dike_moment_magnitude = 10e7
-    # Dike NE-SW
+    dyke_moment_magnitude = 10e7
+    # dyke NE-SW
     coordinates.append(vd.profile_coordinates((-20e3, -5e3), (20e3, 12e3), size=1000, extra_coords=0)[0])
-    dipole_moments.append(eqs.angles_to_vector(dike1[0], dike1[1], np.full(1000, dike_moment_magnitude)))
-    # Dike NW-SE
+    dipole_moments.append(eqs.angles_to_vector(dyke1[0], dyke1[1], np.full(1000, dyke_moment_magnitude)))
+    # dyke NW-SE
     coordinates.append(vd.profile_coordinates((20e3, -10e3), (-20e3, 25e3), size=1000, extra_coords=0)[0])
-    dipole_moments.append(eqs.angles_to_vector(dike2[0], dike2[1], np.full(1000, dike_moment_magnitude)))
-    # Dike small
+    dipole_moments.append(eqs.angles_to_vector(dyke2[0], dyke2[1], np.full(1000, dyke_moment_magnitude)))
+    # dyke small
     coordinates.append(vd.profile_coordinates((20e3, -4e3), (4e3, 3e3), size=1000, extra_coords=0)[0])
-    dipole_moments.append(eqs.angles_to_vector(dike2[0], dike2[1], np.full(1000, dike_moment_magnitude)))
-    # Dike very small
+    dipole_moments.append(eqs.angles_to_vector(dyke2[0], dyke2[1], np.full(1000, dyke_moment_magnitude)))
+    # dyke very small
     coordinates.append(vd.profile_coordinates((3e3, 3.5e3), (-0.5e3, 5.5e3), size=100, extra_coords=0)[0])
-    dipole_moments.append(eqs.angles_to_vector(dike2[0], dike2[1], np.full(100, dike_moment_magnitude)))
+    dipole_moments.append(eqs.angles_to_vector(dyke2[0], dyke2[1], np.full(100, dyke_moment_magnitude)))
     # point source top left
     coordinates.append([[-7500], [7000], [-350]])
     dipole_moments.append(eqs.angles_to_vector(point1[0], point1[1], 6e9))
@@ -318,7 +318,7 @@ def simple_synthetic(dike1, dike2, point1, point2, point3, point4, regional ):
 def complicated_synthetic(largest_anomaly, grid_anomaly, scatter_anomaly, north_anomaly, south_anomaly, regional):
     """
     Complicated synthetic dataset associated with the Victoria Land coordinates.
-    Provide source directions specifed as [inclination, declination]. E.g. dike1=[70,60], where inclination=70 and declination=60.
+    Provide source directions specifed as [inclination, declination]. E.g. dyke1=[70,60], where inclination=70 and declination=60.
     """
     dipole_moments = []
     coordinates = []
