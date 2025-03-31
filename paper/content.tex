@@ -411,11 +411,11 @@ Overall, the dual layer approach improves predictions by allowing the deep layer
 \section{Real Data Application}
 \label{sec:real_application}
 
-The method was applied to the open-access aeromagnetic survey data from the ICEGRAV campaigns \citep{ICEGRAV_data}, which spanned from 2009 to 2013. The data covers parts of interior East Antarctica and the Antarctic Peninsula, including key areas such as the Dronning Maud Land ice stream systems and the Recovery Lakes drainage basin. This dataset was selected to showcase the effectiveness of the method on real-world data that features irregular survey flight lines, substantial spacing between those lines and varying line altitudes. The dataset’s distinctive characteristics, in terms of its vast geographical coverage, complex data collection and large amount of data points (404,363 data points), provide a robust and challenging test case for evaluating the method's performance in complex conditions.
+The method was applied to the open-access aeromagnetic survey data from the ICEGRAV campaigns \citep{ICEGRAV_data}, which spanned from 2010 to 2013. The data covers parts of interior East Antarctica and the Antarctic Peninsula, including key areas such as the Dronning Maud Land ice stream systems and the Recovery Lakes drainage basin. This dataset was selected to showcase the effectiveness of the method on real-world data that features irregular survey flight lines, substantial spacing between those lines and varying line altitudes. The dataset’s distinctive characteristics, in terms of its vast geographical coverage, complex data collection and large amount of data points (404,363 data points), provide a robust and challenging test case for evaluating the method's performance in complex conditions.
 
-The coordinates of this dataset were first projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The dual layer equivalent source method (see Algorithm~\ref{alg:dual_layer}) could then be applied to the observed data, which had already undergone preprocessing \citep{ICEGRAV_data}. To fit the deep equivalent source layer, the observed data was block-averaged using different block spacings to determine the ideal size for isolating the long-wavelength signals. A block spacing of 15 km $\times$ 15 km, with a padding of $ 0.3 \times $ the block spacing, was selected. The padding allows for additional data points along the survey boundary to be used, reducing the potential for edge effects at the borders. The BK-CV method (see Algorithm~\ref{alg:BK-CV}) was then applied with a block size of 200 km $\times$ 200 km. The optimal hyper-parameters for the deep layer, which yielded  the lowest BK-CV RMSE, were a damping value of 10 and a relative depth of approximately 56 km ($5 \cdot $ grid spacing). The shallow layer was fitted to the residuals from the deep layer using the GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) with a window size of 400 km $\times$ 400 km.
+The coordinates of this dataset were first projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The dual layer equivalent source method (see Algorithm~\ref{alg:dual_layer}) could then be applied to the observed data, which has already undergone preprocessing \citep{ICEGRAV_data}. To fit the deep equivalent source layer, the observed data was block-averaged using different block spacings to determine the ideal size for isolating most of the long-wavelength signals. A block spacing of 15 km $\times$ 15 km, with a padding of $ 0.3 \times $ the block spacing, was selected. The padding allows for additional data points along the survey boundary, reducing the potential for edge effects at the borders. The BK-CV method (see Algorithm~\ref{alg:BK-CV}) was applied with a block size of 200 km $\times$ 200 km to determine the optimal hyper-parameters which yield the lowest BK-CV RMSE. The chosen parameters were a damping value of 10 and a relative depth of approximately 55 km. The shallow layer was then fitted to the residuals from the deep layer using the GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) with a window size of 400 km $\times$ 400 km. The BK-CV method (see Algorithm~\ref{alg:BK-CV}) was utilised again to determine the optimal hyper-parameters for the shallow layer. Using a block size of 20 km $\times$ 20 km, the chosen parameters with the lowest BK-CV RMSE were a damping value of 100 and a relative depth of approximately 10 km. The GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was applied twice to the shallow layer to minimise potential errors in the initially selected windows of the iterations.
 
-The results for the total field anomaly along the survey lines (a-c), regularly gridded lines (d), and the norm of the magnetic field on the regularly gridded lines (f) are shown in Figure~\ref{fig:}. The dual layer model provides a good prediction for the total field anomaly along the survey lines (Figure~\ref{fig:} b), with an RMSE of 27.3. Moreover, the method demonstrates its ability to interpolate onto regularly gridded lines and upward continue to a constant height (see Figure~\ref{fig:} d and f).
+The results for the total field anomaly along the survey lines are shown in Figure~\ref{fig:real_line_pred}. The dual layer provides a good prediction of the complicated dataset, with an RMSE of 27.3nT.
 
 \begin{figure}[!h]
 \centering
@@ -425,7 +425,9 @@ The results for the total field anomaly along the survey lines (a-c), regularly 
 }
 \label{fig:real_line_pred}
 \end{figure}
-\
+
+The predictions of the total field anomaly and norm of the magnetic field on a regular grid are shown in Figure~\ref{fig:real_grid_pred}. Here, the method demonstrates its ability to interpolate onto regularly gridded lines and upward continue to a constant height.
+
 
 \begin{figure}[!h]
 \centering
@@ -435,8 +437,7 @@ The results for the total field anomaly along the survey lines (a-c), regularly 
 }
 \label{fig:real_grid_pred}
 \end{figure}
-\
-
+\clearpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
