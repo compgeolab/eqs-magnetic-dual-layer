@@ -369,6 +369,7 @@ Source & Shape & Location (km) &  & Magnitisation & \\
 \end{table}
 
 \subsection{With and without dual layer}
+\label{sec:single_vs_dual}
 To assess the performance of a single verse dual layer of equivalent sources, the single layer of equivalent sources was first applied using the gradient-boosted equivalent sources (GB EQS) method (see Algorithm~\ref{alg:gradient_boosting}). To ensure optimal selection of the hyper-parameters, the Block K-Fold Cross-Validation (BK-CV) method (see Algorithm~\ref{alg:BK-CV}) was employed, using a block size of 30 km $\times$30 km over a wide range of parameter values. The optimal hyper-parameters, which resulted in the lowest BK-CV RMSE, were a damping value of $1 \cdot 10^{2}$ and a relative depth of 35km. With these optimised parameters, the GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was applied using a window size of 250 km $\times$ 250 km. To minimise errors in the initially selected windows of the iteration, the method was repeated twice. 
 
 The resulting predictions for the total field anomaly along the survey lines, the regularly gridded lines, and the norm of the magnetic field along the regularly gridded lines are shown in Figure~\ref{fig:single_layer_synthetic}. The prediction of the total field anomaly along the survey lines (Figure~\ref{fig:single_layer_synthetic}b) provides overall an accurate prediction, with an RMSE of 8.5nT. However, it underestimates the magnitude of the four small, shallow dipoles, a pattern consistent with the predictions for both, the total field anomaly (Figure~\ref{fig:single_layer_synthetic}e) and the norm of the magnetic field (Figure~\ref{fig:single_layer_synthetic}h) on a regular grid. Furthermore, the single layer model introduces undulating ripple effects at the edges of the sources, especially along the dykes. It also generates edges effects at the borders of the survey area. These results highlight a key challenge when fitting both, the long-wavelength components and the short-wavelength components simultaneously with a single layer.
@@ -380,7 +381,7 @@ Further exploration of the single layer model reveals an inherent trade-off: whe
 \centering
 \includegraphics[width=1\linewidth]{figures/single_layer_synthetic.png}
 \caption{
-    INSERT CAPTION
+    Synthetic data and the predictions using a single layer of equivalent sources. a) observed total field anomaly of the synthetic data on the survey lines from the ICEGRAV survey \citep{ICEGRAV_data}, b) total field anomaly prediction on the survey lines, c) residual between the observed (a) and predicted (b) total field anomaly on the survey lines with a RMSE of 8.5nT; d) true total field anomaly on a regular grid with 5km spacing, e) predicted total field anomaly on regular grid with 5km spacing, f) residual between the true (d) and predicted (e) total field anomaly on a regular grid with 5km spacing and an RMSE of 13.2nT; g) true norm of the magnetic field on a regular grid with 5km spacing, h) predicted norm of the magnetic field on a regular grid with 5km spacing, i) residual between the true (g) and predicted (h) norm of the magnetic field on a regular grid with 5km spacing and an RMSE of 14.1nT.
 }
 \label{fig:single_layer_synthetic}
 \end{figure}
@@ -388,25 +389,45 @@ Further exploration of the single layer model reveals an inherent trade-off: whe
 To explore the potential benefits of a dual layer model, the dual layer equivalent source method (see Algorithm~\ref{alg:dual_layer}) was applied. The observed data was block averaged using different block spacings in order to determine the ideal size that isolates the long-wavelength signals for the deep layer to fit. When the block spacing is too small, some of the short-wavelength signals are captured, resulting in the deep layer not capturing all of the regional, long-wavelength signals due to trying to fit both long- and short-wavelengths. When the block spacing is too large, not all of the regional signals are captured either. Those chosen ideal block spacing for this synthetic data was 25 km $\times$ 25 km with a padding of $0.2 \times $ block spacing. The use of padding allows for more data points that fall along the survey boundary to be used, reducing the potential for edge effects at the borders that were seen in the single layer model. Using the BK-CV method (see Algorithm~\ref{alg:BK-CV}) with a block size of 100 km $\times$ 100 km, the optimal hyper-parameters for the deep layer, which resulted in the lowest BK-CV RMSE, were a damping value of 1 and a relative depth of approximately 117 km ($6 \cdot $ grid spacing). The shallow layer was then fitted to the residuals from the deep layer in order to focus on fitting the shorter-wavelength signals, as well as correct potential errors caused by the deep layer. The GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was utilised with a window size of 250 km $\times$ 250 km, matching the single layer model. To optimise the shallow layer’s hyper-parameters, the BK-CV method was applied with a block size of 30 km $\times$ 30 km (the same as the single layer model) to account for local variations in the data. The optimal hyper-parameters for the shallow layer, resulting in the lowest BK-CV RMSE, were a damping value of $1 \cdot 10^{2}$ and a relative depth of 17 km. The GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was applied twice to the shallow layer to minimise potential errors in the initial windows selected in the iteration, similar to the single layer model. 
 
 The results for the total field anomaly along the survey lines, regularly gridded lines, and the norm of the magnetic field on the regularly gridded lines are shown in Figure~\ref{fig:dual_layer_synthetic}. The dual layer model provides a significantly improved prediction of the total field anomaly along the survey lines (Figure~\ref{fig:dual_layer_synthetic} b), with an RMSE of 4.7nT, particularly in capturing the four small dipoles. It also demonstrates the method is able to interpolate onto regularly gridded lines and upward continue to a constant height (see Figure~\ref{fig:dual_layer_synthetic} e and h). Additionally, the regional field prediction is much smoother, with no edge effects at the survey borders or along the dykes. The dual layer model successfully reduces the undulating ripple effects near the edges of the sources. However, the dual-layer method does face challenges when predicting on the regular grid (Figure~\ref{fig:dual_layer_synthetic} e and h). Specifically, the method struggles with artifacts related to the flight lines, particularly along the dykes. The gaps between the survey lines appear more pronounced in these areas, leading to visible discontinuities. This issue could be addressed by adjusting the depth of the shallow layer, but in doing so may impact the accuracy of the small anomalies such as the small dipoles.
-\clearpage
-
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\linewidth]{figures/dual_layer_synthetic.png}
 \caption{
-    INSERT CAPTION
+    Synthetic data and the predictions using the dual layer equivalent sources. a) observed total field anomaly of the synthetic data on the survey lines from the ICEGRAV survey \citep{ICEGRAV_data}, b) total field anomaly prediction on the survey lines, c) residual between the observed (a) and predicted (b) total field anomaly on the survey lines with a RMSE of 4.7nT; d) true total field anomaly on a regular grid with 5km spacing, e) predicted total field anomaly on regular grid with 5km spacing, f) residual between the true (d) and predicted (e) total field anomaly on a regular grid with 5km spacing and an RMSE of 8.2nT; g) true norm of the magnetic field on a regular grid with 5km spacing, h) predicted norm of the magnetic field on a regular grid with 5km spacing, i) residual between the true (g) and predicted (h) norm of the magnetic field on a regular grid with 5km spacing and an RMSE of 8.2nT.
 }
 \label{fig:dual_layer_synthetic}
 \end{figure}
 \
 
 Overall, the dual layer approach improves predictions by allowing the deep layer to capture the regional, long-wavelength signals, whilst the shallow layer focuses on the short-wavelength signals and corrects potential errors from the deep layer. This combination enhances the accuracy when compared to the single layer approach, illustrating the advantages of using multiple layers of equivalent sources to model multi-scale sources. Applying padding to the deep layer reduces the edge effects along the survey borders, a common artefact when using a single layer model. The BK-CV method provides a more automated and efficient way to select optimal hyper-parameters. Additionally, the use of the GB EQS method reduces the computational load and the processing time. By repeating this method twice also helps to minimise errors in the initial selection of windows during the iteration.
-
+\clearpage
 
 \subsection{Truncated Regional}
 \label{sec:truncated_regional}
-The impact of a truncated regional signal was also investigated after observing the single layer approach struggles to accurately predict the regional field. To assess this effect, both the single and dual layer models were applied while progressively truncating the regional dipole by moving it beyond the survey boundary. As the regional dipole became increasingly truncated, the RMSE for both models increased, particularly for the prediction of the norm of the magnetic field. However, the dual layer approach consistently exhibited a lower RMSE compared to the single layer approach, suggesting it provides more reliable predictions in the presence of a truncated regional field signal. Furthermore, the single layer approach was more susceptible to edge effects as the regional dipole was moved further out of the survey bounds. On the contrary, the dual layer approach mitigated these edge effects, further highlighting the importance of using a multi-layer approach.
+The impact of a truncated regional signal was also investigated further after observing the single layer approach struggled to accurately predict the regional field. To assess this effect, both the single and dual layer models were applied while progressively truncating the regional dipole by moving it beyond the survey boundary. An example of the truncated regional dipole is illustrated in Figure~\ref{fig:truncated_regional}). Both single and dual layer approaches appear to underestimate the magnitude of the truncated regional signal. Furthermore, the single layer approach creates edge effects along the survey bounds resulting from the truncated regional signal (see Figure~\ref{fig:truncated_regional}b). On the contrary, the dual layer approach mitigated these edge effects (see Figure~\ref{fig:truncated_regional}c), which was also noted in Section~\ref{sec:single_vs_dual}.
 
+\begin{figure}[!h]
+\centering
+\includegraphics[width=1\linewidth]{paper/figures/truncated_regional.png}
+\caption{
+    Synthetic data with a truncating regional dipole and the predictions using a single and dual layer of equivalent sources. a) true total field anomaly on a regular grid with 5km spacing, b) predicted total field anomaly on regular grid with 5km spacing using a single layer of equivalent sources, c) predicted total field anomaly on a regular grid with 5km spacing using the dual layer of equivalent sources; d) true norm of the magnetic field on a regular grid with 5km spacing, e) predicted norm of the magnetic field on a regular grid with 5km spacing using a single layer of equivalent sources, c) predicted norm of the magnetic field on a regular grid with 5km spacing using the dual layer of equivalent sources.
+}
+\label{fig:truncated_regional}
+\end{figure}
+
+
+As the regional dipole became increasingly truncated, the RMSE for both models increased, particularly for the prediction of the norm of the magnetic field (see the grey shaded region of Figure~\ref{fig:truncated_regional_rmses}). However, the dual layer approach consistently exhibited a lower RMSE compared to the single layer approach, suggesting it provides more reliable predictions overall, as well as, in the presence of a truncated regional field signal. The impact of a truncated long-wavelength signal further highlights the importance of using a multi-layer approach when applying the equivalent sources technique.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=1\linewidth]{paper/figures/truncated_regional_rmses.png}
+\caption{
+    The Root Mean Square Errors (RMSE) from the predictions of the total field anomaly and norm of the magnetic field on a regular grid with 5km spacing using a single and dual layer of equivalent sources. The regional dipole was increasingly shifted outside the survey boundary. The x-axis shows the y-coordinate position of the top of the regional dipole. The shaded grey region shows when the regional dipole is truncated and can be partially seen within the survey boundary.
+}
+\label{fig:truncated_regional_rmses}
+\end{figure}
+
+\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Real Data Application}
 \label{sec:real_application}
@@ -421,7 +442,7 @@ The results for the total field anomaly along the survey lines are shown in Figu
 \centering
 \includegraphics[width=1\linewidth]{paper/figures/real_line_pred.png}
 \caption{
-    INSERT CAPTION
+    The observed total field anomaly data of the ICEGRAV survey \citep{ICEGRAV_data} (a), the prediction (b) on the same survey lines using the dual layer of equivalent sources and the residual (c) between the observed and the predicted with an RMSE of 27.3nT.
 }
 \label{fig:real_line_pred}
 \end{figure}
@@ -432,7 +453,7 @@ The predictions of the total field anomaly and norm of the magnetic field on a r
 \centering
 \includegraphics[width=1\linewidth]{paper/figures/real_grid_pred.png}
 \caption{
-    INSERT CAPTION
+    The predictions of the total field anomaly (a) and norm of the magnetic field (b) of the ICEGRAV survey \citep{ICEGRAV_data} on a regular grid with 5km spacing. The survey lines are shown in white.
 }
 \label{fig:real_grid_pred}
 \end{figure}
