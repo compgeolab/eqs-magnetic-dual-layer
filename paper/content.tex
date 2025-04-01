@@ -259,7 +259,6 @@ Estimating \textcolor{teal}{$\bar{\mathbf{c}}$} using the damped least-squares s
 To overcome this problem, \citet{Soler2021} adapted the gradient-boosting method from \citet{Friedman2001}, which provides a way to fit additive models iteratively. Using this method, the shallow source coefficients (\textcolor{teal}{$\bar{\mathbf{c}}^s$}) are estimated in overlapping windows and carried out iteratively. Following \citet{Friedman2002}, \citet{Soler2021} also iterated through the windows randomly to improve the accuracy of the prediction. 
 The gradient-boosted equivalent sources (GB EQS) method reduces the computational load by solving numerous smaller damped least-squares problems rather than one large problem. This method is applied to the shallow layer of equivalent sources because it is fitted to the entire dataset, which can contain millions of observations in real airborne surveys. An outline of the method is presented in Algorithm~\ref{alg:gradient_boosting}.
 
-\clearpage
 \begin{algorithm}[!h]
     \setstretch{1.5}
     Determine a set of $Q$ windows overlapping by 50\% that are equal in size and cover the whole survey area
@@ -416,27 +415,25 @@ The impact of a truncated regional signal was also investigated further after ob
 \end{figure}
 
 
-As the regional dipole became increasingly truncated, the RMSE for both models increased, particularly for the prediction of the norm of the magnetic field (see the grey shaded region of Figure~\ref{fig:truncated_regional_rmses}). However, the dual layer approach consistently exhibited a lower RMSE compared to the single layer approach, suggesting it provides more reliable predictions overall, as well as, in the presence of a truncated regional field signal. The impact of a truncated long-wavelength signal further highlights the importance of using a multi-layer approach when applying the equivalent sources technique.
+As the regional dipole became increasingly truncated, the RMSE for both models increased and then decreased back to the initial RMSE. The RMSE for the norm of the magnetic field (see the grey shaded region of Figure~\ref{fig:truncated_regional_rmses}) significantly increased in comparison to the total field anomaly. The dual layer approach consistently exhibited a lower RMSE compared to the single layer approach, suggesting it provides more reliable predictions overall, as well as, in the presence of a truncated regional field signal. The impact of a truncated long-wavelength signal further highlights the importance of using a multi-layer approach when applying the equivalent sources technique.
 
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\linewidth]{paper/figures/truncated_regional_rmses.png}
 \caption{
-    The Root Mean Square Error (RMSE) from the predictions of the total field anomaly (solid lines) and norm of the magnetic field (dashed lines) on a regular grid (with 5km spacing) as the regional dipole was increasingly shifted outside the survey boundary (a). The x-axis in (a) shows the y-coordinate at the top of the regional dipole. The RMSEs from the single layer approach are shown in orange and the RMSEs from the dual layer approach are shown in green. The shaded grey region in (a) highlights when the regional dipole was truncated. (b-d) shows the true total field anomaly with an increasingly truncated regional dipole. The y-coordinates at the top of the regional dipole are 2880km (b), 2800km (c) and 2730km (d).
+    The Root Mean Square Error (RMSE) from the predictions of the total field anomaly (solid lines) and norm of the magnetic field (dashed lines) on a regular grid (with 5km spacing) as the regional dipole was shifted outside the survey boundary (a). The x-axis in (a) shows the y-coordinate at the top of the regional dipole. The RMSEs from the single layer approach are shown in orange and the RMSEs from the dual layer approach are shown in green. The shaded grey region in (a) highlights when the regional dipole was truncated and could partially be seen within the survey bounds. (b-d) shows the true total field anomaly on regular grids (with 5km spacing) with the regional dipole located at different y-coordinates as it was shifted outside the survey bounds. The y-coordinates at the top of the regional dipole are 2730km (b), 2800km (c) and 2880km (d).
 }
 \label{fig:truncated_regional_rmses}
 \end{figure}
 
-\clearpage
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Real Data Application}
 \label{sec:real_application}
 
 The method was applied to the open-access aeromagnetic survey data from the ICEGRAV campaigns \citep{ICEGRAV_data}, which spanned from 2010 to 2013. The data covers parts of interior East Antarctica and the Antarctic Peninsula, including key areas such as the Dronning Maud Land ice stream systems and the Recovery Lakes drainage basin. This dataset was selected to showcase the effectiveness of the method on real-world data that features irregular survey flight lines, substantial spacing between those lines and varying line altitudes. The dataset’s distinctive characteristics, in terms of its vast geographical coverage, complex data collection and large amount of data points (404,363 data points), provide a robust and challenging test case for evaluating the method's performance in complex conditions.
 
-The coordinates of this dataset were first projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The dual layer equivalent source method (see Algorithm~\ref{alg:dual_layer}) could then be applied to the observed data, which has already undergone preprocessing \citep{ICEGRAV_data}. To fit the deep equivalent source layer, the observed data was block-averaged using different block spacings to determine the ideal size for isolating most of the long-wavelength signals. A block spacing of 15 km $\times$ 15 km, with a padding of $ 0.3 \times $ the block spacing, was selected. The padding allows for additional data points along the survey boundary, reducing the potential for edge effects at the borders. The BK-CV method (see Algorithm~\ref{alg:BK-CV}) was applied with a block size of 200 km $\times$ 200 km to determine the optimal hyper-parameters which yield the lowest BK-CV RMSE. The chosen parameters were a damping value of 10 and a relative depth of approximately 55 km. The shallow layer was then fitted to the residuals from the deep layer using the GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) with a window size of 400 km $\times$ 400 km. The BK-CV method (see Algorithm~\ref{alg:BK-CV}) was utilised again to determine the optimal hyper-parameters for the shallow layer. Using a block size of 20 km $\times$ 20 km, the chosen parameters with the lowest BK-CV RMSE were a damping value of 100 and a relative depth of approximately 10 km. The GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was applied twice to the shallow layer to minimise potential errors in the initially selected windows of the iterations.
-
-The results for the total field anomaly along the survey lines are shown in Figure~\ref{fig:real_line_pred}. The dual layer provides a good prediction of the complicated dataset, with an RMSE of 27.3nT.
+The coordinates of this dataset were first projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The dual layer equivalent source method (see Algorithm~\ref{alg:dual_layer}) could then be applied to the observed data, which has already undergone preprocessing \citep{ICEGRAV_data}. To fit the deep equivalent source layer, the observed data was block-averaged using different block spacings to determine the ideal size for isolating most of the long-wavelength signals. A block spacing of 15 km $\times$ 15 km, with a padding of $ 0.3 \times $ the block spacing, was selected. The padding allows for additional data points along the survey boundary, reducing the potential for edge effects at the borders. The BK-CV method (see Algorithm~\ref{alg:BK-CV}) was applied with a block size of 200 km $\times$ 200 km to determine the optimal hyper-parameters which yield the lowest BK-CV RMSE. The chosen parameters were a damping value of 10 and a relative depth of approximately 55 km. The shallow layer was then fitted to the residuals from the deep layer using the GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) with a window size of 400 km $\times$ 400 km. The BK-CV method (see Algorithm~\ref{alg:BK-CV}) was utilised again to determine the optimal hyper-parameters for the shallow layer. Using a block size of 20 km $\times$ 20 km, the chosen parameters with the lowest BK-CV RMSE were a damping value of 100 and a relative depth of approximately 10 km. The GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was applied twice to the shallow layer to minimise potential errors in the initially selected windows of the iterations. The results for the total field anomaly along the survey lines are shown in Figure~\ref{fig:real_line_pred}. The dual layer provides a good prediction of the complicated dataset, with an RMSE of 27.3nT.
 
 \begin{figure}[!h]
 \centering
@@ -457,7 +454,7 @@ The predictions of the total field anomaly and norm of the magnetic field on a r
 }
 \label{fig:real_grid_pred}
 \end{figure}
-\clearpage
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
