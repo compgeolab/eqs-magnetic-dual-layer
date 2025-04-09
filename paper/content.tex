@@ -2,35 +2,42 @@
 
 \section{Introduction}
 
-Potential field data often need to be interpolated onto a regular grid at constant height before further application, such as modelling crustal structures and geological interpretation. However, many gridding methods do not consider the variable survey heights which are typical of airborne data. Additionally, some methods assume potential fields are not harmonic. However, the total field anomaly is harmonic when the magnitude is much smaller than the magnitude of the geomagnetic field, which is true for most instances in which the total field anomaly is observed \citep{Blakley1995}.
+Potential field data often need to be interpolated onto a regular grid at constant height before further application, such as modelling crustal structures and geological interpretation. However, many gridding methods do not consider the variable survey heights which are typical of airborne data. Additionally, most methods do not take advantage of the fact that potential fields are harmonic functions. For example, the total field magnetic anomaly is harmonic when the magnitude of the anomalous field is much smaller than the magnitude of the geomagnetic field, which is true for most instances in which the total field anomaly is observed \citep{Blakley1995}.
 
-A widely used approach that addresses these issues is the Equivalent Source Technique, first introduced by \citet{Dampney1969} and based on potential theory from \citet{Kellogg1967}. This method approximates any harmonic function as the sum of discrete point source effects, which are then used to predict the potential field in unobserved locations. However, estimating the source coefficients that best fit the observed data is computationally demanding and and inherently non-unique. Since its introduction, numerous adaptations of the Equivalent Source Technique have been developed to improve the computational efficiency and accuracy, such as: \citet{Leao1989}, \citet{Cordell1992}, \citet{Mendona1994}, \citet{Guspi2009}, \citet{Li2010}, \citet{OliveiraJr2013}, \citet{Siqueira2017}, \citet{Jirigalatu2019}, \citet{Mendona2020}, \citet{Li2020}, \citet{Soler2021} and \citet{Piauilino2024}.
+A widely used approach that addresses these issues is the equivalent sources (also known as equivalent layer) technique, first introduced by \citet{Dampney1969} and based on potential theory \citep{Kellogg1967}. This method approximates any harmonic function as the sum of discrete point source effects, which are then used to predict the potential field in unobserved locations. However, estimating the source coefficients that best fit the observed data is computationally demanding and inherently non-unique. Since its introduction, numerous adaptations of the EQS Technique have been developed to improve the computational efficiency and accuracy, such as: \citet{Leao1989}, \citet{Cordell1992}, \citet{Mendona1994}, \citet{Guspi2009}, \citet{Li2010}, \citet{OliveiraJr2013}, \citet{Siqueira2017}, \citet{Jirigalatu2019}, \citet{Mendona2020}, \citet{Li2020}, \citet{Soler2021}, \citet{Takahashi2022} and \citet{Piauilino2024}. A comprehensive review of the equivalent sources technique was undertaken by \citet{OliveiraJr2023} and we refer readers to it for more information.
 
-A comprehensive review of the Equivalent Source Technique by \citet{OliveiraJunior2023} found the moving data-window and direct deconvolution were the fastest methods, though they still had limitations. The data is required to be distributed on a regular grid at constant height, a stabilising parameter is needed and the predictions often introduce border effects. Furthermore, \citet{Li2020} identified that incorporating an additional deeper layer of equivalent sources improved the accuracy of the predictions, particularly for the long-wavelength fields. \citet{Li2020} fit both equivalent source layers to the observed data simultaneously using prisms. This required a depth-weighing factor to prevent the shallow layer coefficients from dominating, due to the sensitivity matrix elements of the shallow layer being much larger than the elements associated with the deep layer.
+For magnetic data in particular, the recent study of \citet{Li2020} identified that incorporating an additional deeper layer of equivalent sources improved the accuracy of the predictions, particularly for the long-wavelength components. \citet{Li2020} fit both shallow and deep equivalent source layers to the observed data simultaneously using prisms as the sources. This required a depth-weighing factor to prevent the shallow layer coefficients from dominating, due to the sensitivity matrix elements of the shallow layer being much larger than those associated with the deep layer.Fitting both layers at once also significantly increases the computational cost of the inversion.
 
-An alternative approach to mitigate the computational challenges, eliminate the need for regularly spaced data at constant height and reduce border effects is presented: Dual-Layer Gradient-Boosted Equivalent Sources.  This approach aims to enhances both efficiency and accuracy by:
+A strong motivation for accepting such a cost is the ability to calculate the amplitude of the anomalous magnetic field from the total-field anomaly observations. The anomalous field is the magnetic field produced by crustal sources and the total-field anomaly is approximately the projection of this field onto the direction of the geomagnetic field \citep{Blakley1995}. Although 3D non-linear inversions of total-field anomaly are known to be sensitive to the often unknown magnetisation direction, \citet{HidalgoGato2021} show that inversion of the amplitude of the anomalous magnetic field are much less sensitive to uncertainty in the magnetisation direction. Additionally, \citet{Melo2021} demonstrates the amplitude of the anomalous field can be useful for interpreting magnetic data at low latitudes, where other techniques, such as reduction-to-the-pole, tend to be unstable.
+
+A caveat of using the equivalent sources techniques is the need for manual selection of hyper-parameters, such as the damping regularisation parameter and the depth of the equivalent sources. A widely used machine learning technique, often used in statistics, for assessing how well a model is at making predictions is cross-validation (CV). \citet{Geisser1975} introduced the K-Fold method to reduce computational load compared to other cross-validation methods. 
+In equivalent sources processing, \citet{Soler2021} applied K-Fold cross-validation to estimate the damping parameter and the depth of the equivalent sources when gridding gravity data over the country of Australia. However, \citet{Roberts2017} later showed that when observations are spatially auto-correlated, meaning that nearby observations have similar values, a common feature of potential-field data due to their smooth nature, K-Fold cross-validation tends to underestimate the interpolation error and leads to overfitting of the model. To combat this, \citet{Roberts2017} developed the Blocked K-Fold method, specifically designed for cross-validation of spatially auto-correlated data. 
+
+This study presents the dual-layer gradient-boosted magnetic equivalent sources method to fit total field anomaly data and predict the norm of the anomalous magnetic anomalous field. This creates a dataset less dependent on the direction of Earth’s main field and crustal magnetisation. 
+The approach mitigates the computational challenges of applying a dual layer approach to millions of data points and reduces border effects. This enhances both the efficiency and the accuracy by:
+
 \begin{enumerate}
-  \item Fitting a deep equivalent source layer of magnetic dipoles to block-averaged observed data.
-  \item Fitting a second, shallower layer of equivalent sources to the residuals from the deep equivalent source layer prediction, using \citet{Soler2021} Gradient-Boosted Equivalent Sources technique.
-  \item The final prediction is the summation of the predictions from both layers on a regular grid.
+  \item Fitting a deep equivalent source layer of magnetic dipoles to a reduced set of observed data by block-averaging the data before inversion.
+  \item Fitting a second, shallower layer of equivalent sources to the residuals from the deep equivalent sources using the gradient-boosting method of \citet{Soler2021}.
+  \item Composing the final prediction of either total-field anomaly or norm of the anomalous field by the summation of the predictions from both layers on a regular grid.
+  \item Using Block K-Fold cross-validation to assist in the determination the optimal damping parameter and depth of the equivalent sources.
 \end{enumerate}
 
-Another caveat of using the equivalent source techniques is the need for manual selection of hyper-parameters, such as damping and the depth of the equivalent source layers. A widely used machine learning technique, often used in statistics, for assessing how well a model is at making predictions is Cross Validation (CV). Geisser (1975) introduced K-Fold CV to reduce computational load compared to other CV methods. Roberts et al. (2017) later adapted this approach by developing the Blocked K-Fold CV, specifically designed for spatially auto-correlated data. This is crucial when nearby observations have similar values, a common feature of potential-field data due to their smooth nature. To assist with determining the optimal hyper-parameters of the equivalent source layers, Block K-Fold CV is utilised.
-
-Currently available magnetic methods are sensitive the direction of Earth’s main magnetic field at the time of measurement and the presence of remanent magnetisation from the crust’s formation. However, the norm of the anomalous magnetic field is less dependent on the direction of magnetisation. This is particularly useful for areas with remanent magnetisation, low magnetic latitudes, sources with shallow inclination directions and sources with unknown magnetised directions (Hidalgo-Gato, et al., 2021; Melo, et al., 2021). This study uses the Dual-Layer Gradient-Boosted Equivalent Sources to fit the total field anomaly and predict the norm of the anomalous magnetic anomalous field, to create a dataset less dependent on the direction of Earth’s main field and crustal magnetisation.
+\noindent
+This approach demonstrates the effectiveness of the dual-layer method on synthetic data and a real aeromagnetic survey from Antarctica.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Methodology}
 
-The observed total field anomaly ($\Delta T$) is the difference between the measured norm of the total magnetic field ($\vec{\mathbf{T}}$) and the norm of the regional reference field ($\vec{\mathbf{F}}$, usually represented by the IGRF) at the time of measurement:
+The observed total field anomaly ($\Delta T$) is the difference between the measured norm of the total magnetic field ($\vec{\mathbf{T}}$) and the norm of the regional reference field ($\vec{\mathbf{F}}$), usually represented by the International Geomagnetic Reference Field (IGRF), at the time of measurement:
 \begin{equation}
     \Delta T = \vert \vec{\mathbf{T}} \vert - \vert \vec{\mathbf{F}} \vert
     \ .
 \end{equation}
 
 \noindent
-The total magnetic field ($\vec{T}$) is the sum of the anomalous magnetic field vector ($\vec{\mathbf{B}}$) and the regional field vector ($\vec{\mathbf{F}}$) \citep{Blakley1995, Langel1998, OliveiraJr2015}. The total field anomaly ($\Delta T$) can therefore be given by
+The total magnetic field ($\vec{\mathbf{T}}$) is the sum of the anomalous magnetic field vector ($\vec{\mathbf{B}}$) and the regional field vector ($\vec{\mathbf{F}}$) \citep{Blakley1995, Langel1998, OliveiraJr2015}. The total field anomaly ($\Delta T$) can therefore be given by
 \begin{equation}
     \Delta T = \vert \vec{\mathbf{F}} + \vec{\mathbf{B}} \vert - \vert \vec{\mathbf{F}} \vert
     \ .
@@ -199,7 +206,7 @@ Subsequently, a deep layer residual vector is calculated given by
     \label{eq:deep_residual}
 \end{equation}
 
-The shallow layer coefficients are estimated by fitting the $N$ deep layer residuals (\textcolor{orange}{$\bar{\mathbf{r}}^d$}). Since $N$ can be large for real-world airborne surveys (in the order of millions of observations), the fitting employs the gradient-boosted equivalent source technique from \citet{Soler2021}. As suggested by \citet{Soler2021}, the positions of the equivalent sources are calculated by block-averaging the data coordinates using a block size equal to the desired grid spacing, leading to $M^s < N$ sources. It is worth emphasizing that only the source coordinates undergo block-averaging and not the observed data themselves. Block-averaging the source coordinates reduces the computational load by reducing the number of source coefficients that need to be estimated.
+The shallow layer coefficients of size $M^s$, are estimated by fitting the $N$ deep layer residuals (\textcolor{orange}{$\bar{\mathbf{r}}^d$}). Since $N$ can be large for real-world airborne surveys (in the order of millions of observations), the fitting employs the gradient-boosted equivalent source technique from \citet{Soler2021}. As suggested by \citet{Soler2021}, the positions of the equivalent sources are calculated by block-averaging the data coordinates using a block size equal to the desired grid spacing, leading to $M^s < N$ sources. It is worth emphasizing that only the source coordinates undergo block-averaging and not the observed data themselves. Block-averaging the source coordinates reduces the computational load by reducing the number of source coefficients that need to be estimated.
 
 Once both the coefficients for both the deep and shallow layers are estimated, the total-field anomaly can be predicted by combining the predictions of both layers:
 \begin{equation}
@@ -288,7 +295,7 @@ Cross-validation (CV) is a machine learning technique commonly used in statistic
 
 \citet{Roberts2017} introduced the blocked versions of cross-validation methods for when data are spatially auto-correlated. This is necessary for when observations taken at close points tend to have similar values, which is often the case for potential-field data due to their smooth nature. In the Block K-Fold Cross-Validation (BK-CV) method, data (black dots in Figure~\ref{fig:BK-CV}) are first divided into non-overlapping spatial blocks of a specified size (orange blocks in Figure~\ref{fig:BK-CV}). These blocks are then randomly assigned to $K$ folds, ensuring each fold contains approximately the same number of data points. Data from folds 2 to $K$ are assigned to the training set (blue dots in step 1 of Figure~\ref{fig:BK-CV}), whilst the remaining fold is assigned to the testing set (red dots in step 1 of Figure~\ref{fig:BK-CV}). The training set is fitted with the equivalent source model using Equation\ref{eq:normal_equations} or the gradient-boosted equivalent sources method in order to estimate the parameters \textcolor{teal}{$\bar{\mathbf{c}}$}. The model is then used to predict \textcolor{orange}{$\mathbf{d_{test}}$}, the total field anomaly (\textcolor{orange}{$\Delta T (x, y, z)$}), on the coordinates from the testing set using Equation~\ref{eq:tfa_eqs} or the equivalent for the gradient-boosted equivalent sources.
 
-\begin{figure}[!tb]
+\begin{figure}[tb]
   \centering
   \includegraphics[width=1\linewidth]{paper/figures/bk_cv.png}
   \caption{
@@ -312,7 +319,7 @@ for $L$ number of testing points. This BK-CV process is iterated until all the f
     \setstretch{1.5}
     Split the data into blocks of a given size
     \;
-    Split the blocks randomly into K folds, with roughly the same number of data points per fold
+    Split the blocks randomly into K folds, with roughly the same number of data per fold
     \;
     \For{each fold $k$}{
         Assign fold $k$ to the testing set and the remaining folds to the training set
@@ -337,72 +344,69 @@ To determine the optimal hyper-parameters for each layer, a range of values for 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Synthetic Data Application}
 
-To assess the accuracy of the interpolations, the method was applied to synthetic datasets containing magnetic sources with varying shapes, sizes, depths and induced magnetisations. The synthetic dataset for this paper utilises the coordinates from the ICEGRAV 2013 aeromagnetic dataset \citep{ICEGRAV_data}, as detailed in Section~\ref{sec:real_application}. These coordinates were projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The Earth's main magnetic field direction was set to match the orientation at the time of the original measurements, with an inclination of -65$^\circ$ and declination of 35$^\circ$, consistent with the real aeromagnetic dataset. The regional magnetic field was modelled on a regularly spaced grid covering the entire survey area, located at 60km beneath the surface with an oscillating height of 15 km amplitude. The magnetisation for the regional field was specified to have an inclination of -50$^\circ$, declination of 40$^\circ$ and magnitude of $5 \cdot 10^{12}$nT. Pseudo-random Gaussian noise, with a standard deviation of 5nT, was also applied to the regional field. Additionally, a regional dipole was added to study the effects of a truncating regional signal (see Section~\ref{sec:truncated_regional} for further details). This dipole was placed at coordinates [2250km, 2730km, -70km], with a magnetisation of 55$^\circ$ inclination, 45$^\circ$ declination and $2 \cdot 10^{13}$nT magnitude. The descriptions of the shallower synthetic sources can be found in Table~\ref{table:shallow_sources}, in which the characteristics of their shape, location and magnetisation is outlined.
-\clearpage
-\begin{table}[hbt!]
+To assess the accuracy of the interpolations, the method was applied to synthetic datasets containing magnetic sources with varying shapes, sizes, depths and induced magnetisations. To ensure consistency with real-world conditions, the synthetic dataset was simulated using the flight lines from the ICEGRAV 2013 aeromagnetic dataset \citep{ICEGRAV_data}, as detailed in Section~\ref{sec:real_application}. These flight line coordinates were projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The Earth's main magnetic field direction was set to match the IGRF orientation at the time of the original measurements, with an inclination of -65$^\circ$ and declination of 35$^\circ$, consistent with the real aeromagnetic dataset. A regional magnetic field was modelled using the ``checkerboard'' function of Verde  \citep{verde} on a regularly spaced grid covering the entire survey area, located at 60 km beneath the surface with an oscillating height of 15 km amplitude. The magnetisation for the regional field was specified to have an inclination of -50$^\circ$, declination of 40$^\circ$ and magnitude of $5 \times 10^{12}$Am$^2$. A zero-mean pseudo-random Gaussian noise, with a standard deviation of 5 nT, was also applied to the regional field. Additionally, a deep dipole was added to study the effects of a truncated long-wavelength signal (see Section~\ref{sec:truncated_regional} for further details). This dipole was placed at coordinates (2250 km, 2730 km, -70 km), with a magnetisation of 55$^\circ$ inclination, 45$^\circ$ declination and $2 \times 10^{13}$Am$^2$ magnitude. The descriptions of the shallower synthetic sources can be found in Table~\ref{table:shallow_sources}, in which the characteristics of their shape, location and magnetisation are outlined.
+
+\begin{table}[tb!]
 \centering
 \begin{tabular}{c c c c c c}
-\hline
-Source & Shape & Location (km) &  & Magnitisation & \\
-\cline{4-6}
- &  & [x, y, height] & Inclination ($^\circ$) & declination ($^\circ$) & Magnitude (nT) \\
-\hline
-1 & Oval & [1930, 3030, -6] & 75 & 60 & $2 \cdot 10^{10}$ \\
-2 & Irregular & [1960, 2980, -0.8] & -60 & 45 & $3 \cdot 10^{9}$ \\
-3 & Small Dipole & [1950, 2785, -0.5] & 45 & -65 & $5 \cdot 10^{10}$ \\
-4 & Small Dipole	& [2100, 3011, -0.5] & 45 & -65 & $5 \cdot 10^{10}$ \\
-5 & Small Dipole & [2110, 2955, -0.5] & 45 & -65 & $5 \cdot 10^{10}$ \\
-6 & Small Dipole & [2150, 2750, -0.5] & 45 & -65 & $5 \cdot 10^{10}$ \\
-7 &	Linear (Dyke) & [2200, 2950, -1] & -70 & 80 & $1 \cdot 10^{9}$ \\
-8 & Linear (Dyke) & [2220, 2870, -5] & -70 & 80 & $2 \cdot 10^{9}$ \\
-9 & Irregular & [2230, 2820, -0.9] & 50 & 70 & $5 \cdot 10^{9}$ \\
-10 & Large Dipole & [2260, 2830, -8] & -70 & 40 & $1 \cdot 10^{10}$ \\
-\hline
+\toprule
+ &  & Centre Location (km) &  & Magnetisation & \\
+\cmidrule{4-6}
+Source & Type & [x, y, depth] & Inc ($^\circ$) & Dec ($^\circ$) & Magnitude (Am$^2$) \\
+\midrule
+1 & Oval & [1930, 3030, 6] & 75 & 60 & $2 \times 10^{10}$ \\
+2 & Irregular & [1960, 2980, 0.8] & -60 & 45 & $3 \times 10^{9}$ \\
+3 & Small Dipole & [1950, 2785, 0.5] & 45 & -65 & $5 \times 10^{10}$ \\
+4 & Small Dipole	& [2100, 3011, 0.5] & 45 & -65 & $5 \times 10^{10}$ \\
+5 & Small Dipole & [2110, 2955, 0.5] & 45 & -65 & $5 \times 10^{10}$ \\
+6 & Small Dipole & [2150, 2750, 0.5] & 45 & -65 & $5 \times 10^{10}$ \\
+7 &	Linear (Dyke) & [2200, 2950, 1] & -70 & 80 & $1 \times 10^{9}$ \\
+8 & Linear (Dyke) & [2220, 2870, 5] & -70 & 80 & $2 \times 10^{9}$ \\
+9 & Irregular & [2230, 2820, 0.9] & 50 & 70 & $5 \times 10^{9}$ \\
+10 & Regional Dipole & [2260, 2830, 8] & -70 & 40 & $1 \times 10^{10}$ \\
+\bottomrule
 \end{tabular}
 \caption{Descriptions of the shallower synthetic sources.}
 \label{table:shallow_sources}
 \end{table}
 
-\subsection{With and without dual layer}
+\subsection{Single and Dual Layer Comparison}
 \label{sec:single_vs_dual}
-To assess the performance of a single verse dual layer of equivalent sources, the single layer of equivalent sources was first applied using the gradient-boosted equivalent sources (GB EQS) method (see Algorithm~\ref{alg:gradient_boosting}). To ensure optimal selection of the hyper-parameters, the Block K-Fold Cross-Validation (BK-CV) method (see Algorithm~\ref{alg:BK-CV}) was employed, using a block size of 30 km $\times$30 km over a wide range of parameter values. The optimal hyper-parameters, which resulted in the lowest BK-CV RMSE, were a damping value of $1 \cdot 10^{2}$ and a relative depth of 35km. With these optimised parameters, the GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was applied using a window size of 250 km $\times$ 250 km. To minimise errors in the initially selected windows of the iteration, the method was repeated twice. 
 
-The resulting predictions for the total field anomaly along the survey lines, the regularly gridded lines, and the norm of the anomalous magnetic field along the regularly gridded lines are shown in Figure~\ref{fig:single_layer_synthetic}. The prediction of the total field anomaly along the survey lines (Figure~\ref{fig:single_layer_synthetic}b) provides overall an accurate prediction, with an RMSE of 8.5nT. However, it underestimates the magnitude of the four small, shallow dipoles, a pattern consistent with the predictions for both, the total field anomaly (Figure~\ref{fig:single_layer_synthetic}e) and the norm of the anomalous magnetic field (Figure~\ref{fig:single_layer_synthetic}h) on a regular grid. Furthermore, the single layer model introduces undulating ripple effects at the edges of the sources, especially along the dykes. It also generates edges effects at the borders of the survey area. These results highlight a key challenge when fitting both, the long-wavelength components and the short-wavelength components simultaneously with a single layer.
-
-Further exploration of the single layer model reveals an inherent trade-off: when placing the equivalent source layer deeper, it captures the regional, long-wavelength signals more effectively but struggles with the short-wavelength signals. Conversely, placing the equivalent source layer shallower, improves the capture of the short-wavelength signals but compromises the ability to determine the regional, long-wavelength signals. This balancing act emphasises the limitations of using a single-layer approach in modelling multi-scale sources and underlines the need for using a multi-layer model.
-\clearpage
-
-\begin{figure}[!h]
+\begin{figure}[tb!]
 \centering
 \includegraphics[width=1\linewidth]{figures/single_layer_synthetic.png}
 \caption{
-    Synthetic data and the predictions using a single layer of equivalent sources. a) observed total field anomaly of the synthetic data on the survey lines from the ICEGRAV survey \citep{ICEGRAV_data}, b) total field anomaly prediction on the survey lines, c) residual between the observed (a) and predicted (b) total field anomaly on the survey lines with a RMSE of 8.5nT; d) true total field anomaly on a regular grid with 5km spacing, e) predicted total field anomaly on regular grid with 5km spacing, f) residual between the true (d) and predicted (e) total field anomaly on a regular grid with 5km spacing and an RMSE of 13.2nT; g) true norm of the anomalous magnetic field on a regular grid with 5km spacing, h) predicted norm of the anomalous magnetic field on a regular grid with 5km spacing, i) residual between the true (g) and predicted (h) norm of the anomalous magnetic field on a regular grid with 5km spacing and an RMSE of 14.1nT.
+    Synthetic data and the predictions using a single layer of equivalent sources. a) observed total field anomaly of the synthetic data on the survey lines from the ICEGRAV survey \citep{ICEGRAV_data}, b) total field anomaly prediction on the survey lines, c) residual between the observed (a) and predicted (b) total field anomaly on the survey lines with a RMSE of 8.5 nT; d) true total field anomaly on a regular grid with 5 km spacing, e) predicted total field anomaly on regular grid with 5 km spacing, f) residual between the true (d) and predicted (e) total field anomaly on a regular grid with 5 km spacing and an RMSE of 13.2 nT; g) true norm of the anomalous magnetic field on a regular grid with 5 km spacing, h) predicted norm of the anomalous magnetic field on a regular grid with 5 km spacing, i) residual between the true (g) and predicted (h) norm of the anomalous magnetic field on a regular grid with 5 km spacing and an RMSE of 14.1 nT.
 }
 \label{fig:single_layer_synthetic}
 \end{figure}
 
-To explore the potential benefits of a dual layer model, the dual layer equivalent source method (see Algorithm~\ref{alg:dual_layer}) was applied. The observed data was block averaged using different block spacings in order to determine the ideal size that isolates the long-wavelength signals for the deep layer to fit. When the block spacing is too small, some of the short-wavelength signals are captured, resulting in the deep layer not capturing all of the regional, long-wavelength signals due to trying to fit both long- and short-wavelengths. When the block spacing is too large, not all of the regional signals are captured either. Those chosen ideal block spacing for this synthetic data was 25 km $\times$ 25 km with a padding of $0.2 \times $ block spacing. The use of padding allows for more data points that fall along the survey boundary to be used, reducing the potential for edge effects at the borders that were seen in the single layer model. Using the BK-CV method (see Algorithm~\ref{alg:BK-CV}) with a block size of 100 km $\times$ 100 km, the optimal hyper-parameters for the deep layer, which resulted in the lowest BK-CV RMSE, were a damping value of 1 and a relative depth of approximately 117 km ($6 \cdot $ grid spacing). The shallow layer was then fitted to the residuals from the deep layer in order to focus on fitting the shorter-wavelength signals, as well as correct potential errors caused by the deep layer. The GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was utilised with a window size of 250 km $\times$ 250 km, matching the single layer model. To optimise the shallow layer’s hyper-parameters, the BK-CV method was applied with a block size of 30 km $\times$ 30 km (the same as the single layer model) to account for local variations in the data. The optimal hyper-parameters for the shallow layer, resulting in the lowest BK-CV RMSE, were a damping value of $1 \cdot 10^{2}$ and a relative depth of 17 km. The GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was applied twice to the shallow layer to minimise potential errors in the initial windows selected in the iteration, similar to the single layer model. 
-
-The results for the total field anomaly along the survey lines, regularly gridded lines, and the norm of the anomalous magnetic field on the regularly gridded lines are shown in Figure~\ref{fig:dual_layer_synthetic}. The dual layer model provides a significantly improved prediction of the total field anomaly along the survey lines (Figure~\ref{fig:dual_layer_synthetic} b), with an RMSE of 4.7nT, particularly in capturing the four small dipoles. It also demonstrates the method is able to interpolate onto regularly gridded lines and upward continue to a constant height (see Figure~\ref{fig:dual_layer_synthetic} e and h). Additionally, the regional field prediction is much smoother, with no edge effects at the survey borders or along the dykes. The dual layer model successfully reduces the undulating ripple effects near the edges of the sources. However, the dual-layer method does face challenges when predicting on the regular grid (Figure~\ref{fig:dual_layer_synthetic} e and h). Specifically, the method struggles with artifacts related to the flight lines, particularly along the dykes. The gaps between the survey lines appear more pronounced in these areas, leading to visible discontinuities. This issue could be addressed by adjusting the relative depth of the shallow layer, but in doing so may impact the accuracy of the small anomalies such as the small dipoles. Therefore, after using the Block K-Fold Cross Validation to narrow the range of optimal values, visual inspection of the predictions is necessary in order to select the final value.
-\begin{figure}[!h]
+\begin{figure}[tb!]
 \centering
 \includegraphics[width=1\linewidth]{figures/dual_layer_synthetic.png}
 \caption{
-    Synthetic data and the predictions using the dual layer equivalent sources. a) observed total field anomaly of the synthetic data on the survey lines from the ICEGRAV survey \citep{ICEGRAV_data}, b) total field anomaly prediction on the survey lines, c) residual between the observed (a) and predicted (b) total field anomaly on the survey lines with a RMSE of 4.7nT; d) true total field anomaly on a regular grid with 5km spacing, e) predicted total field anomaly on regular grid with 5km spacing, f) residual between the true (d) and predicted (e) total field anomaly on a regular grid with 5km spacing and an RMSE of 8.2nT; g) true norm of the anomalous magnetic field on a regular grid with 5km spacing, h) predicted norm of the anomalous magnetic field on a regular grid with 5km spacing, i) residual between the true (g) and predicted (h) norm of the anomalous magnetic field on a regular grid with 5km spacing and an RMSE of 8.2nT.
+    Synthetic data and the predictions using the dual layer equivalent sources. a) observed total field anomaly of the synthetic data on the survey lines from the ICEGRAV survey \citep{ICEGRAV_data}, b) total field anomaly prediction on the survey lines, c) residual between the observed (a) and predicted (b) total field anomaly on the survey lines with a RMSE of 4.7 nT; d) true total field anomaly on a regular grid with 5 km spacing, e) predicted total field anomaly on regular grid with 5 km spacing, f) residual between the true (d) and predicted (e) total field anomaly on a regular grid with 5 km spacing and an RMSE of 8.2 nT; g) true norm of the anomalous magnetic field on a regular grid with 5 km spacing, h) predicted norm of the anomalous magnetic field on a regular grid with 5 km spacing, i) residual between the true (g) and predicted (h) norm of the anomalous magnetic field on a regular grid with 5 km spacing and an RMSE of 8.2 nT.
 }
 \label{fig:dual_layer_synthetic}
 \end{figure}
 
+To assess the performance of a single versus a dual layer of equivalent sources, the single layer of equivalent sources was first applied using the GB EQS method (see Algorithm~\ref{alg:gradient_boosting}). To ensure optimal selection of the hyper-parameters, the BK-CV method (see Algorithm~\ref{alg:BK-CV}) was employed, using a block size of 30 km $\times$ 30 km over a wide range of parameter values. The optimal hyper-parameters, which resulted in the lowest BK-CV RMSE, were a damping value of $1 \times 10^{2}$ and a relative depth of 35km. With these optimised parameters, the GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was applied using a window size of 250 km $\times$ 250 km. To minimise errors in the initially selected windows of the iteration, the method was repeated twice. 
 
+The resulting single-layer predictions for the total field anomaly along the survey lines, total field anomaly on the regular grid, and the norm of the anomalous magnetic field on the regular grid are presented in Figure~\ref{fig:single_layer_synthetic}. The prediction of the total field anomaly along the survey lines (Figure~\ref{fig:single_layer_synthetic}b) provides overall an accurate prediction, with an RMSE of 8.5nT. However, it underestimates the magnitude of the four small, shallow dipoles, a pattern consistent with the predictions for both, the total field anomaly (Figure~\ref{fig:single_layer_synthetic}e) and the norm of the anomalous magnetic field (Figure~\ref{fig:single_layer_synthetic}h) on a regular grid. Furthermore, the single layer model introduces undulating ripple effects at the edges of the sources, especially along the dykes. It also generates edges effects at the borders of the survey area. These results highlight a key challenge when fitting both, the long-wavelength components and the short-wavelength components simultaneously with a single layer.
 
-Overall, the dual-layer approach improves predictions by allowing the deep layer to capture the regional, long-wavelength signals, whilst the shallow layer focuses on the short-wavelength signals and corrects potential errors from the deep layer. This combination enhances the accuracy when compared to the single-layer approach, illustrating the advantages of using multiple layers of equivalent sources to model multi-scale sources. Applying padding to the deep layer reduces the edge effects along the survey borders, a common artefact when using a single layer model. The BK-CV method provides a more automated and efficient way to select optimal hyper-parameters. Additionally, the use of the GB EQS method reduces the computational load and the processing time. By repeating this method twice also helps to minimise errors in the initial selection of windows during the iteration.
-\clearpage
+Further exploration of the single layer model reveals an inherent trade-off: when placing the equivalent source layer deeper, it captures the regional, long-wavelength signals more effectively but struggles with the short-wavelength signals. Conversely, placing the equivalent source layer shallower, improves the capture of the short-wavelength signals but compromises the ability to determine the regional, long-wavelength signals. This balancing act emphasises the limitations of using a single-layer approach in modelling multi-scale sources and underlines the need for using a multi-layer model.
 
-\subsection{Truncated Regional}
+To explore the potential benefits of a dual layer model, the dual layer equivalent source method (see Algorithm~\ref{alg:dual_layer}) was applied. The observed data was block averaged using different block spacings in order to determine the ideal size that isolates the long-wavelength signals for the deep layer to fit. When the block spacing is too small, some of the short-wavelength signals are captured, resulting in the deep layer not capturing all of the regional, long-wavelength signals due to trying to fit both long- and short-wavelengths. When the block spacing is too large, not all of the regional signals are captured either. Those chosen ideal block spacing for this synthetic data was 25 km $\times$ 25 km with a padding of $0.2 \times $ block spacing. The use of padding allows for more data points that fall along the survey boundary to be used, reducing the potential for edge effects at the borders that were seen in the single layer model. Using the BK-CV method (see Algorithm~\ref{alg:BK-CV}) with a block size of 100 km $\times$ 100 km, the optimal hyper-parameters for the deep layer, which resulted in the lowest BK-CV RMSE, were a damping value of 1 and a relative depth of approximately 117 km ($6 \times$ grid spacing). The shallow layer was then fitted to the residuals from the deep layer in order to focus on fitting the shorter-wavelength signals, as well as correct potential errors caused by the deep layer. The GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was utilised with a window size of 250 km $\times$ 250 km, matching the single layer model. To optimise the shallow layer’s hyper-parameters, the BK-CV method was applied with a block size of 30 km $\times$ 30 km (the same as the single layer model) to account for local variations in the data. The optimal hyper-parameters for the shallow layer, resulting in the lowest BK-CV RMSE, were a damping value of $1 \times 10^{2}$ and a relative depth of 17 km. The GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was applied twice to the shallow layer to minimise potential errors in the initial windows selected in the iteration, similar to the single layer model. 
+
+The dual-layer EQS results for the total field anomaly along the survey lines, regular grid, and the norm of the anomalous magnetic field on the regular grid are shown in Figure~\ref{fig:dual_layer_synthetic}. The dual layer model provides a significantly improved prediction of the total field anomaly along the survey lines (Figure~\ref{fig:dual_layer_synthetic} b), with an RMSE of 4.7nT, particularly in capturing the four small dipoles. It also demonstrates the method is able to interpolate onto regularly gridded lines and upward continue to a constant height (see Figure~\ref{fig:dual_layer_synthetic} e and h). Additionally, the regional field prediction is much smoother, with no edge effects at the survey borders or along the dykes, for both the total field anomaly and norm of the anomalous magnetic field. This will allow different surveys to be blended more easily. The dual layer model successfully reduces the undulating ripple effects near the edges of the sources. However, the dual-layer method does face challenges when predicting on the regular grid (Figure~\ref{fig:dual_layer_synthetic} e and h). Specifically, the method struggles with artifacts related to the flight lines, particularly along the dykes. The gaps between the survey lines appear more pronounced in these areas, leading to visible discontinuities. This issue could be addressed by adjusting the relative depth of the shallow layer, but in doing so may impact the accuracy of the small anomalies such as the small dipoles. Therefore, after using the Block K-Fold Cross Validation to narrow the range of optimal values, visual inspection of the predictions is necessary in order to select the final value.
+
+Overall, the dual-layer approach improves predictions, for both total field anomaly and norm of the anomalous magnetic field, by allowing the deep layer to capture the regional, long-wavelength signals, whilst the shallow layer focuses on the short-wavelength signals and corrects potential errors from the deep layer. This combination enhances the accuracy when compared to the single-layer approach, illustrating the advantages of using multiple layers of equivalent sources to model multi-scale sources. Applying padding to the deep layer reduces the edge effects along the survey borders, a common artefact when using a single layer model. The BK-CV method provides a more automated and efficient way to select optimal hyper-parameters. Additionally, the use of the GB EQS method reduces the computational load and the processing time. By repeating this method twice also helps to minimise errors in the initial selection of windows during the iteration.
+
+\subsection{Truncated Long-wavelength Anomaly}
 \label{sec:truncated_regional}
-The impact of a truncated regional signal was also investigated further after observing the single-layer approach struggled to accurately predict the regional field. To assess this effect, both the single and dual layer models were applied while progressively truncating the regional dipole by moving it beyond the survey boundary. An example of the truncated regional dipole is illustrated in Figure~\ref{fig:truncated_regional}). Both single- and dual-layer approaches appear to underestimate the magnitude of the truncated regional signal. Furthermore, the single-layer approach creates edge effects along the survey bounds resulting from the truncated regional signal (see Figure~\ref{fig:truncated_regional}b). On the contrary, the dual-layer approach mitigated these edge effects (see Figure~\ref{fig:truncated_regional}c), which was also noted in Section~\ref{sec:single_vs_dual}.
 
-\begin{figure}[!h]
+\begin{figure}[tb!]
 \centering
 \includegraphics[width=1\linewidth]{paper/figures/truncated_regional.png}
 \caption{
@@ -411,10 +415,7 @@ The impact of a truncated regional signal was also investigated further after ob
 \label{fig:truncated_regional}
 \end{figure}
 
-
-As the regional dipole became increasingly truncated, the RMSE for both models increased and then decreased back to the initial RMSE. The RMSE for the norm of the anomalous magnetic field (see the grey shaded region of Figure~\ref{fig:truncated_regional_rmses}) significantly increased in comparison to the total field anomaly. The dual-layer approach consistently exhibited a lower RMSE compared to the single-layer approach, suggesting it provides more reliable predictions overall, as well as, in the presence of a truncated regional field signal. The impact of a truncated long-wavelength signal further highlights the importance of using a multi-layer approach when applying the equivalent sources technique.
-
-\begin{figure}[!h]
+\begin{figure}[tb!]
 \centering
 \includegraphics[width=1\linewidth]{paper/figures/truncated_regional_rmses.png}
 \caption{
@@ -423,45 +424,51 @@ As the regional dipole became increasingly truncated, the RMSE for both models i
 \label{fig:truncated_regional_rmses}
 \end{figure}
 
+The impact of a truncated long-wavelength signal was also investigated further after observing the single-layer approach struggled to accurately predict the regional field. To assess this effect, both the single and dual layer models were applied while progressively truncating the regional dipole by moving it beyond the survey boundary. An example of the truncated regional dipole is illustrated in Figure~\ref{fig:truncated_regional}). Both single- and dual-layer approaches appear to underestimate the magnitude of the truncated regional signal. Furthermore, the single-layer approach creates edge effects along the survey bounds resulting from the truncated regional signal (see Figure~\ref{fig:truncated_regional}b). On the contrary, the dual-layer approach mitigated these edge effects (see Figure~\ref{fig:truncated_regional}c), which was also noted in Section~\ref{sec:single_vs_dual}.
+
+As the regional dipole became increasingly truncated, the RMSE for both models increased and then decreased back to the initial RMSE as the dipole influence became less visible. The RMSE for the norm of the anomalous magnetic field (see the grey shaded region of Figure~\ref{fig:truncated_regional_rmses}) significantly increased in comparison to the total field anomaly. The dual-layer approach consistently exhibited a lower RMSE compared to the single-layer approach, suggesting it provides more reliable predictions overall, as well as, in the presence of a truncated regional field signal. The impact of a truncated long-wavelength signal further highlights the importance of using a multi-layer approach when applying the equivalent sources technique.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Real Data Application}
 \label{sec:real_application}
 
-The method was applied to the open-access aeromagnetic survey data from the ICEGRAV campaigns \citep{ICEGRAV_data}, which spanned from 2010 to 2013. The data covers parts of interior East Antarctica and the Antarctic Peninsula, including key areas such as the Dronning Maud Land ice stream systems and the Recovery Lakes drainage basin. This dataset was selected to showcase the effectiveness of the method on real-world data that features irregular survey flight lines, substantial spacing between those lines and varying line altitudes. The dataset’s distinctive characteristics, in terms of its vast geographical coverage, complex data collection and large amount of data points (404,363 data points), provide a robust and challenging test case for evaluating the method's performance in complex conditions.
-
-The coordinates of this dataset were first projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The dual layer equivalent source method (see Algorithm~\ref{alg:dual_layer}) could then be applied to the observed data, which has already undergone preprocessing \citep{ICEGRAV_data}. To fit the deep equivalent source layer, the observed data was block-averaged using different block spacings to determine the ideal size for isolating most of the long-wavelength signals. A block spacing of 15 km $\times$ 15 km, with a padding of $ 0.3 \times $ the block spacing, was selected. The padding allows for additional data points along the survey boundary, reducing the potential for edge effects at the borders. The BK-CV method (see Algorithm~\ref{alg:BK-CV}) was applied with a block size of 200 km $\times$ 200 km to determine the optimal hyper-parameters which yield the lowest BK-CV RMSE. The chosen parameters were a damping value of 10 and a relative depth of approximately 55 km. The shallow layer was then fitted to the residuals from the deep layer using the GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) with a window size of 400 km $\times$ 400 km. The BK-CV method (see Algorithm~\ref{alg:BK-CV}) was utilised again to determine the optimal hyper-parameters for the shallow layer. Using a block size of 20 km $\times$ 20 km, the chosen parameters with the lowest BK-CV RMSE were a damping value of 100 and a relative depth of approximately 10 km. The GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was applied twice to the shallow layer to minimise potential errors in the initially selected windows of the iterations. The results for the total field anomaly along the survey lines are shown in Figure~\ref{fig:real_line_pred}. The dual layer provides a good prediction of the complicated dataset, with an RMSE of 27.3nT.
-
-\begin{figure}[!h]
+\begin{figure}[tb!]
 \centering
 \includegraphics[width=1\linewidth]{paper/figures/real_line_pred.png}
 \caption{
-    The observed total field anomaly data of the ICEGRAV survey \citep{ICEGRAV_data} (a), the prediction (b) on the same survey lines using the dual layer of equivalent sources and the residual (c) between the observed and the predicted with an RMSE of 27.3nT.
+    The real data and prediction on the flight lines using the dual-layer approach. The observed total field anomaly data of the ICEGRAV survey \citep{ICEGRAV_data} (a), the prediction (b) on the same survey lines using the dual layer of equivalent sources and the residual (c) between the observed and the predicted with an RMSE of 27.3nT.
 }
 \label{fig:real_line_pred}
 \end{figure}
 
-The predictions of the total field anomaly and norm of the anomalous magnetic field on a regular grid are shown in Figure~\ref{fig:real_grid_pred}. Here, the method demonstrates its ability to interpolate onto regularly gridded lines, as well as upward continue to a constant height. The grid predictions reveal numerous points with magnetidue close to 0nT, a pattern that is also present in the observed data. However, it remains uncertain whether these near-zero values represent real values or if they are artifacts introduced during the data preprocessing. If the latter is the case, more careful preprocessing is necessary before applying the equivalent source method.
-\clearpage
+The method was applied to the open-access aeromagnetic survey data from the ICEGRAV campaigns \citep{ICEGRAV_data}, which spanned from 2010 to 2013. The data covers parts of interior East Antarctica and the Antarctic Peninsula, including key areas such as the Dronning Maud Land ice stream systems and the Recovery Lakes drainage basin. This dataset was selected to showcase the effectiveness of the method on real-world data that features irregular survey flight lines, substantial spacing between those lines and varying line altitudes. The dataset’s distinctive characteristics, in terms of its vast geographical coverage, complex data collection and large amount of data points (404,363 data points), provide a robust and challenging test case for evaluating the method's performance in complex conditions.
 
-\begin{figure}[!h]
+\begin{figure}[tb!]
 \centering
 \includegraphics[width=1\linewidth]{paper/figures/real_grid_pred.png}
 \caption{
-    The predictions of the total field anomaly (a) and norm of the anomalous magnetic field (b) of the ICEGRAV survey \citep{ICEGRAV_data} on a regular grid with 5km spacing. The survey lines are shown in white.
+    The real data predictions on a regular grid using the dual-layer approach. The prediction of the total field anomaly (a) and norm of the anomalous magnetic field (b) of the ICEGRAV survey \citep{ICEGRAV_data} on a regular grid with 5km spacing. The survey lines are shown in white.
 }
 \label{fig:real_grid_pred}
 \end{figure}
+
+The coordinates of this dataset were first projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The dual layer equivalent source method (see Algorithm~\ref{alg:dual_layer}) could then be applied to the observed data, which has already undergone preprocessing \citep{ICEGRAV_data}. To fit the deep equivalent source layer, the observed data was block-averaged using different block spacings to determine the ideal size for isolating most of the long-wavelength signals. A block spacing of 15 km $\times$ 15 km, with a padding of $ 0.3 \times $ the block spacing, was selected. The padding allows for additional data points along the survey boundary, reducing the potential for edge effects at the borders. The BK-CV method (see Algorithm~\ref{alg:BK-CV}) was applied with a block size of 200 km $\times$ 200 km to determine the optimal hyper-parameters which yield the lowest BK-CV RMSE. The chosen parameters were a damping value of 10 and a relative depth of approximately 55 km. The shallow layer was then fitted to the residuals from the deep layer using the GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) with a window size of 400 km $\times$ 400 km. The BK-CV method (see Algorithm~\ref{alg:BK-CV}) was utilised again to determine the optimal hyper-parameters for the shallow layer. Using a block size of 20 km $\times$ 20 km, the chosen parameters with the lowest BK-CV RMSE were a damping value of 100 and a relative depth of approximately 10 km. The GB EQS method (see Algorithm~\ref{alg:gradient_boosting}) was applied twice to the shallow layer to minimise potential errors in the initially selected windows of the iterations. The results for the total field anomaly along the survey lines are shown in Figure~\ref{fig:real_line_pred}. The dual layer provides a good prediction of the complicated dataset, with an RMSE of 27.3nT.
+
+The predictions of the total field anomaly and norm of the anomalous magnetic field on a regular grid are shown in Figure~\ref{fig:real_grid_pred}. Using a machine with 125 Gigabytes RAM, the dual layer approach took approximately 1 minute and 42 seconds to fit the observed total field anomaly and predict the norm of the anomalous field. Here, the method demonstrates its ability to interpolate onto regularly gridded lines, as well as upward continue to a constant height. The grid predictions reveal numerous points with magnitude close to 0nT, a pattern that is also present in the observed data. However, it remains uncertain whether these near-zero values represent real values or if they are artifacts introduced during the data preprocessing. If the latter is the case, more careful preprocessing is necessary before applying the equivalent source method.
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 
-Different adaptations of the Equivalent Source Technique have been developed to improve the computational efficiency and accuracy of the predictions. However, many of these approaches still face challenges, such as the need for regularly gridded data at constant height, reliance on a stabilising parameter or the presence of border effects in the predictions. The Dual-Layer Gradient-Boosted Equivalent Sources aims to address these limitations by: 
-1.	Using the dual-layer approach to improve the accuracy of the predictions and reduce the border effect.
-2.	Use block-averaging and the Gradient-Boosted Equivalent Sources method to reduce the computational load.
-3.	Apply Block K-Fold Cross Validation to guide optimal parameter selection for the model.
+Different adaptations of the Equivalent Source Technique have been developed to improve the computational efficiency and accuracy of the predictions. However, many of these approaches still face challenges, such as the need for regularly gridded data at constant height, reliance on a stabilising parameter or the presence of border effects in the predictions. The Dual-Layer Gradient-Boosted Equivalent Sources tackles these limitations by: 
+
+\begin{enumerate}
+    \item Using the dual-layer approach to improve the accuracy of the predictions and reduce the border effect.
+    \item Use block-averaging and the Gradient-Boosted Equivalent Sources method to reduce the computational load.
+    \item Apply Block K-Fold Cross Validation to guide optimal parameter selection for the model.
+\end{enumerate}
 
 The synthetic data tests demonstrate the dual-layer approach enhances the prediction accuracy by allowing the deeper layer to capture the regional, long-wavelength signals, whilst the shallower layer focuses on the short-wavelength signals. This approach also significantly improves predictions in cases where long-wavelength signals are truncated. Block-averaging the observed data reduces the number of sources needed in the deep layer, enabling it to focus on fitting the regional signals and decreasing the computational load. Applying padding to the deeper layer increases the number of data points along the survey border, reducing the potential for edge effects, a common issue with the Equivalent Source Technique. 
 To further enhance the computation efficiency, the Gradient-Boosted Equivalent Sources technique was utilised for fitting the shallow layer. This approach solves several smaller damp least-squares problems rather than solve one large problem. Repeating the window iterations of the shallow layer twice helped to minimise errors in the initially selected windows.
@@ -472,23 +479,21 @@ Applying the Dual-Layer Gradient-Boosted Equivalent Sources to the ICEGRAV data 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Open research}
+\section{Data Availability Statement}
 
-The Python source code used to produce all results and figures presented here
-is available at \url{https://github.com/\GitHubRepository} and
-\url{https://doi.org/\ArchiveDOI} under the MIT open-source license.
-
-Here we should cite all of the main software used, like Jupyter, numpy, scipy,
-matplotlib, Fatiando, etc.
-
-Cite any data sources as well.
+The Python source code used to produce all of the results and figures presented here are available at \url{https://github.com/\GitHubRepository} and
+\url{https://doi.org/\ArchiveDOI} under the CC-BY license and the MIT open-source license. This study also made use of the following open-source scientific software: Numpy \citep{numpy} for linear algebra, matplotlib \citep{matplotlib} and PyGMT \citep{pygmt} for generating figures and maps, pyproj \citep{pyproj} for data projection, Pandas \citep{pandas} for manipulating tabular data, xarray \citep{xarray} for working with gridded data, Verde \citep{verde} for the moving windows and interpolation and Harmonica \citep{harmonica} for potential-field data processing and modelling. The aeromagnetic data are available from the British Antarctic Survey \citep{ICEGRAV_data} under the UK Open Government Licence V3.0.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Acknowledgements}
 
-We are indebted to the developers and maintainers of the open-source software
-without which this work would not have been possible.
-Acknowledge any non-author contributors to this study.
-Statement about funding.
+We are indebted to the developers and maintainers of the open-source software without which this work would not have been possible.
+LU and IU were supported in part by start-up grant PRPI 22.1.09345.01.2 from Universidade de São Paulo.
 
-% Thank the editors and reviewers after review.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{CRediT author Contributions}
+
+\textbf{India Uppal:} Conceptualisation, Methodology, Software, Validation, Formal Analysis, Inversitgation, Resources, Data Curation, Writing - Original Draft, Writing - Review and Editing, Visualisation, Project administration.
+\textbf{Leonardo Uieda:} Conceptualisation, Methodology, Software, Resources, Writing - Review and Editing, Supervision.
+\textbf{Vanderlei Coelho Oliverira Jr.:} Conceptualisation, Methodology, Writing - Review and Editing, Supervision.
+\textbf{Richard Holme:} Conceptualisation, Writing - Review and Editing, Supervision.
