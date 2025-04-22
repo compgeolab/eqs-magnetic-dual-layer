@@ -37,21 +37,40 @@ The observed total field anomaly ($\Delta T$) is the difference between the meas
 
 \noindent
 The total magnetic field ($\vec{\mathbf{T}}$) is the sum of the anomalous magnetic field vector ($\vec{\mathbf{B}}$) and the regional field vector ($\vec{\mathbf{F}}$) \citep{Blakley1995, Langel1998, OliveiraJr2015}. The total field anomaly ($\Delta T$) can therefore be given by
-\begin{equation}
-    \Delta T = \vert \vec{\mathbf{F}} + \vec{\mathbf{B}} \vert - \vert \vec{\mathbf{F}} \vert
+
+\begin{align}
+    \Delta T &= \vert \vec{\mathbf{F}} + \vec{\mathbf{B}} \vert - \vert \vec{\mathbf{F}} \vert \ ,
+    \\    
+    &= \left(\vec{\mathbf{F}} \cdot \vec{\mathbf{F}} + 2\vec{\mathbf{F}} \cdot \vec{\mathbf{B}} + \vec{\mathbf{B}} \cdot \vec{\mathbf{B}}\right)^{\frac{1}{2}} - \vert \vec{\mathbf{F}} \vert 
     \ .
-\end{equation}
-\noindent
-For the majority of crustal anomalies measured by airborne and shipborne surveys, $\vec{\mathbf{B}} \ll \vec{\mathbf{F}}$. Additionally, $\vec{\mathbf{F}}$ can be considered constant on these scale of a single survey. Consequently, $\Delta T$ can be approximated as
+\end{align}
 
-\begin{equation}
+\noindent
+For the majority of crustal anomalies measured by airborne and shipborne surveys, $\vec{\mathbf{B}} \ll \vec{\mathbf{F}}$ and $\vert \vec{\mathbf{B}} \vert$ is negligible. Consequently, $\Delta T$ can be approximated as \citep{Blakley1995}
+
+\begin{align}
+    \Delta T &\approx \left(\vec{\mathbf{F}} \cdot \vec{\mathbf{F}} + 2\vec{\mathbf{F}} \cdot \vec{\mathbf{B}}\right)^{\frac{1}{2}} - \vert \vec{\mathbf{F}} \vert \ ,
+    \\
+    &= \vert \vec{\mathbf{F}} \vert \left(1 + 2\dfrac{\vec{\mathbf{F}} \cdot \vec{\mathbf{B}}}{\vec{\mathbf{F}} \cdot \vec{\mathbf{F}}}\right)^{\frac{1}{2}} - \vert \vec{\mathbf{F}} \vert \ .
+    \label{eq:}
+\end{align}
+
+\noindent
+Using the Taylor series expansion $\sqrt{1 + x} = 1 + \frac{x}{2} - \frac{x^2}{8} + \cdots$ up to the first-order term, the square-root can be eliminated giving
+
+\begin{align}
+    \Delta T & \approx \vert \vec{\mathbf{F}} \vert \left(1 + \dfrac{\vec{\mathbf{F}} \cdot \vec{\mathbf{B}}}{\vec{\mathbf{F}} \cdot \vec{\mathbf{F}}}\right) - \vert \vec{\mathbf{F}} \vert \ ,
+    \\
+    &=
+    \dfrac{\vec{\mathbf{F}} \cdot \vec{\mathbf{B}}}{\vert \vec{\mathbf{F}} \vert} \ ,
+    \\
 \label{eq:tfa_dot_product}
-    \Delta T\approx  \vec{\mathbf{B}} \cdot \hat{\mathbf{F}}
-    \ ,
-\end{equation}
+    \Delta T & \approx \vec{\mathbf{B}} \cdot \hat{\mathbf{F}}
+    \ ,   
+\end{align}
 
 \noindent
-in which $\hat{\mathbf{F}}$ is a unit vector in the same direction as the regional field. Thus, $\Delta T$ is approximately a harmonic function \citep{Blakley1995,OliveiraJr2015}.
+in which $\hat{\mathbf{F}}$ is a unit vector in the same direction as the regional field. Additionally, $\vec{\mathbf{F}}$ can be considered constant on the scale of a single survey. Thus, $\Delta T$ is approximately a harmonic function in most crustal magnetic studies \citep{Blakley1995,OliveiraJr2015}.
 
 
 \subsection{Equivalent Source Technique}
@@ -60,7 +79,7 @@ The equivalent source technique assumes any harmonic function \textcolor{orange}
 
 \begin{equation}
 \label{eq:eqs_technique}
-\textcolor{orange}{d (x, y, z)} = \sum_{j=1}^{M} a_j(x, y, z, x'_j, y'_j , z'_j) \textcolor{teal}{c_j}
+\textcolor{orange}{d (x, y, z)} = \sum_{j=1}^{M} a_j\left(x, y, z, x'_j, y'_j , z'_j\right) \textcolor{teal}{c_j}
 \ ,
 \end{equation}
 
@@ -469,7 +488,7 @@ The synthetic data tests demonstrate the dual layer approach enhances the model 
 
 Further exploration of the single-layer model demonstrates the inherent trade-off: when placing the equivalent source layer deeper, it captures the regional, long-wavelength signals more effectively but struggles with the short-wavelength signals. Conversely, placing the equivalent source layer shallower, improves the capture of the short-wavelength signals but compromises the ability to determine the regional, long-wavelength signals. This balancing act emphasises the limitations of using a single-layer approach in modelling multi-scale sources and underlines the need for using a multi-layer model. 
 
-An additional equivalent source layer that would act as an intermediate layer was tested on the synthetic datasets. However, the minimal improvement in model fit to the data did not justify the increase in computational load and decrease in stability for using three layers instead of two. Moreover, the synthetic tests revealed the dual layer approach often yielded more accurate fits to the data when the depths of the equivalent source layers closely matched those of the synthetic anomalies. This suggests the depth of the equivalent source layers may provide valuable physical insights into potential depth ranges of the magnetic anomalies. Further exploration into using multiple equivalent source layers and the physical implications of the depth of these layers is currently ongoing.
+An additional equivalent source layer that would act as an intermediate layer was tested on the synthetic datasets. However, the minimal improvement in model fit to the data did not justify the increase in computational load and decrease in stability for using three layers instead of two. Moreover, the synthetic tests revealed the dual layer approach often yielded more accurate interpolations when the depths of the equivalent source layers closely matched those of the synthetic anomalies. This suggests the depth of the equivalent source layers may provide valuable physical insights into potential depth ranges of the magnetic anomalies. Further exploration into using multiple equivalent source layers and the physical implications of the depth of these layers is currently ongoing.
 
 Applying the dual-layer gradient-boosted equivalent sources to the ICEGRAV data demonstrated the method’s ability to successfully interpolate the data, as well as predict the amplitude of the anomalous magnetic field. However, any artefacts from the data preprocessing will still be present in the final predictions, emphasising the importance of careful preprocessing before applying any gridding method.
 
@@ -491,7 +510,7 @@ We are indebted to the developers and maintainers of the open-source software wi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{CRediT author Contributions}
 
-\textbf{India Uppal:} Conceptualisation, Methodology, Software, Validation, Formal Analysis, Inversitgation, Resources, Data Curation, Writing - Original Draft, Writing - Review and Editing, Visualisation, Project administration.
+\textbf{India Uppal:} Conceptualisation, Methodology, Software, Validation, Formal Analysis, Investigation, Resources, Data Curation, Writing - Original Draft, Writing - Review and Editing, Visualisation, Project administration.
 \textbf{Leonardo Uieda:} Conceptualisation, Methodology, Software, Resources, Writing - Review and Editing.
-\textbf{Vanderlei Coelho Oliverira Jr.:} Conceptualisation, Methodology, Writing - Review and Editing
+\textbf{Vanderlei Coelho Oliverira Jr.:} Conceptualisation, Methodology, Writing - Review and Editing.
 \textbf{Richard Holme:} Conceptualisation, Writing - Review and Editing.
