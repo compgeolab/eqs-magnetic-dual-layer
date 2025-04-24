@@ -1,3 +1,6 @@
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\vecbf}[1]{\vec{\mathbf{#1}}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introduction}
@@ -28,19 +31,24 @@ This approach demonstrates the effectiveness of the dual-layer method on synthet
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Methodology}
 
-The observed total field anomaly ($\Delta T$) is the difference between the measured norm of the total magnetic field ($\vec{\mathbf{T}}$) and the norm of the regional reference field ($\vec{\mathbf{F}}$), usually represented by the International Geomagnetic Reference Field (IGRF), at the time of measurement:
+The total field anomaly $\Delta T(x, y, z)$, observed at a point $(x, y, z)$ on a Cartesian right-handed coordinate system with $x$ pointing eastward and $z$ pointing upward, is the difference between the measured norm of the total magnetic field $\vec{\mathbf{T}}(x, y, z)$ and the norm of the regional reference field $\vec{\mathbf{F}}(x, y, z)$, usually represented by the International Geomagnetic Reference Field (IGRF), at the time of measurement:
+
 \begin{equation}
-    \Delta T = \vert \vec{\mathbf{T}} \vert - \vert \vec{\mathbf{F}} \vert
+    \Delta T(x, y, z) = 
+    \norm{\vec{\mathbf{T}}(x, y, z)}
+    - \norm{\vec{\mathbf{F}}(x, y, z)}
     \ .
 \end{equation}
 
 \noindent
-The total magnetic field ($\vec{\mathbf{T}}$) is the sum of the anomalous magnetic field vector ($\vec{\mathbf{B}}$) and the regional field vector ($\vec{\mathbf{F}}$) \citep{Blakley1995, Langel1998, OliveiraJr2015}. The total field anomaly ($\Delta T$) can therefore be given by
+The total magnetic field $\vec{\mathbf{T}}$ is the sum of the anomalous magnetic field vector $\vec{\mathbf{B}}$, which is produced by lithospheric sources, and the regional field vector $\vec{\mathbf{F}}$ \citep{Blakley1995, Langel1998, OliveiraJr2015}. The total field anomaly $\Delta T$ can therefore be written as
 
 \begin{align}
-    \Delta T &= \vert \vec{\mathbf{F}} + \vec{\mathbf{B}} \vert - \vert \vec{\mathbf{F}} \vert \ ,
+    \Delta T &= 
+    \norm{\vec{\mathbf{F}} + \vec{\mathbf{B}}} - \norm{\vec{\mathbf{F}}}\ ,
     \\    
-    &= \left(\vec{\mathbf{F}} \cdot \vec{\mathbf{F}} + 2\vec{\mathbf{F}} \cdot \vec{\mathbf{B}} + \vec{\mathbf{B}} \cdot \vec{\mathbf{B}}\right)^{\frac{1}{2}} - \vert \vec{\mathbf{F}} \vert 
+    &= \left(
+        \vec{\mathbf{F}} \cdot \vec{\mathbf{F}} + 2\vec{\mathbf{F}} \cdot \vec{\mathbf{B}} + \vec{\mathbf{B}} \cdot \vec{\mathbf{B}}\right)^{\frac{1}{2}} - \vert \vec{\mathbf{F}} \vert 
     \ .
 \end{align}
 
