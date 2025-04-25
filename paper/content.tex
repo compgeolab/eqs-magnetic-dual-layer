@@ -124,7 +124,7 @@ in which \textcolor{orange}{$d_i$} is the predicted data calculated at the Carte
 The function $a_j(x_i, y_i, z_i)$ is the effect of the $j$-th source with unitary physical property, located at the Cartesian coordinates $(x'_j, y'_j, z'_j)$, calculated at the observation point $(x_i, y_i, z_i)$. The coefficients \textcolor{teal}{$c_j$} are the norm of the magnetic moment of the $j$-th source \textcolor{teal}{$\norm{\vecbf{m}_j} = m_j$}.
 
 For magnetic surveys, \textcolor{orange}{$d (x_i, y_i, z_i)$} from Equation~\ref{eq:eqs_technique} is equal to \textcolor{orange}{$\Delta T(x_i, y_i, z_i) = \vecbf{B}(x_i, y_i, z_i) \cdot \uvec{F}$} (Equation~\ref{eq:tfa_dot_product}). 
-Therefore, function $a_j(x_i, y_i, z_i) = \vecbf{b}_j(x_i, y_i, z_i) \cdot \uvec{F}$, in which $\vecbf{b}_j$ is the magnetic field of the $j$-th source with unit magnetic moment $\hat{\mathbf{m}}_j$.
+Therefore, function $a_j(x_i, y_i, z_i) = \vecbf{b}_j(x_i, y_i, z_i) \cdot \uvec{F}$, in which $\vecbf{b}_j(x_i, y_i, z_i)$ is the magnetic field of the $j$-th source with unit magnetic moment $\hat{\mathbf{m}}_j$.
 When the equivalent sources are dipoles, the magnetic field for a unit magnetic moment is given by \citep{Blakley1995}:
 
 \begin{equation}
@@ -138,6 +138,7 @@ When the equivalent sources are dipoles, the magnetic field for a unit magnetic 
 
 \noindent
 in which $C_m = \frac{\mu_0}{4 \pi} = 10^{-7} \ \text{Hm}^{-1}$ is the proportionality constant, $\mu_0$ is the magnetic permeability of free space, $\uvec{m}_j$ is a unit vector of dipole moment, $\uvec{l}_{ij}$ is the unit vector between the $i$-th observation point and the $j$-th equivalent source and $l_{ij}$ is the distance between the $i$-th observation point and the $j$-th source:
+
 \begin{equation}
     l_{ij}= \sqrt{(x_i - x_j')^2 + (y_i - y_j')^2 + (z_i - z_j')^2}
     \ .
@@ -181,7 +182,7 @@ For $N$ observation points, Equation~\ref{eq:tfa_eqs} can be arranged in a linea
 in which \textcolor{orange}{$\bvec{d}$} is the $N \times 1$ predicted data vector, \textcolor{teal}{$\bar{\mathbf{c}}$} is the $M \times 1$ parameter vector and $\mat{A}$ is the $N \times M$ sensitivity (Jacobian) matrix.
 
 The inverse problem of the equivalent sources method consists of finding the parameter vector \textcolor{teal}{$\bar{\mathbf{c}}$} that best fits the observed data \textcolor{orange}{$\bvec{d}^o$} subject to minimum norm constraints. 
-This can be achieved by minimizing the goal function
+This can be achieved by minimizing the damped least-squares goal function
 
 \begin{equation}
 \label{eq:goal_function}
@@ -279,14 +280,14 @@ Instead of solving for both $\textcolor{teal}{\bvec{c}^d}$ and $\textcolor{teal}
   \label{alg:block_averaging}
 \end{algorithm}
 
-To estimate the deep layer coefficients first, the short-wavelength information has to be removed from the observed data to allow the deep layer to only capture the long-wavelength components, rather than both short- and long-wavelength components. This is achieved by block-averaging the observed line data, as described in Algorithm~\ref{alg:block_averaging}, to arrive at the $N^d \times 1$ block-averaged observed data vector $\textcolor{orange}{\bvec{d}^{ob}}$.
-The deep equivalent sources are then placed one beneath each block-averaged data point at a given relative depth following \citet{Soler2021}, providing $M^d = N^d$ sources.
-The block-averaged observed data $\textcolor{orange}{\bvec{d}^{ob}}$ are then used to estimate the $M^d$ deep layer coefficients by solving the normal equation system
+To estimate the deep layer coefficients first, the short-wavelength information has to be removed from the observed data to allow the deep layer to only capture the long-wavelength components, rather than both short- and long-wavelength components. This is achieved by block-averaging the observed line data, as described in Algorithm~\ref{alg:block_averaging}, to arrive at the $N^d \times 1$ block-averaged observed data vector $\textcolor{orange}{\bvec{d}^{od}}$.
+The deep equivalent sources are then placed one beneath each block-averaged data point at a given relative depth following \citet{Soler2021}, providing $M^d$ deep sources with $M^d = N^d$.
+The block-averaged observed data $\textcolor{orange}{\bvec{d}^{od}}$ are then used to estimate the $M^d$ deep layer coefficients by solving the normal equation system
 
 \begin{equation}
     \left(\ {\mat{A}^d}^T \mat{A}^d + \mu \mat{I}\ \right) 
     \textcolor{teal}{\bvec{c}^d} =
-    {\mat{A}^d}^T\textcolor{orange}{\bvec{d}^{ob}}
+    {\mat{A}^d}^T\textcolor{orange}{\bvec{d}^{od}}
     \ .
 \end{equation}
 
@@ -308,7 +309,7 @@ The deep sources residuals $\textcolor{orange}{\bvec{r}^d}$ are then used as the
 
 The positions of the shallow sources are calculated by block-averaging the data coordinates using a block size equal to the desired grid spacing \citep{Soler2021}, leading to $M^s < N$ sources.
 It is worth emphasizing that only the source coordinates undergo block-averaging and not the observed data themselves.
-The $M^s$ shallow layer coefficients are estimated by fitting the $N$ deep layer residuals (\textcolor{orange}{$\bar{\mathbf{r}}^d$}). Since $N$ can be large for real-world airborne surveys (on the order of tens to hundreds of millions of observations), the fitting employs the gradient-boosted equivalent source technique from \citet{Soler2021} (Section~\ref{sec:gradient-boosting}). 
+The $M^s$ shallow layer coefficients are estimated by fitting the $N$ deep layer residuals (\textcolor{orange}{$\bar{\mathbf{r}}^d$}). Since $N$ can be large for real-world airborne surveys (on the order of tens to hundreds of millions of observations), the fitting employs the gradient-boosted equivalent source technique from \citet{Soler2021}, which is explained in Section~\ref{sec:gradient-boosting}. 
 
 Once the coefficients for both the deep and shallow layers are estimated, the total-field anomaly can be predicted by combining the predictions of both layers:
 
@@ -501,6 +502,7 @@ Regional Dipole & [2260, 2830, 8] & -70 & 40 & $1 \times 10^{10}$ \\
 \end{figure}
 
 To assess the performance of a single versus a dual layer of equivalent sources, the single layer of equivalent sources was first applied using the gradient-boosted equivalent sources method (see Algorithm~\ref{alg:gradient_boosting}). To ensure optimal selection of the hyper-parameters, the block K-fold cross-validation method (see Algorithm~\ref{alg:BK-CV}) was employed, using a block size of 30 km $\times$ 30 km over a wide range of parameter values. The optimal hyper-parameters, which resulted in the lowest cross-validated RMSE, were a damping value of $1 \times 10^{2}$ and a relative depth of 35 km. These optimised parameters were then used in the gradient-boosted equivalent sources with a window size of 250 km $\times$ 250 km. To further minimise the residuals of the inversion, the iteration over the windows was performed twice.
+In all test cases, the inclination of the equivalent sources was \ang{90} and the declination was \ang{0}.
 
 The resulting single-layer predictions for the total field anomaly along the survey lines, total field anomaly on a regular grid, and the amplitude of the anomalous magnetic field on a regular grid are presented in Figure~\ref{fig:single_layer_synthetic}. The prediction of the total field anomaly along the survey lines (Figure~\ref{fig:single_layer_synthetic}b) provides an overall good fit to the data, with an RMSE of 8.5 nT. However, it underestimates the magnitude of the four small, shallow dipoles, a pattern consistent with the predictions for both, the total field anomaly (Figure~\ref{fig:single_layer_synthetic}e) and the amplitude of the anomalous magnetic field (Figure~\ref{fig:single_layer_synthetic}h). Furthermore, the single layer model introduces undulating ripple effects at the edges of the sources, especially along the dykes. It also generates edges effects at the borders of the survey area (Figure~\ref{fig:single_layer_synthetic}e). These results highlight a key challenge when fitting both the short- and long-wavelength components simultaneously with a single layer.
 
@@ -560,7 +562,10 @@ The method was applied to the open-access aeromagnetic survey data from the ICEG
 \label{fig:real_grid_pred}
 \end{figure}
 
-The coordinates of this dataset were first projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The dual layer equivalent source method (Algorithm~\ref{alg:dual_layer}) could then be applied to the observed data, which have already undergone some preprocessing \citep{ICEGRAV_data}. To fit the deep equivalent source layer, the observed data was block-averaged using different block spacings to determine the ideal size for isolating most of the long-wavelength signals. A block spacing of 15 km $\times$ 15 km, with a padding of $ 0.3 \times $ the block spacing, was selected by visual inspection. The padding allows for additional data points along the survey boundary, reducing the potential for edge effects at the borders. The block K-fold cross-validation method (see Algorithm~\ref{alg:BK-CV}) was applied with a block size of 200 km $\times$ 200 km to determine the optimal hyper-parameters which yield the lowest cross-validated RMSE. The chosen parameters were a damping value of 10 and a relative depth of approximately 55 km. The shallow layer was then fitted to the residuals from the deep layer using the gradient boosting method (see Algorithm~\ref{alg:gradient_boosting}) with a window size of 400 km $\times$ 400 km. The cross-validation method was utilised again to determine the optimal hyper-parameters for the shallow layer. Using a block size of 20 km $\times$ 20 km, the chosen parameters with the lowest cross-validated RMSE were a damping value of 100 and a relative depth of approximately 10 km. The gradient-boosted equivalent sources method (see Algorithm~\ref{alg:gradient_boosting}) was applied twice to the shallow layer to minimise potential errors in the initially selected windows of the iterations. The results for the total field anomaly along the survey lines are shown in Figure~\ref{fig:real_line_pred}. The dual layer provides a good fit to the complicated dataset, with an RMSE of 27.3 nT.
+The coordinates of this dataset were first projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The dual layer equivalent source method (Algorithm~\ref{alg:dual_layer}) could then be applied to the observed data, which have already undergone some preprocessing \citep{ICEGRAV_data}. To fit the deep equivalent source layer, the observed data was block-averaged using different block spacings to determine the ideal size for isolating most of the long-wavelength signals. A block spacing of 15 km $\times$ 15 km, with a padding of $ 0.3 \times $ the block spacing, was selected by visual inspection. The padding allows for additional data points along the survey boundary, reducing the potential for edge effects at the borders. 
+The inclination of the equivalent sources was \ang{90} and the declination was \ang{0}.
+
+The block K-fold cross-validation method (see Algorithm~\ref{alg:BK-CV}) was applied with a block size of 200 km $\times$ 200 km to determine the optimal hyper-parameters which yield the lowest cross-validated RMSE. The chosen parameters were a damping value of 10 and a relative depth of approximately 55 km. The shallow layer was then fitted to the residuals from the deep layer using the gradient boosting method (see Algorithm~\ref{alg:gradient_boosting}) with a window size of 400 km $\times$ 400 km. The cross-validation method was utilised again to determine the optimal hyper-parameters for the shallow layer. Using a block size of 20 km $\times$ 20 km, the chosen parameters with the lowest cross-validated RMSE were a damping value of 100 and a relative depth of approximately 10 km. The gradient-boosted equivalent sources method (see Algorithm~\ref{alg:gradient_boosting}) was applied twice to the shallow layer to minimise potential errors in the initially selected windows of the iterations. The results for the total field anomaly along the survey lines are shown in Figure~\ref{fig:real_line_pred}. The dual layer provides a good fit to the complicated dataset, with an RMSE of 27.3 nT.
 
 The predictions of the total field anomaly and amplitude of the anomalous magnetic field on a regular grid are shown in Figure~\ref{fig:real_grid_pred}. Using a machine with 128 Gigabytes of RAM and an Intel Core i9 9980XE 3GHz processor with 18 cores, the dual layer approach took approximately 1 minute and 42 seconds to fit the 404,363 observed total field anomaly data point and predict the amplitude of the anomalous field on a regular grid. The grid predictions reveal numerous points with very small magnitudes close to 0 nT, a pattern that is also present in the observed data. However, it remains uncertain whether these very small values represent real values or if they are artifacts introduced during the data preprocessing. If the latter is the case, more careful preprocessing may be necessary before applying the equivalent source method.
 
