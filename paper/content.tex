@@ -1,5 +1,9 @@
-\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+% Define some custom math commands
+\newcommand{\norm}[1]{\lVert #1 \rVert}
 \newcommand{\vecbf}[1]{\vec{\mathbf{#1}}}
+\newcommand{\uvec}[1]{\hat{\mathbf{#1}}}
+\newcommand{\bvec}[1]{\bar{\mathbf{#1}}}
+\newcommand{\mat}[1]{\bar{\bar{\mathbf{#1}}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -44,169 +48,222 @@ The total field anomaly $\Delta T(x, y, z)$, observed at a point $(x, y, z)$ on 
 The total magnetic field $\vecbf{T}$ is the sum of the anomalous magnetic field vector $\vecbf{B}$, which is produced by lithospheric sources, and the regional field vector $\vecbf{F}$ \citep{Blakley1995, Langel1998, OliveiraJr2015}. The total field anomaly $\Delta T$ can therefore be written as
 
 \begin{align}
-    \Delta T &=
-    \norm{\vecbf{F} + \vecbf{B}} - \norm{\vecbf{F}}\ ,
+    \label{eq:tfa-definition}
+    \Delta T(x, y, z) &=
+    \norm{\vecbf{F}(x, y, z) + \vecbf{B}(x, y, z)} - \norm{\vecbf{F}(x, y, z)}\ ,
     \\
     &= \left(
-        \vecbf{F} \cdot \vecbf{F} + 2\vecbf{F} \cdot \vecbf{B} + \vecbf{B} \cdot \vecbf{B}\right)^{\frac{1}{2}} - \vert \vecbf{F} \vert
+        \vecbf{F} \cdot \vecbf{F} 
+        + 2\vecbf{F} \cdot \vecbf{B} 
+        + \vecbf{B} \cdot \vecbf{B}
+        \right)^{\frac{1}{2}} 
+    - \norm{\vecbf{F}}
     \ .
 \end{align}
 
 \noindent
-For the majority of crustal anomalies measured by airborne and shipborne surveys, $\vert \vecbf{B} \vert \ll \vert \vecbf{F} \vert$ and $\vert \vecbf{B} \vert$ is negligible in the equation above. Consequently, $\Delta T$ can be approximated as \citep{Blakley1995}
+For the majority of crustal anomalies measured by airborne and shipborne surveys, $\norm{\vecbf{B}} \ll \norm{\vecbf{F}}$ thus $\norm{\vecbf{B}}$ is negligible in the equation above. Consequently, $\Delta T$ can be approximated as \citep{Blakley1995}
 
 \begin{align}
-    \Delta T &\approx \left(\vecbf{F} \cdot \vecbf{F} + 2\vecbf{F} \cdot \vecbf{B}\right)^{\frac{1}{2}} - \vert \vecbf{F} \vert \ ,
+    \Delta T &\approx \left(
+        \vecbf{F} \cdot \vecbf{F} 
+        + 2\vecbf{F} \cdot \vecbf{B}
+    \right)^{\frac{1}{2}} 
+    - \norm{\vecbf{F}} \ ,
     \\
-    &= \vert \vecbf{F} \vert \left(1 + 2\dfrac{\vecbf{F} \cdot \vecbf{B}}{\vecbf{F} \cdot \vecbf{F}}\right)^{\frac{1}{2}} - \vert \vecbf{F} \vert \ .
+    &= \norm{\vecbf{F}} \left(
+        1 + 2 \dfrac{
+            \vecbf{F} \cdot \vecbf{B}
+        }{
+            \vecbf{F} \cdot \vecbf{F}
+        }
+    \right)^{\frac{1}{2}} 
+    - \norm{\vecbf{F}} \ .
     \label{eq:}
 \end{align}
 
 \noindent
-Using the Taylor series expansion $\sqrt{1 + x} = 1 + \frac{x}{2} - \frac{x^2}{8} + \cdots$ up to the first-order term, the square-root can be eliminated giving
+Using the Taylor series expansion $\left( \sqrt{1 + x} = 1 + \frac{x}{2} - \frac{x^2}{8} + \cdots \right)$ up to the first-order term, the square-root can be eliminated:
 
 \begin{align}
-    \Delta T & \approx \vert \vecbf{F} \vert \left(1 + \dfrac{\vecbf{F} \cdot \vecbf{B}}{\vecbf{F} \cdot \vecbf{F}}\right) - \vert \vecbf{F} \vert \ ,
+    \Delta T & \approx \norm{\vecbf{F}} \left(
+        1 + \dfrac{
+            \vecbf{F} \cdot \vecbf{B}
+        }{
+            \vecbf{F} \cdot \vecbf{F}
+        }
+    \right) 
+    - \norm{\vecbf{F}} \ ,
     \\
     &=
-    \dfrac{\vecbf{F} \cdot \vecbf{B}}{\vert \vecbf{F} \vert} \ ,
+    \dfrac{\vecbf{F} \cdot \vecbf{B}}{\norm{\vecbf{F}}} \ ,
     \\
 \label{eq:tfa_dot_product}
-    \Delta T & \approx \vecbf{B} \cdot \hat{\mathbf{F}}
+    \Delta T & \approx \vecbf{B} \cdot \uvec{F}
     \ ,
 \end{align}
 
 \noindent
-in which $\hat{\mathbf{F}}$ is a unit vector in the same direction as the regional field. Additionally, $\vecbf{F}$ can be considered constant on the scale of a single survey. Thus, $\Delta T$ is approximately a harmonic function in most crustal magnetic studies \citep{Blakley1995,OliveiraJr2015}.
+in which $\uvec{F}$ is a unit vector in the same direction as the regional field. Additionally, $\vecbf{F}$ can be considered constant on the scale of a single survey. Thus, $\Delta T$ is approximately a harmonic function in most crustal magnetic studies \citep{Blakley1995,OliveiraJr2015}.
 
 
 \subsection{Equivalent Source Technique}
 
-The equivalent source technique assumes any harmonic function \textcolor{orange}{$d(x, y, z)$} can be approximated by the sum of $M$ discrete point source effects \citep{Dampney1969, Cordell1992}:
+Consider a set of $N$ observations of total field anomaly $\Delta T$ at locations $(x_i, y_i, z_i)$ that are organized into a vector $\bvec{d}^o$ of observed data.
+The equivalent source technique assumes these observations can be approximated by a harmonic function \textcolor{orange}{$d_i = d(x_i, y_i, z_i)$} which is the sum of $M$ discrete source effects \citep{Dampney1969, Cordell1992}:
 
 \begin{equation}
 \label{eq:eqs_technique}
-\textcolor{orange}{d (x, y, z)} = \sum_{j=1}^{M} a_j\left(x, y, z, x'_j, y'_j , z'_j\right) \textcolor{teal}{c_j}
+\textcolor{orange}{d_i} = 
+\textcolor{orange}{d (x_i, y_i, z_i)} = \sum_{j=1}^{M} a_{j}\left(x_i, y_i, z_i\right) \textcolor{teal}{c_j}
 \ ,
 \end{equation}
 
 \noindent
-where \textcolor{orange}{$d$} is calculated at the Cartesian coordinates ($x$, $y$, $z$) pointing in the geographic east, geographic north and upwards direction, respectively. The function $a_j(x, y, z, x'_j, y'_j , z'_j)$ is the effect of the $j$-th source with unitary physical property, located at the Cartesian coordinates $(x'_j, y'_j, z'_j)$, calculated at the observation point $(x, y, z)$. The coefficients (\textcolor{teal}{$c_j$}) represent the physical property of the $j$-th source
-(e.g. density for gravity data, magnetic moment amplitude for magnetic data).
+in which \textcolor{orange}{$d_i$} is the predicted data calculated at the Cartesian coordinates $(x_i, y_i, z_i)$. 
+The function $a_j(x_i, y_i, z_i)$ is the effect of the $j$-th source with unitary physical property, located at the Cartesian coordinates $(x'_j, y'_j, z'_j)$, calculated at the observation point $(x_i, y_i, z_i)$. The coefficients \textcolor{teal}{$c_j$} are the norm of the magnetic moment of the $j$-th source \textcolor{teal}{$\norm{\vecbf{m}_j} = m_j$}.
 
-For magnetic surveys, \textcolor{orange}{$d (x, y, z)$} from Equation~\ref{eq:eqs_technique} becomes \textcolor{orange}{$\Delta T(x, y, z)$}. The point source effects, $a_j(x, y, z, x'_j, y'_j , z'_j)$, are therefore $\vecbf{B}_j \cdot \hat{\mathbf{F}}$ from Equation~\ref{eq:tfa_dot_product}, where $\vecbf{B}_j$ is the magnetic field of the $j$-th dipole with unit magnetic moment ($\hat{\mathbf{m}}_j$) and is given by \citep{Blakley1995}:
+For magnetic surveys, \textcolor{orange}{$d (x_i, y_i, z_i)$} from Equation~\ref{eq:eqs_technique} is equal to \textcolor{orange}{$\Delta T(x_i, y_i, z_i) = \vecbf{B}(x_i, y_i, z_i) \cdot \uvec{F}$} (Equation~\ref{eq:tfa_dot_product}). 
+Therefore, function $a_j(x_i, y_i, z_i) = \vecbf{b}_j(x_i, y_i, z_i) \cdot \uvec{F}$, in which $\vecbf{b}_j$ is the magnetic field of the $j$-th source with unit magnetic moment $\hat{\mathbf{m}}_j$.
+When the equivalent sources are dipoles, the magnetic field for a unit magnetic moment is given by \citep{Blakley1995}:
 
 \begin{equation}
-    \vecbf{B}_j (x, y, z) = C_m \dfrac{3 \left( \hat{\mathbf{m_j}} \cdot \hat{\mathbf{r_j}} \right) \hat{\mathbf{r_j}} - \hat{\mathbf{m_j}}}{{r_j}^3}
-    \ .
+    \vecbf{b}_{ij} = \vecbf{b}_j (x_i, y_i, z_i) = C_m \dfrac{
+        3 \left(\uvec{m}_j \cdot \uvec{l}_{ij}\right) 
+        \uvec{l}_{ij} - \uvec{m}_j
+    }{{l_{ij}}^3}
+    \ ,
     \label{eq:magnetic_field}
 \end{equation}
 
 \noindent
-Here $C_m = \frac{\mu_0}{4 \pi} = 10^{-7} \ \text{Hm}^{-1}$ is the proportionality constant where $\mu_0$ is the magnetic permeability of free space, $\hat{\mathbf{m}}_j$ is the dipole moment unit vector and $r_j$ is the distance between the observation point and the $j$-th source:
+in which $C_m = \frac{\mu_0}{4 \pi} = 10^{-7} \ \text{Hm}^{-1}$ is the proportionality constant, $\mu_0$ is the magnetic permeability of free space, $\uvec{m}_j$ is a unit vector of dipole moment, $\uvec{l}_{ij}$ is the unit vector between the $i$-th observation point and the $j$-th equivalent source and $l_{ij}$ is the distance between the $i$-th observation point and the $j$-th source:
 \begin{equation}
-    r_j = \sqrt{(x - x_j')^2 + (y - y_j')^2 + (z - z_j')^2}
-    \ ,
+    l_{ij}= \sqrt{(x_i - x_j')^2 + (y_i - y_j')^2 + (z_i - z_j')^2}
+    \ .
 \end{equation}
 
+As a result, Equation~\ref{eq:eqs_technique} becomes
 
-The coefficients (\textcolor{teal}{$\mathbf{c_j}$}) from Equation~\ref{eq:eqs_technique} are the norm of the magnetic moment \textcolor{teal}{$\vert \vec{\mathbf{m}}_j \vert = m_j$}. As a result, Equation~\ref{eq:eqs_technique} becomes
 \begin{equation}
 \label{eq:tfa_eqs}
-\textcolor{orange}{\Delta T (x, y, z)} = \sum_{j=1}^{M} \left(\vecbf{B}_j(x, y, z) \cdot \hat{\mathbf{F}}\right) \textcolor{teal}{m_j}
+\textcolor{orange}{d_i} =
+\sum_{j=1}^{M} \left(\ 
+    \vecbf{b}_{ij} \cdot \hat{\mathbf{F}}
+\ \right)\ 
+\textcolor{teal}{m_j}
 \ .
 \end{equation}
 
+\noindent
 For $N$ observation points, Equation~\ref{eq:tfa_eqs} can be arranged in a linear system which can be expressed in matrix form:
 
 \begin{equation}
 \textcolor{orange}{\begin{bmatrix}
-    \Delta T_1 \\ \Delta T_2 \\ \vdots \\ \Delta T_N
+    d_1 \\ d_2 \\ \vdots \\ d_N
 \end{bmatrix}_{Nx1}} = \begin{bmatrix}
-    \mathbf{B}_{11} \cdot \hat{\mathbf{F}} & \mathbf{B}_{12} \cdot \hat{\mathbf{F}} & \cdots & \mathbf{B}_{1M} \cdot \hat{\mathbf{F}} \\
-    \mathbf{B}_{21} \cdot \hat{\mathbf{F}} & \mathbf{B}_{22} \cdot \hat{\mathbf{F}} & \cdots & \mathbf{B}_{2M} \cdot \hat{\mathbf{F}} \\
+    \vecbf{b}_{11} \cdot \uvec{F} & \vecbf{b}_{12} \cdot \uvec{F} & \cdots & \vecbf{b}_{1M} \cdot \uvec{F} \\
+    \vecbf{b}_{21} \cdot \uvec{F} & \vecbf{b}_{22} \cdot \uvec{F} & \cdots & \vecbf{b}_{2M} \cdot \uvec{F} \\
     \vdots & \vdots & \vdots & \vdots \\
-    \mathbf{B}_{N1} \cdot \hat{\mathbf{F}} & \mathbf{B}_{N2} \cdot \hat{\mathbf{F}} & \cdots & \mathbf{B}_{NM} \cdot \hat{\mathbf{F}} \\
+    \vecbf{b}_{N1} \cdot \uvec{F} & \vecbf{b}_{N2} \cdot \uvec{F} & \cdots & \vecbf{b}_{NM} \cdot \uvec{F} \\
 \end{bmatrix}_{NxM} \textcolor{teal}{\begin{bmatrix}
     m_1 \\ m_2 \\ \vdots \\ m_j
 \end{bmatrix}_{Mx1}} \ ,
 \end{equation}
 
 \begin{equation}
-    \textcolor{orange}{\bar{\mathbf{d}}} = \bar{\bar{\mathbf{A}}} \textcolor{teal}{\bar{\mathbf{c}}}
+    \textcolor{orange}{\bvec{d}} = \mat{A} \textcolor{teal}{\bvec{c}}
     \ ,
+    \label{eq:forward-matrices}
 \end{equation}
 
 \noindent
-where \textcolor{orange}{$\bar{\mathbf{d}}$} is the column vector of $N$ predicted data at the observation points, \textcolor{teal}{$\bar{\mathbf{c}}$} is the column vector of $M$ coefficients (norm of the magnetic moment), and $\bar{\bar{\mathbf{A}}}$ is the $N \times M$ sensitivity (Jacobian) matrix.
+in which \textcolor{orange}{$\bvec{d}$} is the $N \times 1$ predicted data vector, \textcolor{teal}{$\bar{\mathbf{c}}$} is the $M \times 1$ parameter vector and $\mat{A}$ is the $N \times M$ sensitivity (Jacobian) matrix.
 
-
-The damped least-squares solution can be obtained by minimizing the goal function, $\phi$,
+The inverse problem of the equivalent sources method consists of finding the parameter vector \textcolor{teal}{$\bar{\mathbf{c}}$} that best fits the observed data \textcolor{orange}{$\bvec{d}^o$} subject to minimum norm constraints. 
+This can be achieved by minimizing the goal function
 
 \begin{equation}
 \label{eq:goal_function}
-    \phi(\textcolor{teal}{\bar{\mathbf{c}}}) = \textcolor{orange}{\bar{\mathbf{r}}^T\bar{\mathbf{r}}} + \mu \textcolor{teal}{\bar{\mathbf{c}}^T\bar{\mathbf{c}}}
+    \phi(\textcolor{teal}{\bar{\mathbf{c}}}) = \textcolor{orange}{\bar{\mathbf{r}}^T\bar{\mathbf{r}}} + \mu\ \textcolor{teal}{\bar{\mathbf{c}}^T\bar{\mathbf{c}}}
     \ ,
 \end{equation}
 
 \noindent
-where $\theta(\textcolor{teal}{\bar{\mathbf{c}}}) = \mu \textcolor{teal}{\bar{\mathbf{c}}^T\bar{\mathbf{c}}}$ is the regularisation function, $\mu$ is the positive regularisation parameter, and $\psi(\textcolor{teal}{\bar{\mathbf{c}}}) =$ \textcolor{orange}{$\bar{\mathbf{r}}^T\bar{\mathbf{r}}$} is the data misfit function where \textcolor{orange}{$\bar{\mathbf{r}}$} is the residual between the observed (\textcolor{orange}{$\bar{\mathbf{d}}^o$}) and predicted data:
+in which $\mu$ is the positive regularisation parameter and  \textcolor{orange}{$\bar{\mathbf{r}}$} is the residual vector:
 
 \begin{equation}
     \label{eqs:resdiual}
-    \textcolor{orange}{\bar{\mathbf{r}}} = \textcolor{orange}{\bar{\mathbf{d}}^o} - \textcolor{orange}{\bar{\mathbf{d}}}
+    \textcolor{orange}{\bvec{r}} = \textcolor{orange}{\bvec{d}^o} - \textcolor{orange}{\bvec{d}}
     \ .
 \end{equation}
 
 \noindent
-Consequently, the goal function from Equation~\ref{eq:goal_function} can  be expanded to give
+The goal function from Equation~\ref{eq:goal_function} can  be expanded to give
 
 \begin{equation}
-    \phi (\textcolor{teal}{\bar{\mathbf{c}}}) = \left(\textcolor{orange}{\bar{\mathbf{d}}^o} - \Bar{\Bar{\mathbf{A}}} \textcolor{teal}{\bar{\mathbf{c}}}\right)^T \left(\textcolor{orange}{\bar{\mathbf{d}}^o} - \Bar{\Bar{\mathbf{A}}} \textcolor{teal}{\bar{\mathbf{c}}}\right) + \mu \textcolor{teal}{\bar{\mathbf{c}}^T\bar{\mathbf{c}}}
+    \phi (\textcolor{teal}{\bvec{c}}) = 
+    \left(\textcolor{orange}{\bvec{d}^o} - \mat{A} \textcolor{teal}{\bvec{c}}\right)^T 
+    \left(\textcolor{orange}{\bvec{d}^o} - \mat{A} \textcolor{teal}{\bvec{c}}\right) 
+    + \mu\ \textcolor{teal}{\bvec{c}^T\bvec{c}}
     \ .
 \end{equation}
 
 \noindent
-By minimising the goal function, the values of the source coefficients \textcolor{teal}{$\bar{\mathbf{c}}$} that best fit the observed field values can be obtained subject to the constraint. If the residual is as close as possible to zero, the observed and predicted data are very similar. The smallest $\phi(\textcolor{teal}{\bar{\mathbf{c}}})$ gives the best fit, which can be calculated by taking the gradient of $\phi(\textcolor{teal}{\bar{\mathbf{c}}})$ and equating it to the null vector:
+The minimum of the goal function can be found by taking its gradient and equating it to the null vector:
+
 \begin{equation}
-    \nabla_{\textcolor{teal}{\bar{c}}} \phi = 2 \Bar{\Bar{\mathbf{A}}}^T \Bar{\Bar{\mathbf{A}}} \textcolor{teal}{\Bar{\mathbf{c}}} - 2\Bar{\Bar{\mathbf{A}}}^T\textcolor{orange}{\bar{\mathbf{d}}^o} + 2\mu \textcolor{teal}{\bar{\mathbf{c}}} = \bar{\mathbf{0}}
+    \nabla \phi = 
+    2 \mat{A}^T \mat{A} \textcolor{teal}{\bvec{c}} 
+    - 2\mat{A}^T \textcolor{orange}{\bvec{d}^o} 
+    + 2 \mu \textcolor{teal}{\bvec{c}}
+    = \bvec{0}
     \ .
 \end{equation}
 
 \noindent
-This can be rearranged to express the normal equation system:
+This equation can be rearranged to express the normal equation system
+
 \begin{equation}
-    \left( \Bar{\Bar{\mathbf{A}}}^T \Bar{\Bar{\mathbf{A}}} +  \mu \bar{\bar{\mathbf{I}}} \right) \textcolor{teal}{\bar{\mathbf{c}}} =
-    \Bar{\Bar{\mathbf{A}}}^T\textcolor{orange}{\bar{\mathbf{d}}^o}
+    \left(\ \mat{A}^T \mat{A} + \mu \mat{I}\ \right) 
+    \textcolor{teal}{\bvec{c}} =
+    \mat{A}^T\textcolor{orange}{\bvec{d}^o}
     \ ,
     \label{eq:normal_equations}
 \end{equation}
 
 \noindent
-which can be solved for \textcolor{teal}{$\bar{\mathbf{c}}$}. Once \textcolor{teal}{$\bar{\mathbf{c}}$} has been estimated, Equation~\ref{eq:eqs_technique} can be used to forward model the total-field anomaly in any ($x, y, z$) location.
+which can be solved for \textcolor{teal}{$\bvec{c}$}. Once \textcolor{teal}{$\bvec{c}$} has been estimated, Equation~\ref{eq:eqs_technique} can be used to forward model the total-field anomaly at any $(x, y, z)$ location.
 
+It is also possible to use the estimated parameters \textcolor{teal}{$\bvec{c}$} to calculate transformations of the potential field, such as upward continuation, directional derivatives and reduction-to-the-pole, by adjusting function $a_j(x_i, y_i, z_i)$ appropriately.
+However, in order to calculate the amplitude of the anomalous magnetic field vector $\vecbf{B}$ (Equation~\ref{eq:tfa-definition}), the forward modelling equation must be modified to
 
-The amplitude of the anomalous magnetic field vector ($\vecbf{B}$) caused by the $j$-th source with unit magnetic moment is given by
 \begin{equation}
-    \left\lvert \vec{\mathbf{B}_j}(x,y,z) \right\rvert = \sqrt{B^2_{x_j} + B^2_{y_j} +B^2_{z_j}}
-    \ ,
-\end{equation}
-
-\noindent
-where $B_{x_j}$, $B_{y_j}$ and $B_{z_j}$ are the three components of the anomalous magnetic field vector (Equation~\ref{eq:magnetic_field}) in the geographic easting, geographic northing and upwards direction, respectively. We can therefore adapt Equation~\ref{eq:tfa_eqs} to predict the amplitude of the anomalous magnetic field using the estimated dipole moment intensities (\textcolor{teal}{$\bar{\mathbf{c}}$}):
-\begin{equation}
-\textcolor{orange}{\left\lvert \vecbf{B}(x,y,z) \right\rvert} = \left\lvert \sum_{j=1}^{M} \vecbf{B}_{j}(x,y,z) \textcolor{teal}{m_j} \right\rvert
+\textcolor{orange}{\norm{\vecbf{B}(x,y,z)}} = \left\lVert 
+    \sum_{j=1}^{M} \vecbf{b}_{j}(x,y,z)\ \textcolor{teal}{m_j} 
+\right\rVert
 \ .
 \end{equation}
 
 
 \subsection{Dual Layer Concept}
 
-The use of two layers, one shallow and one deep, was first introduced by \citet{Li2020} to predict the three components of the anomalous field ($\vecbf{B}$) from total-field anomaly observations. The deep layer was used to fit the regional magnetic field and the shallow layer was used to fit the shallow magnetic anomalies. \citet{Li2020} found that having an additional deeper layer of equivalent sources improved the model fit to the data, particularly for the long‐wavelength fields. \citet{Li2020} fit both layers to the observed data simultaneously. Due to the sensitivity matrix elements associated with the shallow layer being much larger than the elements associated with the deep layer, their method required the use of a depth-weighing factor to keep the shallow layer coefficients from dominating.
+The use of two layers, one shallow and one deep, was first introduced by \citet{Li2020} to predict the three components of the anomalous field ($\vecbf{B}$) from total-field anomaly observations. \citet{Li2020} found that having an additional deeper layer of equivalent sources improved the model fit to the data, particularly for the long‐wavelength fields. \citet{Li2020} fit both layers to the observed data simultaneously. Due to the sensitivity matrix elements associated with the shallow layer being much larger than the elements associated with the deep layer, their method required the use of a depth-weighing factor to keep the shallow layer coefficients from dominating.
 
-Instead, here the dual layer method is modified to separate the deep and shallow sources into two different sets of parameters, \textcolor{teal}{$\bar{\mathbf{c}}^d$} and \textcolor{teal}{$\bar{\mathbf{c}}^s$}, respectively, and estimated separately. To estimate the deep layer coefficients first, the short-wavelength information has to be removed from the observed data to allow the deep layer to only capture the long-wavelength components, rather than both short- and long-wavelength components. This is achieved by block-averaging the observed line data, as described in Algorithm~\ref{alg:block_averaging}.
+Here the dual layer method is modified to separate the deep and shallow sources into two different sets of parameters, \textcolor{teal}{$\bar{\mathbf{c}}^d$} and \textcolor{teal}{$\bar{\mathbf{c}}^s$}, respectively.
+The forward modelling Equation~\ref{eq:forward-matrices} is then modified to
 
-\begin{algorithm}[!h]
+\begin{equation}
+    \textcolor{orange}{\bvec{d}} = \mat{A}^d \textcolor{teal}{\bvec{c}^d}
+    +  \mat{A}^s \textcolor{teal}{\bvec{c}^s}
+    \ ,
+\end{equation}
+
+\noindent
+in which $\mat{A}^d$ and $\mat{A}^s$ are the sensitivity matrices for the deep and shallow sources, respectively.
+Instead of solving for both $\textcolor{teal}{\bvec{c}^d}$ and $\textcolor{teal}{\bvec{c}^s}$ simultaneously, we first estimate the deep source coefficients $\textcolor{teal}{\bvec{c}^d}$ and then estimate the shallow source coefficients $\textcolor{teal}{\bvec{c}^s}$ sequentially.
+
+\begin{algorithm}[!htb]
   \setstretch{1.5}
   Establish the geographic bounding box (region) of the data
   \;
@@ -222,40 +279,68 @@ Instead, here the dual layer method is modified to separate the deep and shallow
   \label{alg:block_averaging}
 \end{algorithm}
 
+To estimate the deep layer coefficients first, the short-wavelength information has to be removed from the observed data to allow the deep layer to only capture the long-wavelength components, rather than both short- and long-wavelength components. This is achieved by block-averaging the observed line data, as described in Algorithm~\ref{alg:block_averaging}, to arrive at the $N^d \times 1$ block-averaged observed data vector $\textcolor{orange}{\bvec{d}^{ob}}$.
+The deep equivalent sources are then placed one beneath each block-averaged data point at a given relative depth following \citet{Soler2021}, providing $M^d = N^d$ sources.
+The block-averaged observed data $\textcolor{orange}{\bvec{d}^{ob}}$ are then used to estimate the $M^d$ deep layer coefficients by solving the normal equation system
 
-The deep layer coefficients (\textcolor{teal}{$\bar{\mathbf{c}}^d$}) of size $M^d$, are estimated using the block-averaged data instead of the original line data with Equation~\ref{eq:normal_equations}. The deep equivalent sources are placed one beneath each block-averaged data point at a given relative depth following \citet{Soler2021}. Thus, another advantage of using the block-averaged data for fitting the deep layer is the reduced computational load because of the reduced number of data and equivalent sources in the model, as well as the increased stability of the model. The estimated dipole moments of the deep layer \textcolor{teal}{$\bar{\mathbf{c}}^d$} are then used to calculate a predicted total-field anomaly \textcolor{orange}{$\bar{\mathbf{d}}^d$} using Equation~\ref{eq:tfa_eqs} on all of the $N$ original observation points.
-Subsequently, a deep layer residual vector is calculated given by
 \begin{equation}
-    \textcolor{orange}{\bar{\mathbf{r}}^d} = \textcolor{orange}{\bar{\mathbf{d}}^o} - \textcolor{orange}{\bar{\mathbf{d}}^d}
+    \left(\ {\mat{A}^d}^T \mat{A}^d + \mu \mat{I}\ \right) 
+    \textcolor{teal}{\bvec{c}^d} =
+    {\mat{A}^d}^T\textcolor{orange}{\bvec{d}^{ob}}
+    \ .
+\end{equation}
+
+\noindent
+Thus, another advantage of using the block-averaged data for fitting the deep layer is the reduced computational load because $N^d \ll N$, as well as the increased stability of the model. 
+
+The estimated dipole moments of the deep layer \textcolor{teal}{$\bvec{c}^d$} are then used to calculate a predicted total-field anomaly \textcolor{orange}{$\bvec{d}^d$} using Equation~\ref{eq:tfa_eqs} on all of the $N$ original observation points.
+Subsequently, a deep layer residual vector is calculated given by
+
+\begin{equation}
+    \textcolor{orange}{\bar{\mathbf{r}}^d} = 
+    \textcolor{orange}{\bar{\mathbf{d}}^o} - \mat{A}^d \textcolor{teal}{\bvec{c}^d}
     \ .
     \label{eq:deep_residual}
 \end{equation}
 
-The shallow layer coefficients of size $M^s$, are estimated by fitting the $N$ deep layer residuals (\textcolor{orange}{$\bar{\mathbf{r}}^d$}). Since $N$ can be large for real-world airborne surveys (in the order of millions of observations), the fitting employs the gradient-boosted equivalent source technique from \citet{Soler2021}. As suggested by \citet{Soler2021}, the positions of the equivalent sources are calculated by block-averaging the data coordinates using a block size equal to the desired grid spacing, leading to $M^s < N$ sources. It is worth emphasizing that only the source coordinates undergo block-averaging and not the observed data themselves. Block-averaging the source coordinates reduces the computational load by reducing the number of source coefficients that need to be estimated.
+\noindent
+The deep sources residuals $\textcolor{orange}{\bvec{r}^d}$ are then used as the observations to estimate the shallow sources coefficients $\textcolor{teal}{\bvec{c}^s}$ in a separate inverse problem. 
 
-Once both the coefficients for both the deep and shallow layers are estimated, the total-field anomaly can be predicted by combining the predictions of both layers:
+The positions of the shallow sources are calculated by block-averaging the data coordinates using a block size equal to the desired grid spacing \citep{Soler2021}, leading to $M^s < N$ sources.
+It is worth emphasizing that only the source coordinates undergo block-averaging and not the observed data themselves.
+The $M^s$ shallow layer coefficients are estimated by fitting the $N$ deep layer residuals (\textcolor{orange}{$\bar{\mathbf{r}}^d$}). Since $N$ can be large for real-world airborne surveys (on the order of tens to hundreds of millions of observations), the fitting employs the gradient-boosted equivalent source technique from \citet{Soler2021} (Section~\ref{sec:gradient-boosting}). 
+
+Once the coefficients for both the deep and shallow layers are estimated, the total-field anomaly can be predicted by combining the predictions of both layers:
+
 \begin{equation}
     \label{eq:tfa_eqs_dual_layer}
-  \textcolor{orange}{\Delta T (x, y, z)} = \sum_{j=1}^{M^d} \left(\vecbf{B}^d_j(x, y, z) \cdot \hat{\mathbf{F}}\right) \textcolor{teal}{m_j^d}
-  +  \sum_{j=1}^{M^s} \left(\vecbf{B}^s_j(x, y, z) \cdot \hat{\mathbf{F}}\right) \textcolor{teal}{m_j^s}
+    \textcolor{orange}{\Delta T (x, y, z)} = 
+    \sum_{j=1}^{M^d} \left(
+        \vecbf{b}^d_j(x, y, z) \cdot \uvec{F}
+    \right) \textcolor{teal}{m_j^d}
+    + \sum_{j=1}^{M^s} \left(
+        \vecbf{b}^s_j(x, y, z) \cdot \uvec{F}
+    \right) \textcolor{teal}{m_j^s}
+  \ ,
+\end{equation}
+
+\noindent
+in which $\vecbf{b}_j^d$ and $\vecbf{b}_j^s$ are the magnetic field vectors with unit magnetic moment for the $j$-th deep and shallow sources, respectively.
+Likewise, the amplitude of the anomalous field can also be predicted by combing the predictions of both layers:
+
+\begin{equation}
+  \textcolor{orange}{\norm{\vecbf{B}(x,y,z)}} =
+  \left\lVert \sum_{j=1}^{M^d} \vecbf{b}^d_{j}(x,y,z)\ \textcolor{teal}{m^d_j}
+  +
+  \sum_{j=1}^{M^s}  \vecbf{b}^s_{j}(x,y,z)\ \textcolor{teal}{m^s_j}
+  \right\rVert
   \ .
 \end{equation}
 
 \noindent
-Likewise, the amplitude of the anomalous field can also be predicted by combing the predictions of both layers:
-
-\begin{equation}
-  \textcolor{orange}{\left\lvert \vecbf{B}(x,y,z) \right\rvert} =
-  \left\lvert \sum_{j=1}^{M^d} \vecbf{B}^d_{j}(x,y,z)\ \textcolor{teal}{m^d_j}
-  +
-  \sum_{j=1}^{M^s}  \vecbf{B}^s_{j}(x,y,z)\ \textcolor{teal}{m^s_j}
-  \right\rvert
-  \ .
-\end{equation}
-
 A summary of this dual layer method proposed here is given in Algorithm~\ref{alg:dual_layer}.
 
-\begin{algorithm}[!h]
+\begin{algorithm}[!htb]
   \setstretch{1.5}
   Block average the observed data
   \;
@@ -282,6 +367,7 @@ A summary of this dual layer method proposed here is given in Algorithm~\ref{alg
 
 
 \subsection{Gradient-Boosted Equivalent Sources}
+\label{sec:gradient-boosting}
 
 Estimating \textcolor{teal}{$\bar{\mathbf{c}}$} using the damped least-squares solution (Equation~\ref{eq:normal_equations}) is computationally demanding, especially on a regional scale, due to the large number of data points.
 To overcome this problem, \citet{Soler2021} adapted the gradient-boosting method from \citet{Friedman2001}, which provides a way to fit additive models iteratively. Using this method, the shallow source coefficients (\textcolor{teal}{$\bar{\mathbf{c}}^s$}) are estimated in overlapping windows and carried out iteratively. Following \citet{Friedman2002}, \citet{Soler2021} also iterated through the windows randomly to improve the model fit to the data. The gradient-boosted equivalent sources method reduces the computational load by solving numerous smaller damped least-squares problems rather than one large problem. This method is applied to the shallow layer of equivalent sources because it is fitted to the entire dataset, which can contain millions of observations in real airborne surveys. An outline of the method is presented in Algorithm~\ref{alg:gradient_boosting}.
