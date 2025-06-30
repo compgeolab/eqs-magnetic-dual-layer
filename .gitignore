@@ -1,4 +1,6 @@
 .ipynb_checkpoints
 __pycache__
 paper/*.pdf
-
+data/icegrav.csv
+data/icegrav_synthetic.csv
+data/icegrav_synthetic_sources.csv

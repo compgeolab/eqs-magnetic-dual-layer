@@ -109,7 +109,7 @@ def icegrav_synthetic(source1, source2, source3, source4, dyke1, dyke2, dipoles,
     small_dipole_height = -500
     small_dipole_moment = 5e10
     small_dipole_coords = [
-        [[1.95e6], [2785e6], [small_dipole_height]],
+        [[1.95e6], [2.785e6], [small_dipole_height]],
         [[2.1e6], [3.011e6], [small_dipole_height]],
         [[2.11e6], [2.955e6], [small_dipole_height]],
         [[2.15e6], [2.75e6], [small_dipole_height]],
@@ -248,7 +248,7 @@ def truncated_regional_synthetic(source1, source2, source3, source4, dyke1, dyke
     small_dipole_height = -500
     small_dipole_moment = 5e10
     small_dipole_coords = [
-        [[1.95e6], [2785e6], [small_dipole_height]],
+        [[1.95e6], [2.785e6], [small_dipole_height]],
         [[2.1e6], [3.011e6], [small_dipole_height]],
         [[2.11e6], [2.955e6], [small_dipole_height]],
         [[2.15e6], [2.75e6], [small_dipole_height]],
