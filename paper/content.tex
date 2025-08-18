@@ -53,10 +53,10 @@ The total magnetic field $\vecbf{T}$ is the sum of the anomalous magnetic field 
     \norm{\vecbf{F}(x, y, z) + \vecbf{B}(x, y, z)} - \norm{\vecbf{F}(x, y, z)}\ ,
     \\
     &= \left(
-        \vecbf{F} \cdot \vecbf{F} 
-        + 2\vecbf{F} \cdot \vecbf{B} 
+        \vecbf{F} \cdot \vecbf{F}
+        + 2\vecbf{F} \cdot \vecbf{B}
         + \vecbf{B} \cdot \vecbf{B}
-        \right)^{\frac{1}{2}} 
+        \right)^{\frac{1}{2}}
     - \norm{\vecbf{F}}
     \ .
 \end{align}
@@ -66,9 +66,9 @@ For the majority of crustal anomalies measured by airborne and shipborne surveys
 
 \begin{align}
     \Delta T &\approx \left(
-        \vecbf{F} \cdot \vecbf{F} 
+        \vecbf{F} \cdot \vecbf{F}
         + 2\vecbf{F} \cdot \vecbf{B}
-    \right)^{\frac{1}{2}} 
+    \right)^{\frac{1}{2}}
     - \norm{\vecbf{F}} \ ,
     \\
     &= \norm{\vecbf{F}} \left(
@@ -77,7 +77,7 @@ For the majority of crustal anomalies measured by airborne and shipborne surveys
         }{
             \vecbf{F} \cdot \vecbf{F}
         }
-    \right)^{\frac{1}{2}} 
+    \right)^{\frac{1}{2}}
     - \norm{\vecbf{F}} \ .
     \label{eq:}
 \end{align}
@@ -92,7 +92,7 @@ Using the Taylor series expansion $\left( \sqrt{1 + x} = 1 + \frac{x}{2} - \frac
         }{
             \vecbf{F} \cdot \vecbf{F}
         }
-    \right) 
+    \right)
     - \norm{\vecbf{F}} \ ,
     \\
     &=
@@ -113,13 +113,13 @@ Consider a set of $N$ observations of total-field anomaly $\Delta T$ at location
 
 \begin{equation}
 \label{eq:eqs_technique}
-\textcolor{orange}{d_i} = 
+\textcolor{orange}{d_i} =
 \textcolor{orange}{d (x_i, y_i, z_i)} = \sum_{j=1}^{M} a_{j}\left(x_i, y_i, z_i\right) \textcolor{teal}{c_j}
 \ ,
 \end{equation}
 
 \noindent
-in which \textcolor{orange}{$d_i$} is the predicted data calculated at the Cartesian coordinates $(x_i, y_i, z_i)$. 
+in which \textcolor{orange}{$d_i$} is the predicted data calculated at the Cartesian coordinates $(x_i, y_i, z_i)$.
 The function $a_j(x_i, y_i, z_i)$ is the effect of the $j$-th source with unitary physical property, located at the Cartesian coordinates $(x'_j, y'_j, z'_j)$, calculated at the observation point $(x_i, y_i, z_i)$. The coefficients \textcolor{teal}{$c_j$} are the norm of the magnetic moment of the $j$-th source \textcolor{teal}{$\norm{\vecbf{m}_j} = m_j$}.
 
 For magnetic surveys, \textcolor{orange}{$d (x_i, y_i, z_i)$} from Equation~\ref{eq:eqs_technique} is equal to \textcolor{orange}{$\Delta T(x_i, y_i, z_i) = \vecbf{B}(x_i, y_i, z_i) \cdot \uvec{F}$} (Equation~\ref{eq:tfa_dot_product}). Therefore, function $a_j(x_i, y_i, z_i) = \vecbf{b}_j(x_i, y_i, z_i) \cdot \uvec{F}$, in which $\vecbf{b}_j(x_i, y_i, z_i)$ is the magnetic field of the $j$-th source with unit magnetic moment $\hat{\mathbf{m}}_j$.
@@ -127,7 +127,7 @@ When the equivalent sources are dipoles, the magnetic field for a unit magnetic 
 
 \begin{equation}
     \vecbf{b}_{ij} = \vecbf{b}_j (x_i, y_i, z_i) = C_m \dfrac{
-        3 \left(\uvec{m}_j \cdot \uvec{l}_{ij}\right) 
+        3 \left(\uvec{m}_j \cdot \uvec{l}_{ij}\right)
         \uvec{l}_{ij} - \uvec{m}_j
     }{{l_{ij}}^3}
     \ ,
@@ -147,9 +147,9 @@ As a result, Equation~\ref{eq:eqs_technique} becomes
 \begin{equation}
 \label{eq:tfa_eqs}
 \textcolor{orange}{d_i} =
-\sum_{j=1}^{M} \left(\ 
+\sum_{j=1}^{M} \left(\
     \vecbf{b}_{ij} \cdot \hat{\mathbf{F}}
-\ \right)\ 
+\ \right)\
 \textcolor{teal}{m_j}
 \ .
 \end{equation}
@@ -179,7 +179,7 @@ For $N$ observation points, Equation~\ref{eq:tfa_eqs} can be arranged in a linea
 \noindent
 in which \textcolor{orange}{$\bvec{d}$} is the $N \times 1$ predicted data vector, \textcolor{teal}{$\bar{\mathbf{c}}$} is the $M \times 1$ parameter vector and $\mat{A}$ is the $N \times M$ sensitivity (Jacobian) matrix.
 
-The inverse problem of the equivalent sources method consists of finding the parameter vector \textcolor{teal}{$\bar{\mathbf{c}}$} that best fits the observed data \textcolor{orange}{$\bvec{d}^o$} subject to minimum norm constraints. 
+The inverse problem of the equivalent sources method consists of finding the parameter vector \textcolor{teal}{$\bar{\mathbf{c}}$} that best fits the observed data \textcolor{orange}{$\bvec{d}^o$} subject to minimum norm constraints.
 This can be achieved by minimizing the damped least-squares goal function
 
 \begin{equation}
@@ -201,9 +201,9 @@ in which $\mu$ is the positive regularisation parameter and  \textcolor{orange}{
 The goal function from Equation~\ref{eq:goal_function} can  be expanded to give
 
 \begin{equation}
-    \phi (\textcolor{teal}{\bvec{c}}) = 
-    \left(\textcolor{orange}{\bvec{d}^o} - \mat{A} \textcolor{teal}{\bvec{c}}\right)^T 
-    \left(\textcolor{orange}{\bvec{d}^o} - \mat{A} \textcolor{teal}{\bvec{c}}\right) 
+    \phi (\textcolor{teal}{\bvec{c}}) =
+    \left(\textcolor{orange}{\bvec{d}^o} - \mat{A} \textcolor{teal}{\bvec{c}}\right)^T
+    \left(\textcolor{orange}{\bvec{d}^o} - \mat{A} \textcolor{teal}{\bvec{c}}\right)
     + \mu\ \textcolor{teal}{\bvec{c}^T\bvec{c}}
     \ .
 \end{equation}
@@ -212,9 +212,9 @@ The goal function from Equation~\ref{eq:goal_function} can  be expanded to give
 The minimum of the goal function can be found by taking its gradient and equating it to the null vector:
 
 \begin{equation}
-    \nabla \phi = 
-    2 \mat{A}^T \mat{A} \textcolor{teal}{\bvec{c}} 
-    - 2\mat{A}^T \textcolor{orange}{\bvec{d}^o} 
+    \nabla \phi =
+    2 \mat{A}^T \mat{A} \textcolor{teal}{\bvec{c}}
+    - 2\mat{A}^T \textcolor{orange}{\bvec{d}^o}
     + 2 \mu \textcolor{teal}{\bvec{c}}
     = \bvec{0}
     \ .
@@ -224,7 +224,7 @@ The minimum of the goal function can be found by taking its gradient and equatin
 This equation can be rearranged to express the normal equation system
 
 \begin{equation}
-    \left(\ \mat{A}^T \mat{A} + \mu \mat{I}\ \right) 
+    \left(\ \mat{A}^T \mat{A} + \mu \mat{I}\ \right)
     \textcolor{teal}{\bvec{c}} =
     \mat{A}^T\textcolor{orange}{\bvec{d}^o}
     \ ,
@@ -238,8 +238,8 @@ It is also possible to use the estimated parameters \textcolor{teal}{$\bvec{c}$}
 However, in order to calculate the amplitude of the anomalous magnetic field vector $\vecbf{B}$ (Equation~\ref{eq:tfa-definition}), the forward modelling equation must be modified to
 
 \begin{equation}
-\textcolor{orange}{\norm{\vecbf{B}(x,y,z)}} = \left\lVert 
-    \sum_{j=1}^{M} \vecbf{b}_{j}(x,y,z)\ \textcolor{teal}{m_j} 
+\textcolor{orange}{\norm{\vecbf{B}(x,y,z)}} = \left\lVert
+    \sum_{j=1}^{M} \vecbf{b}_{j}(x,y,z)\ \textcolor{teal}{m_j}
 \right\rVert
 \ .
 \end{equation}
@@ -281,36 +281,36 @@ Instead of solving for both $\textcolor{teal}{\bvec{c}^d}$ and $\textcolor{teal}
 To estimate the deep layer coefficients first, the short-wavelength information has to be removed from the observed data to allow the deep layer to only capture the long-wavelength components, rather than both short- and long-wavelength components. This is achieved by block-averaging the observed line data, as described in Algorithm~\ref{alg:block_averaging}, to arrive at the $N^d \times 1$ block-averaged observed data vector $\textcolor{orange}{\bvec{d}^{od}}$. The deep equivalent sources are then placed one beneath each block-averaged data point at a given relative depth following \citet{Soler2021}, providing $M^d$ deep sources with $M^d = N^d$. The block-averaged observed data $\textcolor{orange}{\bvec{d}^{od}}$ are then used to estimate the $M^d$ deep layer coefficients by solving the normal equation system
 
 \begin{equation}
-    \left(\ {\mat{A}^d}^T \mat{A}^d + \mu \mat{I}\ \right) 
+    \left(\ {\mat{A}^d}^T \mat{A}^d + \mu \mat{I}\ \right)
     \textcolor{teal}{\bvec{c}^d} =
     {\mat{A}^d}^T\textcolor{orange}{\bvec{d}^{od}}
     \ .
 \end{equation}
 
 \noindent
-Thus, another advantage of using the block-averaged data for fitting the deep layer is the reduced computational load because $N^d \ll N$, as well as the increased stability of the model. 
+Thus, another advantage of using the block-averaged data for fitting the deep layer is the reduced computational load because $N^d \ll N$, as well as the increased stability of the model.
 
 The estimated dipole moments of the deep layer \textcolor{teal}{$\bvec{c}^d$} are then used to calculate a predicted total-field anomaly \textcolor{orange}{$\bvec{d}^d$} using Equation~\ref{eq:tfa_eqs} on all of the $N$ original observation points. Subsequently, a deep layer residual vector is calculated given by
 
 \begin{equation}
-    \textcolor{orange}{\bar{\mathbf{r}}^d} = 
+    \textcolor{orange}{\bar{\mathbf{r}}^d} =
     \textcolor{orange}{\bar{\mathbf{d}}^o} - \mat{A}^d \textcolor{teal}{\bvec{c}^d}
     \ .
     \label{eq:deep_residual}
 \end{equation}
 
 \noindent
-The deep sources residuals $\textcolor{orange}{\bvec{r}^d}$ are then used as the observations to estimate the shallow sources coefficients $\textcolor{teal}{\bvec{c}^s}$ in a separate inverse problem. 
+The deep sources residuals $\textcolor{orange}{\bvec{r}^d}$ are then used as the observations to estimate the shallow sources coefficients $\textcolor{teal}{\bvec{c}^s}$ in a separate inverse problem.
 
-The positions of the shallow sources are calculated by block-averaging the data coordinates using a block size equal to the desired grid spacing \citep{Soler2021}, leading to $M^s < N$ sources. It is worth emphasising that only the source coordinates undergo block-averaging and not the observed data themselves. Fitting multiple data points and sources for a single grid point did not significantly improve the model fit in practice and would unnecessarily increase the computational cost. The equivalent sources were placed directly beneath each blocked-averaged coordinate. This layout was also preferred over a regular grid of equivalent sources, as sources positioned without directly overlying data worsened the model fit \citep{Soler2021}. 
+The positions of the shallow sources are calculated by block-averaging the data coordinates using a block size equal to the desired grid spacing \citep{Soler2021}, leading to $M^s < N$ sources. It is worth emphasising that only the source coordinates undergo block-averaging and not the observed data themselves. Fitting multiple data points and sources for a single grid point did not significantly improve the model fit in practice and would unnecessarily increase the computational cost. The equivalent sources were placed directly beneath each blocked-averaged coordinate. This layout was also preferred over a regular grid of equivalent sources, as sources positioned without directly overlying data worsened the model fit \citep{Soler2021}.
 
-The $M^s$ shallow layer coefficients are estimated by fitting the $N$ deep layer residuals (\textcolor{orange}{$\bar{\mathbf{r}}^d$}). Since $N$ can be large for real-world airborne surveys (on the order of tens to hundreds of millions of observations), the fitting employs the gradient-boosted equivalent source technique from \citet{Soler2021}, which is explained in Section~\ref{sec:gradient-boosting}. 
+The $M^s$ shallow layer coefficients are estimated by fitting the $N$ deep layer residuals (\textcolor{orange}{$\bar{\mathbf{r}}^d$}). Since $N$ can be large for real-world airborne surveys (on the order of tens to hundreds of millions of observations), the fitting employs the gradient-boosted equivalent source technique from \citet{Soler2021}, which is explained in Section~\ref{sec:gradient-boosting}.
 
 Once the coefficients for both the deep and shallow layers are estimated, the total-field anomaly can be predicted by combining the predictions of both layers:
 
 \begin{equation}
     \label{eq:tfa_eqs_dual_layer}
-    \textcolor{orange}{\Delta T (x, y, z)} = 
+    \textcolor{orange}{\Delta T (x, y, z)} =
     \sum_{j=1}^{M^d} \left(
         \vecbf{b}^d_j(x, y, z) \cdot \uvec{F}
     \right) \textcolor{teal}{m_j^d}
@@ -396,7 +396,28 @@ The equivalent sources model requires careful selection of appropriate values fo
 
 Cross-validation is a statistical technique commonly used in machine learning to obtain a metric of how successful a model is at fitting data that was not used to train the model. Data are split into two subsets: one for model training and one for model testing. This prevents overfitting by ensuring the training set is independent to the testing set. \citet{Geisser1975} introduced K-fold cross-validation to reduce the computational load compared to other cross-validation methods. In K-fold cross-validation, data are split into K equally-sized folds. The folds 2 to $K$ are used as the training set to construct the model and the remaining fold (fold 1) is used as the testing set to validate the model \citep{Jung2017}. This is then repeated by using a subsequent fold for testing and the remaining folds for training until each fold has been used as a testing set.
 
-\citet{Roberts2017} introduced the blocked versions of cross-validation methods for when data are spatially auto-correlated. This is necessary for when observations taken at close points tend to have similar values, which is often the case for both potential field data due to their smooth nature and airborne data in particular for their spatial bias along flight lines. Block K-Fold cross validation also tends to favour smoother models which helps reduce the effects of high frequency noise in final products. In the block K-fold cross-validation method, data (black dots in Figure~\ref{fig:BK-CV}) are first divided into non-overlapping spatial blocks of a specified size (orange blocks in Figure~\ref{fig:BK-CV}). These blocks are then randomly assigned to $K$ folds, ensuring each fold contains approximately the same number of data points. Data from folds 2 to $K$ are assigned to the training set (blue dots in step 1 of Figure~\ref{fig:BK-CV}), whilst the remaining fold is assigned to the testing set (red dots in step 1 of Figure~\ref{fig:BK-CV}). The training set is fitted with the equivalent source model using Equation\ref{eq:normal_equations} or the gradient-boosted equivalent sources method in order to estimate the parameters \textcolor{teal}{$\bar{\mathbf{c}}$}. The model is then used to predict \textcolor{orange}{$\mathbf{d_{test}}$}, the total-field anomaly (\textcolor{orange}{$\Delta T (x, y, z)$}), on the coordinates from the testing set using Equation~\ref{eq:tfa_eqs} or the equivalent for the gradient-boosted equivalent sources.
+\citet{Roberts2017} introduced the blocked versions of cross-validation methods
+for when data are spatially auto-correlated. This is necessary for when
+observations taken at close points tend to have similar values, which is often
+the case for both potential field data due to their smooth nature and airborne
+data in particular for their spatial bias along flight lines. Block K-Fold
+cross validation also tends to favour smoother models which helps reduce the
+effects of high frequency noise in final products. In the block K-fold
+cross-validation method, data (black dots in Figure~\ref{fig:BK-CV}) are first
+divided into non-overlapping spatial blocks of a specified size (orange blocks
+in Figure~\ref{fig:BK-CV}). These blocks are then randomly assigned to $K$
+folds, ensuring each fold contains approximately the same number of data
+points. Data from folds 2 to $K$ are assigned to the training set (blue dots in
+step 1 of Figure~\ref{fig:BK-CV}), whilst the remaining fold is assigned to the
+testing set (red dots in step 1 of Figure~\ref{fig:BK-CV}). The training set is
+fitted with the equivalent source model using
+Equation~\ref{eq:normal_equations} or the gradient-boosted equivalent sources
+method in order to estimate the parameters
+\textcolor{teal}{$\bar{\mathbf{c}}$}. The model is then used to predict
+\textcolor{orange}{$\mathbf{d_{test}}$}, the total-field anomaly
+(\textcolor{orange}{$\Delta T (x, y, z)$}), on the coordinates from the testing
+set using Equation~\ref{eq:tfa_eqs} or the equivalent for the gradient-boosted
+equivalent sources.
 
 \begin{figure}[tb]
   \centering
@@ -478,7 +499,7 @@ Regional Dipole & [2260, 2830, 8] & -70 & 40 & $1 \times 10^{10}$ \\
 
 \begin{figure}[tb!]
 \centering
-\includegraphics[width=1\linewidth]{paper/figures/cv_synthetic.png}
+\includegraphics[width=1\linewidth]{figures/cv_synthetic.png}
 \caption{
     Cross-validation results for selecting the optimal hyperparameters in the synthetic data test. The combination with the lowest RMSE is marked with a white star. a) The single-layer model with the lowest RMSE obtained at a relative depth of 35 km and damping of $1 \times 10^2$. b) The deep layer of the dual-layer model with the lowest RMSE obtained at a relative depth of 147 km and damping of $1 \times 10^1$. c) The shallow layer of the dual-layer model with the lowest RMSE at a relative depth of 17 km and damping of $1 \times 10^2$.
 }
@@ -545,7 +566,7 @@ As the signal of the regional dipole became increasingly truncated, the RMSE for
 
 \begin{figure}[tb!]
 \centering
-\includegraphics[width=1\linewidth]{paper/figures/cv_real.png}
+\includegraphics[width=1\linewidth]{figures/cv_real.png}
 \caption{
     Cross-validation results for selecting the optimal hyperparameters for the real data. The combination with the lowest RMSE is marked with a white star. a) The deep layer of the dual-layer model with the lowest RMSE obtained at a relative depth of 59 km and damping of $1 \times 10^1$. b) The shallow layer of the dual-layer model with the lowest RMSE at a relative depth of 11 km and damping of $1 \times 10^2$.
 }
@@ -572,7 +593,7 @@ The method was applied to the open-access aeromagnetic data from the ICEGRAV cam
 \label{fig:real_grid_pred}
 \end{figure}
 
-The coordinates of this dataset were first projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The dual-layer equivalent source method (Algorithm~\ref{alg:dual_layer}) could then be applied to the observed data, which have already undergone some preprocessing such as levelling and IGRF correction \citep{ICEGRAV_data}. To fit the deep equivalent source layer, the observed data was block-averaged using different block spacings to determine the ideal size for isolating most of the long-wavelength signals. A block spacing of 15 km $\times$ 15 km, with a padding of $ 0.3 \times $ the block spacing, was selected by visual inspection. The padding allows for additional data points along the survey boundary, reducing the potential for edge effects at the borders. 
+The coordinates of this dataset were first projected using the Universal Polar Stereographic (UPS) projection, specifically for the South Pole region. The dual-layer equivalent source method (Algorithm~\ref{alg:dual_layer}) could then be applied to the observed data, which have already undergone some preprocessing such as levelling and IGRF correction \citep{ICEGRAV_data}. To fit the deep equivalent source layer, the observed data was block-averaged using different block spacings to determine the ideal size for isolating most of the long-wavelength signals. A block spacing of 15 km $\times$ 15 km, with a padding of $ 0.3 \times $ the block spacing, was selected by visual inspection. The padding allows for additional data points along the survey boundary, reducing the potential for edge effects at the borders.
 The inclination of the equivalent sources was \ang{90} and the declination was \ang{0}.
 
 The block K-fold cross-validation method (see Algorithm~\ref{alg:BK-CV}) was applied with a block size of 200 km $\times$ 200 km to determine the optimal hyperparameters which yield the lowest cross-validated RMSE. The chosen parameters included a relative depth of approximately 59 km (see Figure~\ref{fig:cv_real}a). The shallow layer was then fitted to the residuals from the deep layer using the gradient boosting method (see Algorithm~\ref{alg:gradient_boosting}) with a window size of 400 km $\times$ 400 km. The cross-validation method was utilised again to determine the optimal hyperparameters for the shallow layer. Using a block size of 20 km $\times$ 20 km, the chosen parameters with the lowest cross-validated RMSE included a relative depth of approximately 11 km (see Figure~\ref{fig:cv_real}b). The gradient-boosted equivalent sources method (see Algorithm~\ref{alg:gradient_boosting}) was applied twice to the shallow layer to minimise potential errors in the initially selected windows of the iterations. The results for the total-field anomaly along the survey lines are shown in Figure~\ref{fig:real_line_pred}. The dual-layer provides a good fit to the complicated dataset, with an RMSE of 27.3 nT.
