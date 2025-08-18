@@ -1,4 +1,4 @@
-# Transforming Total Field Anomaly into Anomalous Magnetic Field: Using Dual-Layer Gradient-Boosted Equivalent Sources
+# Dual-Layer Gradient-Boosted Equivalent Sources for Magnetic Data
 
 by
 [India Uppal](https://orcid.org/0000-0003-3531-2656),
@@ -32,27 +32,27 @@ exploration into the challenging Antarctic magnetic datasets.
 
 ## Abstract
 
-Potential field data often require interpolation onto a regular grid at
-constant height before further analysis. A widely used approach for this is the
+Magnetic data often require interpolation onto a regular grid at constant
+height before further analysis. A widely used approach for this is the
 equivalent sources technique, which has been adapted over time to improve its
 computational efficiency and accuracy of the predictions. However, many of
-these approaches still face challenges, including border effects in the
+these adaptations still face challenges, including border effects in the
 predictions or reliance on a stabilising parameter. To address these
-limitations, we introduce the dual-layer gradient-boosted equivalent sources
-to: (1) use a dual-layer approach to improve the predictions of long-wavelength
-signals and reduce border effect; (2) use block-averaging and the
-gradient-boosted equivalent sources method to reduce the computational load;
-(3) apply Block K-Fold cross-validation to guide optimal parameter selection
-for the model. The proposed method was tested on both synthetic datasets and
-the ICEGRAV aeromagnetic dataset to evaluate the methods ability to interpolate
-and upward continue onto a regular grid at constant height as well as predict
-the amplitude of the anomalous field from total-field anomaly data. The
-dual-layer approach proved superior to the single-layer approach at predicting
-both short- and long-wavelength signals, particularly in the presence of
-truncated long-wavelength anomalies. The use of block-averaging and the
-gradient-boosting method make our dual-layer approach computationally light,
-being able to grid over 400,000 data points in under 2 minutes on a moderate
-workstation computer.
+limitations, we introduce dual-layer gradient-boosted equivalent sources to:
+(1) use a dual-layer approach to improve the predictions of both short- and
+long-wavelength signals, as well as, reduce border effect; (2) use
+block-averaging and the gradient-boosted equivalent sources method to reduce
+the computational load; (3) apply block K-fold cross-validation to guide
+optimal parameter selection for the model. The proposed method was tested on
+both synthetic datasets and the ICEGRAV aeromagnetic dataset to evaluate the
+methods ability to interpolate and upward continue onto a regular grid, as well
+as predict the amplitude of the anomalous field from total-field anomaly data.
+The dual-layer approach proved better compared to the single-layer approach
+when predicting both short- and long-wavelength signals, particularly in the
+presence of truncated long-wavelength anomalies. The use of block-averaging and
+the gradient-boosting method enhances the computational efficiency, being able
+to grid over 400,000 data points in under 2 minutes on a moderate workstation
+computer.
 
 ## License
 
