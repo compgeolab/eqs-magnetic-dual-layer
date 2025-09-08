@@ -1,10 +1,11 @@
-name: eqs-gb-norm-of-b
+name: eqs-magnetic-dual-layer
 channels:
   - conda-forge
   - defaults
 dependencies:
   # Should be on every project
   - python==3.10.*
+  - pip
   - numpy
   - scipy
   - matplotlib
@@ -24,6 +25,3 @@ dependencies:
   - verde
   - harmonica
   - choclo
-  - pip
-  - pip:
-      - git+https://github.com/fatiando/harmonica
